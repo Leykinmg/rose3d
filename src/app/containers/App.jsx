@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ReactGA from 'react-ga';
 import { actions as machineActions } from '../flux/machine';
 import { actions as developToolsActions } from '../flux/develop-tools';
 import { actions as keyboardShortcutActions } from '../flux/keyboardShortcut';
@@ -67,8 +66,6 @@ class App extends PureComponent {
         const actions = this.actions;
 
         history.listen(location => {
-            this.logPageView();
-
             // show warning when open CNC tab for the first time
             if (this.state.shouldShowCncWarning && location.pathname === '/cnc') {
                 modal({
@@ -123,12 +120,6 @@ class App extends PureComponent {
         this.props.cncInit();
         this.props.printingInit();
         this.props.textInit();
-    }
-
-    logPageView() {
-        const path = window.location.pathname + window.location.search + window.location.hash;
-        ReactGA.set({ page: path });
-        ReactGA.pageview(path);
     }
 
     render() {

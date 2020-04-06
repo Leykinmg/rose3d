@@ -3,7 +3,6 @@ import isEqual from 'lodash/isEqual';
 import includes from 'lodash/includes';
 import noop from 'lodash/noop';
 import semver from 'semver';
-import SerialConnection from '../../lib/SerialConnection';
 import interpret from '../../lib/interpret';
 import EventTrigger from '../../lib/EventTrigger';
 import Feeder from '../../lib/Feeder';
@@ -31,7 +30,6 @@ import {
     WRITE_SOURCE_FEEDER,
     WRITE_SOURCE_SENDER,
     WRITE_SOURCE_QUERY,
-    WRITE_SOURCE_UNKNOWN,
     HEAD_TYPE_3DP, QUERY_TYPE_ENCLOSURE
 } from '../constants';
 
@@ -674,100 +672,7 @@ class MarlinController {
             log.error(`Cannot open serial port "${port}/${dataSource}"`);
             return;
         }
-        this.serialport = new SerialConnection({
-            ...this.options,
-            isScreenProtocol: false,
-            writeFilter: (data, context) => {
-                const { source = null } = { ...context };
-                const line = data.trim();
-
-
-                // TODO source
-                // update write history
-                // this.history.writeSource = source;
-                if (source) {
-                    this.history.writeSource = source;
-                } else {
-                    this.history.writeSource = WRITE_SOURCE_UNKNOWN;
-                }
-                this.history.writeLine = line;
-
-                if (!line) {
-                    return data;
-                }
-
-                let { jogSpeed, workSpeed, headStatus, headPower } = { ...this.controller.state };
-                const modal = { ...this.controller.state.modal };
-                let spindle = 0;
-
-                interpret(line, (cmd, params) => {
-                    // motion
-                    if (includes(['G0', 'G1'], cmd)) {
-                        modal.motion = cmd;
-                    }
-                    // units
-                    if (includes(['G20', 'G21'], cmd)) {
-                        // G20: Inches, G21: Millimeters
-                        modal.units = cmd;
-                    }
-                    // distance
-                    if (includes(['G90', 'G91'], cmd)) {
-                        // G90: Absolute, G91: Relative
-                        modal.distance = cmd;
-                    }
-                    // feedrate mode
-                    if (includes(['G93', 'G94'], cmd)) {
-                        // G93: Inverse time mode, G94: Units per minute
-                        modal.feedrate = cmd;
-                    }
-                    // spindle or head
-                    if (includes(['M3', 'M4', 'M5'], cmd)) {
-                        // M3: Spindle (cw), M4: Spindle (ccw), M5: Spindle off
-                        modal.spindle = cmd;
-
-                        if (cmd === 'M3' || cmd === 'M4') {
-                            if (params.S !== undefined) {
-                                spindle = params.S;
-                            }
-                        }
-                    }
-                    if (cmd === 'G0' && params.F) {
-                        jogSpeed = params.F;
-                    }
-                    if (cmd === 'G1' && params.F) {
-                        workSpeed = params.F;
-                    }
-                    if (cmd === 'M3') {
-                        headStatus = true;
-                        if (params.P !== undefined) {
-                            headPower = params.P;
-                            headPower = ensureRange(headPower, 0, 100);
-                        } else if (params.S !== undefined) {
-                            // round to get executed power, convert to percentage and round again
-                            headPower = Math.round(params.S) / 255.0 * 100.0;
-                            headPower = ensureRange(headPower, 0, 100);
-                        }
-                    }
-                    if (cmd === 'M5') {
-                        headStatus = false;
-                        // headPower = 0;
-                    }
-                });
-                const nextState = {
-                    ...this.controller.state,
-                    modal,
-                    spindle,
-                    jogSpeed,
-                    workSpeed,
-                    headStatus,
-                    headPower
-                };
-                if (!isEqual(this.controller.state, nextState)) {
-                    this.controller.state = nextState; // enforce change
-                }
-                return data;
-            }
-        });
+        this.serialport = {};
 
         this.serialport.on('close', this.serialportListener.close);
         this.serialport.on('error', this.serialportListener.error);

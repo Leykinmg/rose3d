@@ -1,4 +1,3 @@
-import serialport from 'serialport';
 import store from '../../store';
 import logger from '../../lib/logger';
 import { MarlinController } from '../../controllers';
@@ -20,34 +19,9 @@ const onDisconnection = (socket) => {
     });
 };
 
-const serialportList = (socket, options) => {
-    const { dataSource } = options;
+const serialportList = (socket) => {
+    // const { dataSource } = options;
     log.debug(`serialport:list(): id=${socket.id}`);
-
-    serialport.list()
-        .then(ports => {
-            const allPorts = ports.concat(ensureArray(config.get('ports', [])));
-
-            const controllers = store.get('controllers', {});
-            const portsInUse = Object.keys(controllers)
-                .filter(port => {
-                    const controller = controllers[port];
-                    return controller && controller.isOpen();
-                });
-
-            const availablePorts = allPorts.map(port => {
-                return {
-                    port: port.path,
-                    manufacturer: port.manufacturer,
-                    inuse: portsInUse.indexOf(port.path) >= 0
-                };
-            });
-
-            socket.emit('serialport:list', { ports: availablePorts, dataSource });
-        })
-        .catch(err => {
-            log.error(err);
-        });
 };
 
 const serialportOpen = (socket, options) => {
