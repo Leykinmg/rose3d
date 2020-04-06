@@ -27,7 +27,7 @@ class PrintableCube extends Object3D {
 
     _setup() {
         // Faces
-        const bottom = new RectangleGridHelper(this.size.x, this.size.y, 10);
+        const bottom = new RectangleGridHelper(this.size.x, this.size.y, 5);
         bottom.position.set(0, 0, 0);
         bottom.rotation.x = Math.PI; // flip to show left bottom point as zero
         this.add(bottom);
@@ -58,8 +58,10 @@ class PrintableCube extends Object3D {
 
         // Add logo
         const minSideLength = Math.min(this.size.x, this.size.y);
-        const geometry = new PlaneGeometry(minSideLength / 2, minSideLength / 8);
-        const texture = new TextureLoader().load('./images/snapmaker-logo-512x128.png', this.update);
+
+        const geometry = new PlaneGeometry(minSideLength / 7, minSideLength / 7);
+        const texture = new TextureLoader().load('./images/rose-logo-256x256.png', this.update);
+
         const material = new MeshBasicMaterial({
             map: texture,
             side: DoubleSide,

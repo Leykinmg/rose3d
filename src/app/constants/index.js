@@ -104,9 +104,9 @@ export const MACHINE_SERIES = {
         label: 'Snapmaker Original',
         setting: {
             size: {
-                x: 125,
-                y: 125,
-                z: 125
+                x: 125, //width
+                y: 110, //depth
+                z: 120 //height
             }
         }
     },
