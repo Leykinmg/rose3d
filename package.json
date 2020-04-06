@@ -70,6 +70,7 @@
     },
     "mac": {
       "category": "public.app-category.productivity",
+      "identity": "null",
       "target": [
         "dmg"
       ],
@@ -104,12 +105,6 @@
         "nsis"
       ],
       "icon": "build/electron/snapmaker-luban.ico"
-    },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": true,
-      "allowElevation": true,
-      "allowToChangeInstallationDirectory": true
     },
     "linux": {
       "category": "Utility",
