@@ -120,7 +120,7 @@ $visualizer-padding = 10px
                 background-image: url('/images/48x48/icon-rotate-disabled-48x48.png')
 
     > .panel
-        background-color: $background-color
+        background-color: rgba(250, 250, 250, 0.3)
         display: block
         width: 235px
         position: absolute
@@ -286,14 +286,14 @@ $visualizer-padding = 10px
         color: $desc-text-color
 
     > .preview-panel
-        background-color: $background-color
+        background-color: rgba(255, 250, 250, 0.3)
         display: block
         width: 170px
         position: absolute
         top: 142px
         right: 40px
-        border-radius: $border-radius
-        padding: 16px 8px
+        border: 1px solid $border-color
+        padding: 5px 8px 0px
 
         .preview-title
             font-weight: bold
@@ -307,5 +307,5 @@ $visualizer-padding = 10px
             display: inline-block
             width: 14px
             height: 14px
-            margin-top: 5px
+            margin-top: 2px
             float: right

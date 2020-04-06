@@ -10,7 +10,6 @@ import FileSaver from 'file-saver';
 import i18n from '../../lib/i18n';
 import modal from '../../lib/modal';
 import { actions as printingActions, PRINTING_STAGE } from '../../flux/printing';
-import { actions as workspaceActions } from '../../flux/workspace';
 import Thumbnail from './Thumbnail';
 import ModelExporter from '../PrintingVisualizer/ModelExporter';
 import { DATA_PREFIX } from '../../constants';
@@ -24,14 +23,12 @@ class Output extends PureComponent {
         modelGroup: PropTypes.object.isRequired,
         boundingBox: PropTypes.object.isRequired,
         isGcodeOverstepped: PropTypes.bool.isRequired,
-        workflowState: PropTypes.string.isRequired,
         gcodeLine: PropTypes.object,
         gcodeFile: PropTypes.object,
         hasModel: PropTypes.bool.isRequired,
         stage: PropTypes.number.isRequired,
         isAnyModelOverstepped: PropTypes.bool.isRequired,
-        generateGcode: PropTypes.func.isRequired,
-        renderGcodeFile: PropTypes.func.isRequired
+        generateGcode: PropTypes.func.isRequired
     };
 
     state = {
@@ -57,7 +54,6 @@ class Output extends PureComponent {
 
             gcodeFile.thumbnail = this.thumbnail.current.getDataURL();
 
-            this.props.renderGcodeFile(gcodeFile);
 
             document.location.href = '/#/workspace';
             window.scrollTo(0, 0);
@@ -125,7 +121,7 @@ class Output extends PureComponent {
     render() {
         const state = this.state;
         const actions = this.actions;
-        const { workflowState, stage, gcodeLine, hasModel } = this.props;
+        const { stage, gcodeLine, hasModel } = this.props;
 
         const isSlicing = stage === PRINTING_STAGE.SLICING;
         const { isAnyModelOverstepped } = this.props;
@@ -180,15 +176,6 @@ class Output extends PureComponent {
                     <button
                         type="button"
                         className="sm-btn-large sm-btn-default"
-                        onClick={actions.onClickLoadGcode}
-                        disabled={workflowState === 'running' || !gcodeLine}
-                        style={{ display: 'block', width: '100%', marginTop: '10px' }}
-                    >
-                        {i18n._('Load G-code to Workspace')}
-                    </button>
-                    <button
-                        type="button"
-                        className="sm-btn-large sm-btn-default"
                         onClick={actions.onClickExportGcode}
                         disabled={!gcodeLine}
                         style={{ display: 'block', width: '100%', marginTop: '10px' }}
@@ -231,8 +218,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        generateGcode: (thumbnail) => dispatch(printingActions.generateGcode(thumbnail)),
-        renderGcodeFile: (file) => dispatch(workspaceActions.renderGcodeFile(file))
+        generateGcode: (thumbnail) => dispatch(printingActions.generateGcode(thumbnail))
     };
 };
 
