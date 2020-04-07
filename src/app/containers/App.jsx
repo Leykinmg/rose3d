@@ -136,7 +136,7 @@ class App extends PureComponent {
             return (
                 <Redirect
                     to={{
-                        pathname: '/workspace',
+                        pathname: '/3dp',
                         state: {
                             from: location
                         }

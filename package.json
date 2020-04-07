@@ -1,9 +1,9 @@
 {
-  "name": "snapmaker-luban",
-  "version": "3.3.3",
+  "name": "Rose3D",
+  "version": "0.0.1",
   "description": "A web-based interface for Snapmaker 3-in-1 3D Printer",
   "homepage": "https://github.com/whimsycwd/Snapmakerjs",
-  "author": "Snapmaker Dev Team <whimsycwd@snapmaker.com>",
+  "author": "Rose3D Dev Team <374406742@qq.com>",
   "contributors": [
     "David Chen <whimsycwd@snapmaker.com>",
     "parachvte <ryan@snapmaker.com>",
@@ -59,10 +59,10 @@
     "coveralls": "tape -r babel-register test/*.js --coverage --coverage-report=text-lcov --nyc-arg=--require --nyc-arg=babel-register --nyc-arg=--require --nyc-arg=babel-polyfill | coveralls"
   },
   "build": {
-    "appId": "com.snapmaker.luban",
+    "appId": "com.rose3d",
     "asar": false,
     "asarUnpack": [],
-    "productName": "Snapmaker Luban",
+    "productName": "Rose3D",
     "directories": {
       "buildResources": "build",
       "output": "output",
@@ -74,7 +74,7 @@
       "target": [
         "dmg"
       ],
-      "icon": "build/electron/snapmaker-luban.icns",
+      "icon": "build/electron/snap-icon.icns",
       "hardenedRuntime": true,
       "gatekeeperAssess": false,
       "entitlements": "build/entitlements.mac.plist",
@@ -83,7 +83,7 @@
     "afterSign": "build/notarize.js",
     "dmg": {
       "background": "build/electron/background.png",
-      "icon": "build/electron/snapmaker-luban.icns",
+      "icon": "build/electron/snap-icon.icns",
       "iconSize": 80,
       "iconTextSize": 12,
       "contents": [
@@ -98,13 +98,19 @@
           "y": 344,
           "type": "file"
         }
-      ]
+      ],
+      "window":{
+          "x": 100,
+          "y": 100,
+          "width": 660,
+          "height": 500
+        }
     },
     "win": {
       "target": [
         "nsis"
       ],
-      "icon": "build/electron/snapmaker-luban.ico"
+      "icon": "build/electron/snap-icon.ico"
     },
     "linux": {
       "category": "Utility",
@@ -283,7 +289,7 @@
     "file-loader": "~1.1.11",
     "find-imports": "~0.5.2",
     "glob": "~7.1.2",
-    "gulp": "~4.0.2",
+    "gulp": "^4.0.2",
     "gulp-babel": "~7.0.0",
     "gulp-nodemon": "~2.4.2",
     "gulp-sort": "~2.0.0",
