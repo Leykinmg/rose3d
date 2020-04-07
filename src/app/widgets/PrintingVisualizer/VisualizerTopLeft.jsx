@@ -130,7 +130,7 @@ class VisualizerTopLeft extends PureComponent {
                 >
                     <div className={styles['btn-redo']} />
                 </Anchor>
-                <div style={{ width: '110px', position: 'absolute', left: '305px', top: '0px' }}>
+                <div style={{ width: '90px', position: 'absolute', left: '305px', top: '0px' }}>
                     <Select
                         searchable={false}
                         clearable={false}
