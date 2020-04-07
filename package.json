@@ -108,7 +108,7 @@
     },
     "win": {
       "target": [
-        "nsis"
+        "zip"
       ],
       "icon": "build/electron/snap-icon.ico"
     },
@@ -229,7 +229,6 @@
     "redux-thunk": "~2.3.0",
     "regression": "^2.0.1",
     "semver": "~5.6.0",
-    "serialport": "~8.0.7",
     "serve-favicon": "~2.5.0",
     "session-file-store": "~1.1.2",
     "sha1": "~1.1.1",
