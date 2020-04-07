@@ -1,11 +1,29 @@
 import React, { PureComponent } from 'react';
+import Uri from 'jsuri';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import i18next from 'i18next';
+import Select from 'react-select';
 import Anchor from '../../components/Anchor';
 import i18n from '../../lib/i18n';
 import styles from './styles.styl';
 import { actions as printingActions } from '../../flux/printing';
 import modal from '../../lib/modal';
+
+const LANGUAGE_OPTIONS = [
+    { value: 'zh-cn', label: '简体中文' },
+    { value: 'en', label: 'English' }
+];
+
+const getOption = (lang) => {
+    if (lang === 'en') {
+        return { value: 'en', label: 'English' };
+    }
+    if (lang === 'zh-cn') {
+        return { value: 'zh-cn', label: '简体中文' };
+    }
+    return { value: 'en', label: 'English' };
+};
 
 class VisualizerTopLeft extends PureComponent {
     static propTypes = {
@@ -17,6 +35,11 @@ class VisualizerTopLeft extends PureComponent {
     };
 
     fileInput = React.createRef();
+
+    state = {
+        // language
+        lang: i18next.language
+    };
 
     actions = {
         onClickToUpload: () => {
@@ -39,12 +62,31 @@ class VisualizerTopLeft extends PureComponent {
         },
         redo: () => {
             this.props.redo();
+        },
+        selectLanguage: (selectedOption) => {
+            if (!selectedOption) {
+                return;
+            }
+            const lang = selectedOption.value;
+            console.log(lang);
+            this.setState(
+                { lang }
+            );
+            if (lang !== i18next.language) {
+                i18next.changeLanguage(lang, () => {
+                    const uri = new Uri(window.location.search);
+                    uri.replaceQueryParam('lang', lang);
+                    window.location.search = uri.toString();
+                });
+            }
         }
     };
 
     render() {
         const actions = this.actions;
         const { canUndo, canRedo } = this.props;
+        const langOption = getOption(this.state.lang);
+        //select use: https://github.com/JedWatson/react-select/blob/v1.x/examples/src/components/States.js
         return (
             <React.Fragment>
                 <input
@@ -80,6 +122,24 @@ class VisualizerTopLeft extends PureComponent {
                 >
                     <div className={styles['btn-redo']} />
                 </Anchor>
+                <Anchor
+                    componentClass="button"
+                    className={styles['btn-top-left']}
+                    onClick={actions.redo}
+                    disabled={!canRedo}
+                >
+                    <div className={styles['btn-redo']} />
+                </Anchor>
+                <div style={{ width: '110px', position: 'absolute', left: '305px', top: '0px' }}>
+                    <Select
+                        searchable={false}
+                        clearable={false}
+                        value={langOption}
+                        onChange={actions.selectLanguage}
+                        options={LANGUAGE_OPTIONS}
+                        onBlurResetsInput={false}
+                    />
+                </div>
             </React.Fragment>
         );
     }
