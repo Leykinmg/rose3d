@@ -154,10 +154,10 @@ class DefinitionManager {
     addMachineStartGcode(definition) {
         const settings = definition.settings;
 
-        const machineHeatedBed = settings.machine_heated_bed.default_value;
+        // const machineHeatedBed = settings.machine_heated_bed.default_value;
         const printTemp = settings.material_print_temperature.default_value;
         const printTempLayer0 = settings.material_print_temperature_layer_0.default_value || printTemp;
-        const bedTempLayer0 = settings.material_bed_temperature_layer_0.default_value;
+        // const bedTempLayer0 = settings.material_bed_temperature_layer_0.default_value;
 
         /**
          * 1.set bed temperature and not wait to reach the target temperature
@@ -176,24 +176,23 @@ class DefinitionManager {
          */
 
         const gcode = [
-            ';Start GCode begin',
-            `M104 S${printTempLayer0}`
+            ';Start GCode begin'
+            // `M104 S${printTempLayer0}`
         ];
-        if (machineHeatedBed) {
-            gcode.push(`M140 S${bedTempLayer0}`);
-        }
+        // if (machineHeatedBed) {
+        //     gcode.push(`M140 S${bedTempLayer0}`);
+        // }
+        gcode.push(`M109 S${printTempLayer0};Wait for Hotend Temperature`);
         gcode.push('G28 ;home');
         gcode.push('G90 ;absolute positioning');
-        gcode.push('G1 X-10 Y-10 F3000');
-        gcode.push('G1 Z0 F1800');
-
-        gcode.push(`M109 S${printTempLayer0};Wait for Hotend Temperature`);
-        if (machineHeatedBed) {
-            gcode.push(`M190 S${bedTempLayer0};Wait for Bed Temperature`);
-        }
+        // gcode.push('G92 E0');
+        // gcode.push('G1 Z0 F1800');
+        // if (machineHeatedBed) {
+        //     gcode.push(`M190 S${bedTempLayer0};Wait for Bed Temperature`);
+        // }
 
         gcode.push('G92 E0');
-        gcode.push('G1 E20 F200');
+        gcode.push('G1 E3 F200');
         gcode.push('G92 E0');
         gcode.push(';Start GCode end');
 
@@ -210,7 +209,7 @@ class DefinitionManager {
         const gcode = [
             ';End GCode begin',
             'M104 S0 ;extruder heater off',
-            'M140 S0 ;heated bed heater off (if you have it)',
+            // 'M140 S0 ;heated bed heater off (if you have it)',
             'G90 ;absolute positioning',
             'G92 E0',
             'G1 E-1 F300 ;retract the filament a bit before lifting the nozzle, to release some of the pressure',
