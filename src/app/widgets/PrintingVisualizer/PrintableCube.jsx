@@ -1,5 +1,5 @@
 import {
-    Object3D, DoubleSide,
+    Object3D,
     PlaneGeometry, MeshBasicMaterial, Mesh,
     TextureLoader
 } from 'three';
@@ -64,13 +64,12 @@ class PrintableCube extends Object3D {
 
         const material = new MeshBasicMaterial({
             map: texture,
-            side: DoubleSide,
-            opacity: 0.75,
+            opacity: 0.9,
             transparent: true
         });
         const mesh = new Mesh(geometry, material);
         mesh.rotateX(-Math.PI / 2);
-        mesh.position.set(0, 0, this.size.y / 4);
+        mesh.position.set(0, 0.1, this.size.y / 3);
         this.add(mesh);
     }
 }
