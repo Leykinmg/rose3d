@@ -18,10 +18,10 @@ const MATERIAL_CONFIG_KEYS = [
     'material_flow',
     'material_print_temperature',
     'material_print_temperature_layer_0',
-    'material_final_print_temperature',
-    'machine_heated_bed',
-    'material_bed_temperature',
-    'material_bed_temperature_layer_0'
+    'material_final_print_temperature'
+    // 'machine_heated_bed',
+    // 'material_bed_temperature',
+    // 'material_bed_temperature_layer_0'
 ];
 // Only custom material is editable, changes on diameter is not allowed as well
 function isDefinitionEditable(definition, key) {
