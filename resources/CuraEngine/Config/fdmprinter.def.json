@@ -4599,7 +4599,7 @@
                             "label": "Brim Line Count",
                             "description": "The number of lines used for a brim. More brim lines enhance adhesion to the build plate, but also reduces the effective print area.",
                             "type": "int",
-                            "default_value": 20,
+                            "default_value": 25,
                             "minimum_value": "0",
                             "maximum_value_warning": "50 / skirt_brim_line_width",
                             "value": "math.ceil(brim_width / (skirt_brim_line_width * initial_layer_line_width_factor / 100.0))",

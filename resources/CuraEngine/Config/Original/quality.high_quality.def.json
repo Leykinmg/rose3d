@@ -7,13 +7,13 @@
             "type": "category",
             "children": {
                 "layer_height": {
-                    "default_value": 0.1
+                    "default_value": 0.08
                 },
                 "layer_height_0": {
-                    "default_value": 0.3
+                    "default_value": 0.16
                 },
                 "initial_layer_line_width_factor": {
-                    "default_value": 100
+                    "default_value": 110
                 }
             }
         },
@@ -21,22 +21,22 @@
             "type": "category",
             "children": {
                 "wall_thickness": {
-                    "default_value": 0.8
+                    "default_value": 1.2
                 },
                 "wall_line_count": {
-                    "default_value": 8
+                    "default_value": 15
                 },
                 "top_thickness": {
-                    "default_value": 1
+                    "default_value": 1.6
                 },
                 "top_layers": {
-                    "default_value": 10
+                    "default_value": 20
                 },
                 "bottom_thickness": {
-                    "default_value": 0.6
+                    "default_value": 2
                 },
                 "bottom_layers": {
-                    "default_value": 6
+                    "default_value": 25
                 }
             }
         },
@@ -44,10 +44,10 @@
             "type": "category",
             "children": {
                 "infill_line_distance": {
-                    "default_value": 3.2
+                    "default_value": 10
                 },
                 "infill_sparse_density": {
-                    "default_value": 25
+                    "default_value": 10
                 }
             }
         },
@@ -58,7 +58,7 @@
                     "default_value": true
                 },
                 "retraction_speed": {
-                    "default_value": 25
+                    "default_value": 60
                 },
                 "retraction_amount": {
                     "default_value": 6.5
@@ -72,25 +72,25 @@
             "type": "category",
             "children": {
                 "speed_travel": {
-                    "default_value": 40
+                    "default_value": 70
                 },
                 "speed_topbottom": {
                     "default_value": 30
                 },
                 "speed_wall_x": {
-                    "default_value": 25
+                    "default_value": 30
                 },
                 "speed_wall_0": {
-                    "default_value": 20
+                    "default_value": 25
                 },
                 "speed_wall": {
                     "default_value": 30
                 },
                 "speed_infill": {
-                    "default_value": 35
+                    "default_value": 40
                 },
                 "speed_print_layer_0": {
-                    "default_value": 18
+                    "default_value": 20
                 },
                 "speed_travel_layer_0": {
                     "default_value": 30
@@ -126,7 +126,7 @@
             "type": "category",
             "children": {
                 "adhesion_type": {
-                    "default_value": "skirt"
+                    "default_value": "brim"
                 },
                 "skirt_line_count": {
                     "default_value": 1
