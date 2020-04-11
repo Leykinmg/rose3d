@@ -7,7 +7,7 @@
             "default_value": 100
         },
         "machine_heated_bed": {
-            "default_value": true
+            "default_value": false
         },
         "material_final_print_temperature": {
             "default_value": 200
