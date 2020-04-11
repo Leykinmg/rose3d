@@ -80,10 +80,12 @@ class VisualizerInfo extends PureComponent {
                 <React.Fragment>
                     <p>
                         <span className="fa fa-bullseye" />
+                        {' '}
                         {filamentDes}
                     </p>
                     <p>
                         <span className="fa fa-clock-o" />
+                        {' '}
                         {printTimeDes}
                     </p>
                 </React.Fragment>

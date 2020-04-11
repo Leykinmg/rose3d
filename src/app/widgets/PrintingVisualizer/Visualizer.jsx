@@ -8,7 +8,7 @@ import i18n from '../../lib/i18n';
 import ProgressBar from '../../components/ProgressBar';
 import ContextMenu from '../../components/ContextMenu';
 import Canvas from '../../components/SMCanvas';
-import SecondaryToolbar from '../CanvasToolbar/SecondaryToolbar';
+// import SecondaryToolbar from '../CanvasToolbar/SecondaryToolbar';
 import { actions as printingActions, PRINTING_STAGE } from '../../flux/printing';
 import VisualizerTopLeft from './VisualizerTopLeft';
 import VisualizerModelTransformation from './VisualizerModelTransformation';
@@ -272,13 +272,6 @@ class Visualizer extends PureComponent {
                         onModelAfterTransform={this.actions.onModelAfterTransform}
                         onModelTransform={this.actions.onModelTransform}
                         showContextMenu={this.showContextMenu}
-                    />
-                </div>
-                <div className={styles['canvas-footer']}>
-                    <SecondaryToolbar
-                        zoomIn={this.actions.zoomIn}
-                        zoomOut={this.actions.zoomOut}
-                        autoFocus={this.actions.autoFocus}
                     />
                 </div>
                 <ContextMenu
