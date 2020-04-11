@@ -58,7 +58,7 @@ class Configurations extends PureComponent {
     state = {
         // control UI
         notificationMessage: '',
-        showOfficialConfigDetails: true,
+        showOfficialConfigDetails: false,
 
         isOfficialTab: true,
         officialQualityDefinition: null,
