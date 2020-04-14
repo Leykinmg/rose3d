@@ -1,22 +1,22 @@
 {
-    "name": "ABS",
+    "name": "TPU",
     "version": 2,
     "inherits": "snapmaker",
     "overrides": {
         "material_flow": {
-            "default_value": 100
+            "default_value": 125
         },
         "machine_heated_bed": {
             "default_value": false
         },
         "material_final_print_temperature": {
-            "default_value": 235
+            "default_value": 190
         },
         "material_print_temperature_layer_0": {
-            "default_value": 238
+            "default_value": 220
         },
         "material_print_temperature": {
-            "default_value": 235
+            "default_value": 220
         },
         "material_bed_temperature_layer_0": {
             "default_value": 80
