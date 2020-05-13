@@ -127,29 +127,21 @@ class Output extends PureComponent {
         const { isAnyModelOverstepped } = this.props;
 
         return (
-            <div>
+            <div style={{ paddingBottom: '20px' }}>
                 <div>
-                    <button
-                        type="button"
-                        className="sm-btn-large sm-btn-default"
-                        onClick={actions.onClickGenerateGcode}
-                        disabled={!hasModel || isSlicing || isAnyModelOverstepped}
-                        style={{ display: 'block', width: '100%' }}
-                    >
-                        {i18n._('Generate G-code')}
-                    </button>
                     <table style={{ width: '100%', marginTop: '10px' }}>
                         <tbody>
                             <tr>
-                                <td style={{ paddingLeft: '0px', width: '60%' }}>
+                                <td style={{ paddingLeft: '0px', width: '50%' }}>
                                     <Select
                                         clearable={false}
+                                        style={{ borderWidth: '2px' }}
                                         options={[{
                                             value: 'stl_binary',
-                                            label: i18n._('STL File (Binary) (*.stl)')
+                                            label: i18n._('STL File (Binary)')
                                         }, {
                                             value: 'stl_ascii',
-                                            label: i18n._('STL File (ASCII) (*.stl)')
+                                            label: i18n._('STL File (ASCII)')
                                         }, {
                                             value: 'obj',
                                             label: i18n._('OBJ File (*.obj)')
@@ -159,7 +151,7 @@ class Output extends PureComponent {
                                         onChange={actions.onChangeExportModelFormat}
                                     />
                                 </td>
-                                <td style={{ paddingRight: '0px', width: '40%' }}>
+                                <td style={{ paddingRight: '0px', width: '50%' }}>
                                     <button
                                         type="button"
                                         className="sm-btn-large sm-btn-default"
@@ -176,11 +168,20 @@ class Output extends PureComponent {
                     <button
                         type="button"
                         className="sm-btn-large sm-btn-default"
+                        onClick={actions.onClickGenerateGcode}
+                        disabled={!hasModel || isSlicing || isAnyModelOverstepped}
+                        style={{ display: 'block', width: '100%', marginTop: '10px' }}
+                    >
+                        {i18n._('Slice')}
+                    </button>
+                    <button
+                        type="button"
+                        className="sm-btn-large sm-btn-default"
                         onClick={actions.onClickExportGcode}
                         disabled={!gcodeLine}
                         style={{ display: 'block', width: '100%', marginTop: '10px' }}
                     >
-                        {i18n._('Export G-code to file')}
+                        {i18n._('Save To File')}
                     </button>
                 </div>
                 <Thumbnail

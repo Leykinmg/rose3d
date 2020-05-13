@@ -138,7 +138,7 @@ class Visualizer extends PureComponent {
         window.addEventListener(
             'hashchange',
             (event) => {
-                if (event.newURL.endsWith('3dp')) {
+                if (event.newURL.endsWith('/')) {
                     this.canvas.current.resizeWindow();
                 }
             },

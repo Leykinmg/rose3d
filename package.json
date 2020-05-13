@@ -1,6 +1,6 @@
 {
   "name": "Rose3D",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A web-based interface for Rose3D Printer",
   "homepage": "https://github.com/whimsycwd/Snapmakerjs",
   "author": "Rose3D Dev Team <374406742@qq.com>",
@@ -40,12 +40,12 @@
     "build-prod": "gulp production",
     "electron-builder": "electron-builder --publish never",
     "electron-rebuild": "electron-rebuild",
-    "build:mac-x64": "bash -c 'build/electron-builder.sh --mac --x64'",
-    "build:linux-ia32": "bash -c 'build/electron-builder.sh --linux --ia32'",
-    "build:linux-x64": "bash -c 'build/electron-builder.sh --linux --x64'",
-    "build:win-ia32": "bash -c 'build/electron-builder.sh --win --ia32'",
-    "build:win-x64": "bash -c 'build/electron-builder.sh --win --x64'",
-    "clean": "bash -c 'rm -rf ./dist ./output'",
+    "build:mac-x64": "bash -c \"build/electron-builder.sh --mac --x64\"",
+    "build:linux-ia32": "bash -c \"build/electron-builder.sh --linux --ia32\"",
+    "build:linux-x64": "bash -c \"build/electron-builder.sh --linux --x64\"",
+    "build:win-ia32": "bash -c \"build/electron-builder.sh --win --ia32\"",
+    "build:win-x64": "bash -c \"build/electron-builder.sh --win --x64\"",
+    "clean": "bash -c \"rm -rf ./dist ./output\"",
     "start-electron": "electron ./dist/Snapmakerjs/main",
     "start-dev": "gulp serverStartDevelopment",
     "start-prod": "cross-env NODE_ENV=production ./bin/cli",
@@ -99,12 +99,12 @@
           "type": "file"
         }
       ],
-      "window":{
-          "x": 200,
-          "y": 300,
-          "width": 640,
-          "height": 480
-        }
+      "window": {
+        "x": 200,
+        "y": 300,
+        "width": 640,
+        "height": 480
+      }
     },
     "win": {
       "target": [

@@ -5,10 +5,8 @@ import { connect } from 'react-redux';
 import i18next from 'i18next';
 import Select from 'react-select';
 import Anchor from '../../components/Anchor';
-import i18n from '../../lib/i18n';
 import styles from './styles.styl';
 import { actions as printingActions } from '../../flux/printing';
-import modal from '../../lib/modal';
 
 const LANGUAGE_OPTIONS = [
     { value: 'zh-cn', label: '简体中文' },
@@ -29,7 +27,6 @@ class VisualizerTopLeft extends PureComponent {
     static propTypes = {
         canUndo: PropTypes.bool.isRequired,
         canRedo: PropTypes.bool.isRequired,
-        uploadModel: PropTypes.func.isRequired,
         undo: PropTypes.func.isRequired,
         redo: PropTypes.func.isRequired
     };
@@ -42,21 +39,6 @@ class VisualizerTopLeft extends PureComponent {
     };
 
     actions = {
-        onClickToUpload: () => {
-            this.fileInput.current.value = null;
-            this.fileInput.current.click();
-        },
-        onChangeFile: async (event) => {
-            const file = event.target.files[0];
-            try {
-                await this.props.uploadModel(file);
-            } catch (e) {
-                modal({
-                    title: i18n._('Failed to upload model'),
-                    body: e.message
-                });
-            }
-        },
         undo: () => {
             this.props.undo();
         },
@@ -89,23 +71,9 @@ class VisualizerTopLeft extends PureComponent {
         //select use: https://github.com/JedWatson/react-select/blob/v1.x/examples/src/components/States.js
         return (
             <React.Fragment>
-                <input
-                    ref={this.fileInput}
-                    type="file"
-                    accept=".stl, .obj"
-                    style={{ display: 'none' }}
-                    multiple={false}
-                    onChange={actions.onChangeFile}
-                />
-                <button
-                    type="button"
-                    className="sm-btn-small sm-btn-primary"
-                    style={{ float: 'left' }}
-                    title={i18n._('Open File')}
-                    onClick={actions.onClickToUpload}
-                >
-                    {i18n._('Open File')}
-                </button>
+                <Anchor className={styles['rose-icon']}>
+                    <img src="/images/rose/rose.png" width="30" height="30" alt="rose" />
+                </Anchor>
                 <Anchor
                     componentClass="button"
                     className={styles['btn-top-left']}
@@ -122,24 +90,16 @@ class VisualizerTopLeft extends PureComponent {
                 >
                     <div className={styles['btn-redo']} />
                 </Anchor>
-                <Anchor
-                    componentClass="button"
-                    className={styles['btn-top-left']}
-                    onClick={actions.redo}
-                    disabled={!canRedo}
-                >
-                    <div className={styles['btn-redo']} />
-                </Anchor>
-                <div style={{ width: '90px', position: 'absolute', left: '305px', top: '0px' }}>
-                    <Select
-                        searchable={false}
-                        clearable={false}
-                        value={langOption}
-                        onChange={actions.selectLanguage}
-                        options={LANGUAGE_OPTIONS}
-                        onBlurResetsInput={false}
-                    />
-                </div>
+                <Select
+                    className={styles['btn-select']}
+                    style={{ height: '30px' }}
+                    searchable={false}
+                    clearable={false}
+                    value={langOption}
+                    onChange={actions.selectLanguage}
+                    options={LANGUAGE_OPTIONS}
+                    onBlurResetsInput={false}
+                />
             </React.Fragment>
         );
     }

@@ -387,7 +387,7 @@ class Configurations extends PureComponent {
                             this.actions.onSetOfficoalTab(true);
                         }}
                     >
-                        {i18n._('Recommended')}
+                        {i18n._('DEFAULT')}
                     </button>
                     <button
                         type="button"
@@ -397,7 +397,7 @@ class Configurations extends PureComponent {
                             this.actions.onSetOfficoalTab(false);
                         }}
                     >
-                        {i18n._('Customize')}
+                        {i18n._('CUSTIOMIZE')}
                     </button>
                 </div>
                 {isOfficialTab && (
@@ -488,6 +488,9 @@ class Configurations extends PureComponent {
                                     clearable={false}
                                     menuContainerStyle={{ zIndex: 5 }}
                                     name="profile"
+                                    style={{
+                                        height: '30px'
+                                    }}
                                     options={customDefinitionOptions}
                                     placeholder=""
                                     value={qualityDefinition.definitionId}

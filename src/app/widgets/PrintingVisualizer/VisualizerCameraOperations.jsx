@@ -22,13 +22,13 @@ class VisualizerCameraOperations extends PureComponent {
             <React.Fragment>
                 <div style={{ display: 'inline-block', float: 'left' }}>
                     <Anchor
-                        className={classNames('fa', 'fa-chevron-left', styles['turn-left'])}
+                        className={classNames(styles['turn-left'])}
                         onClick={actions.toLeft}
                     />
                 </div>
                 <div style={{ display: 'inline-block', float: 'left' }}>
                     <Anchor
-                        className={classNames('fa', 'fa-chevron-up', styles['turn-up'])}
+                        className={classNames(styles['turn-up'])}
                         onClick={actions.toTop}
                     />
                     <Anchor
@@ -36,13 +36,13 @@ class VisualizerCameraOperations extends PureComponent {
                         onClick={actions.autoFocus}
                     />
                     <Anchor
-                        className={classNames('fa', 'fa-chevron-down', styles['turn-down'])}
+                        className={classNames(styles['turn-down'])}
                         onClick={actions.toBottom}
                     />
                 </div>
                 <div style={{ display: 'inline-block', float: 'left' }}>
                     <Anchor
-                        className={classNames('fa', 'fa-chevron-right', styles['turn-right'])}
+                        className={classNames(styles['turn-right'])}
                         onClick={actions.toRight}
                     />
                 </div>

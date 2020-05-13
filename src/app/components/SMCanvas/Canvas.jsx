@@ -124,7 +124,7 @@ class Canvas extends Component {
         this.camera.position.copy(this.cameraInitialPosition);
 
         this.renderer = new WebGLRenderer({ antialias: true });
-        this.renderer.setClearColor(new Color(0xfafafa), 1);
+        this.renderer.setClearColor(new Color(0xffffff), 1);
         this.renderer.setSize(width, height);
         this.renderer.shadowMap.enabled = true;
 

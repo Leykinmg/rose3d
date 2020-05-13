@@ -10,6 +10,8 @@ import { NumberInput as Input } from '../../components/Input';
 import styles from './styles.styl';
 import { actions as workspaceActions } from '../../flux/workspace';
 import { actions as printingActions } from '../../flux/printing';
+import modal from '../../lib/modal';
+import i18n from '../../lib/i18n';
 
 
 class VisualizerModelTransformation extends PureComponent {
@@ -18,6 +20,7 @@ class VisualizerModelTransformation extends PureComponent {
         selectedModelID: PropTypes.string,
         hasModel: PropTypes.bool.isRequired,
         transformMode: PropTypes.string.isRequired,
+        uploadModel: PropTypes.func.isRequired,
         transformation: PropTypes.shape({
             positionX: PropTypes.number,
             positionZ: PropTypes.number,
@@ -34,7 +37,24 @@ class VisualizerModelTransformation extends PureComponent {
         setTransformMode: PropTypes.func.isRequired
     };
 
+    fileInput = React.createRef();
+
     actions = {
+        onClickToUpload: () => {
+            this.fileInput.current.value = null;
+            this.fileInput.current.click();
+        },
+        onChangeFile: async (event) => {
+            const file = event.target.files[0];
+            try {
+                await this.props.uploadModel(file);
+            } catch (e) {
+                modal({
+                    title: i18n._('Failed to upload model'),
+                    body: e.message
+                });
+            }
+        },
         onModelTransform: (type, value) => {
             const { size } = this.props;
             const transformation = {};
@@ -94,6 +114,26 @@ class VisualizerModelTransformation extends PureComponent {
 
         return (
             <React.Fragment>
+                <div className={classNames(styles['model-transformation__open'])}>
+                    <Anchor
+                        componentClass="button"
+                        className={classNames(
+                            styles['model-operation'],
+                            styles['operation-open']
+                        )}
+                        onClick={() => {
+                            actions.onClickToUpload();
+                        }}
+                    />
+                    <input
+                        ref={this.fileInput}
+                        type="file"
+                        accept=".stl, .obj"
+                        style={{ display: 'none' }}
+                        multiple={false}
+                        onChange={actions.onChangeFile}
+                    />
+                </div>
                 <div className={classNames(styles['model-transformation__container'], { [styles.disabled]: disabled })}>
                     <Anchor
                         componentClass="button"
@@ -398,6 +438,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
     clearGcode: () => dispatch(workspaceActions.clearGcode()),
+    uploadModel: (file) => dispatch(printingActions.uploadModel(file)),
     onModelAfterTransform: () => dispatch(printingActions.onModelAfterTransform()),
     updateSelectedModelTransformation: (transformation) => dispatch(printingActions.updateSelectedModelTransformation(transformation)),
     setTransformMode: (value) => dispatch(printingActions.setTransformMode(value))
