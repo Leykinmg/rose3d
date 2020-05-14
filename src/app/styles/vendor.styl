@@ -11,11 +11,17 @@
 
 // react-select
 @import url("~react-select/dist/react-select.css");
-
+@import "../containers/variables.styl"
 // Rewrite react-select component style
 // since react-select is written in less, we have to rewrite its generated CSS
 .Select-control
     border-radius: 0
+
+
+.Select.is-focused:not(.is-open) > .Select-control
+    border-color: $dark-red-color
+    box-shadow: None
+    background: #fff
 
 .Select-placeholder
 .Select--single > .Select-control .Select-value

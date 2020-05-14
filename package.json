@@ -1,13 +1,10 @@
 {
   "name": "Rose3D",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A web-based interface for Rose3D Printer",
   "homepage": "https://github.com/whimsycwd/Snapmakerjs",
   "author": "Rose3D Dev Team <374406742@qq.com>",
   "contributors": [
-    "David Chen <whimsycwd@snapmaker.com>",
-    "parachvte <ryan@snapmaker.com>",
-    "walker <walker@snapmaker.com>"
   ],
   "main": "./dist/Snapmakerjs/server-cli.js",
   "bin": {

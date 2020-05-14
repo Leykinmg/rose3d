@@ -56,12 +56,20 @@ class PrintableCube extends Object3D {
         back.position.set(0, this.size.z / 2, -this.size.y / 2);
         this.add(back);
 
+
         // Add logo
         const minSideLength = Math.min(this.size.x, this.size.y);
 
+        const geometry2 = new PlaneGeometry(this.size.x, this.size.y);
+        const material2 = new MeshBasicMaterial({
+            color: '#f0f0f0'
+        });
+        const mesh2 = new Mesh(geometry2, material2);
+        mesh2.rotateX(-Math.PI / 2);
+        this.add(mesh2);
+
         const geometry = new PlaneGeometry(minSideLength / 7, minSideLength / 7);
         const texture = new TextureLoader().load('./images/rose-arrow.png', this.update);
-
         const material = new MeshBasicMaterial({
             map: texture,
             opacity: 0.9,

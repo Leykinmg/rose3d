@@ -397,7 +397,7 @@ class Configurations extends PureComponent {
                             this.actions.onSetOfficoalTab(false);
                         }}
                     >
-                        {i18n._('CUSTIOMIZE')}
+                        {i18n._('CUSTOMIZE')}
                     </button>
                 </div>
                 {isOfficialTab && (

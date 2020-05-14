@@ -34,8 +34,10 @@ $visualizer-padding = 10px
         background-color: $background-color
         margin-left: 10px
         padding: 0
-        border: 0px solid $border-color
-        border-radius: 0px
+        border: 1px solid $border-color
+        border-radius: 0
+
+
 
     .btn-top-left
         display: inline-block
@@ -77,6 +79,7 @@ $visualizer-padding = 10px
                 background-image: url("/images/14x14/delete-hover-14x14.png")
         &:disabled
             opacity(.5)
+            background-color: $white
             .btn-undo
                 background-image: url("/images/14x14/undo-c.png")
             .btn-redo
@@ -103,7 +106,7 @@ $visualizer-padding = 10px
 
 
     .model-transformation__container
-        border: 0px solid $border-color
+        border: 1px solid $border-color
 
         &.disabled
             opacity(.5)
@@ -112,13 +115,14 @@ $visualizer-padding = 10px
         display: block
         width: 56px
         height: 64px
-        border: 1px solid $border-color
+        border: 0px solid $border-color
         padding: 0
         background-color: $background-color
         background-repeat: no-repeat
         background-position: center
 
         &.operation-open
+            border: 1px solid $border-color
             border-top-left-radius: $border-radius
             border-top-right-radius: $border-radius
             background-image: url('/images/48x48/open-a.png')
