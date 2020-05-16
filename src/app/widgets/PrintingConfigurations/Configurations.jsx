@@ -34,7 +34,8 @@ function isDefinitionEditable(definition) {
 function isOfficialDefinition(definition) {
     return includes(['quality.fast_print',
         'quality.normal_quality',
-        'quality.high_quality'], definition.definitionId);
+        'quality.high_quality',
+        'quality.race_quality'], definition.definitionId);
 }
 
 // config type: official ('fast print', 'normal quality', 'high quality'); custom: ...
@@ -366,6 +367,7 @@ class Configurations extends PureComponent {
         const fastPrintDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.fast_print');
         const normalQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.normal_quality');
         const highQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.high_quality');
+        const raceQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.race_quality');
 
         const { isOfficialTab, officialQualityDefinition, customQualityDefinition, customDefinitionOptions } = this.state;
         const qualityDefinition = isOfficialTab ? officialQualityDefinition : customQualityDefinition;
@@ -401,10 +403,10 @@ class Configurations extends PureComponent {
                     </button>
                 </div>
                 {isOfficialTab && (
-                    <div className="sm-tabs" style={{ marginTop: '12px' }}>
+                    <div className="sm-tabs" style={{ marginTop: '12px', fontSize: '10px' }}>
                         <button
                             type="button"
-                            style={{ width: '33.333333%' }}
+                            style={{ width: '25%' }}
                             className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': qualityDefinition === fastPrintDefinition })}
                             onClick={() => {
                                 this.actions.onSelectOfficialDefinition(fastPrintDefinition);
@@ -414,7 +416,7 @@ class Configurations extends PureComponent {
                         </button>
                         <button
                             type="button"
-                            style={{ width: '33.333333%' }}
+                            style={{ width: '25%' }}
                             className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': qualityDefinition === normalQualityDefinition })}
                             onClick={() => {
                                 this.actions.onSelectOfficialDefinition(normalQualityDefinition);
@@ -424,13 +426,23 @@ class Configurations extends PureComponent {
                         </button>
                         <button
                             type="button"
-                            style={{ width: '33.333333%' }}
+                            style={{ width: '25%' }}
                             className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': qualityDefinition === highQualityDefinition })}
                             onClick={() => {
                                 this.actions.onSelectOfficialDefinition(highQualityDefinition);
                             }}
                         >
                             {i18n._('High Quality')}
+                        </button>
+                        <button
+                            type="button"
+                            style={{ width: '25%' }}
+                            className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': qualityDefinition === raceQualityDefinition })}
+                            onClick={() => {
+                                this.actions.onSelectOfficialDefinition(raceQualityDefinition);
+                            }}
+                        >
+                            {i18n._('Race Mode')}
                         </button>
                     </div>
                 )}
