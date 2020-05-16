@@ -30,7 +30,7 @@ function isDefinitionEditable(definition, key) {
 }
 
 function isOfficialDefinition(definition) {
-    return includes(['material.pla', 'material.tpu'], definition.definitionId);
+    return includes(['material.pla'], definition.definitionId);
 }
 
 class Material extends PureComponent {
