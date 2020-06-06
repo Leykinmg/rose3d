@@ -964,6 +964,17 @@ export const actions = {
         // }
     },
 
+    onModelLayFlat: () => (dispatch, getState) => {
+        const { modelGroup } = getState().printing;
+        const modelState = modelGroup.onModelAfterTransform();
+        // if (!customCompareTransformation(modelState.transformation, transformation)) {
+        dispatch(actions.updateState(modelState));
+        dispatch(actions.recordSnapshot());
+        dispatch(actions.destroyGcodeLine());
+        dispatch(actions.displayModel());
+        // }
+    },
+
     updateSelectedModelTransformation: (transformation) => (dispatch, getState) => {
         const { modelGroup } = getState().printing;
         const modelState = modelGroup.updateSelectedModelTransformation(transformation);
@@ -1068,6 +1079,7 @@ export const actions = {
         }));
         gcodeRenderingWorker.postMessage({ func: '3DP', gcodeFilename });
     }
+
 };
 
 export default function reducer(state = INITIAL_STATE, action) {

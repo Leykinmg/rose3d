@@ -254,6 +254,22 @@ class Configurations extends PureComponent {
                 }
             });
         },
+        onChangeSupportDefinition: (key, value) => {
+            const definition = this.state.customQualityDefinition;
+
+            definition.settings[key].default_value = value;
+
+            this.setState({
+                SupportDefinition: value === false ? 'none' : value
+            });
+
+            this.props.updateActiveDefinition({
+                ownKeys: [key],
+                settings: {
+                    [key]: { default_value: value }
+                }
+            });
+        },
         onDuplicateDefinition: async () => {
             const definition = this.state.customQualityDefinition;
             const newDefinition = await this.props.duplicateQualityDefinition(definition);
@@ -302,8 +318,8 @@ class Configurations extends PureComponent {
             // First load initialization
             if (this.props.qualityDefinitions.length === 0) {
                 const definition = nextProps.qualityDefinitions.find(d => d.definitionId === 'quality.fast_print');
-
                 Object.assign(newState, {
+                    SupportDefinition: 'none',
                     isOfficialTab: true,
                     officialQualityDefinition: definition,
                     customQualityDefinition: definition
@@ -369,7 +385,7 @@ class Configurations extends PureComponent {
         const highQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.high_quality');
         const raceQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.race_quality');
 
-        const { isOfficialTab, officialQualityDefinition, customQualityDefinition, customDefinitionOptions } = this.state;
+        const { isOfficialTab, officialQualityDefinition, customQualityDefinition, customDefinitionOptions, SupportDefinition } = this.state;
         const qualityDefinition = isOfficialTab ? officialQualityDefinition : customQualityDefinition;
 
         if (!qualityDefinition) {
@@ -443,6 +459,42 @@ class Configurations extends PureComponent {
                             }}
                         >
                             {i18n._('Race Mode')}
+                        </button>
+                    </div>
+                )}
+                {isOfficialTab && (
+                    <div className="sm-tabs" style={{ marginTop: '12px', fontSize: '10px' }}>
+                        <button
+                            type="button"
+                            style={{ width: '33%' }}
+                            className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': SupportDefinition === 'none' })}
+                            onClick={() => {
+                                this.actions.onChangeSupportDefinition('support_enable', false);
+                            }}
+                        >
+                            {i18n._('None')}
+                        </button>
+                        <button
+                            type="button"
+                            style={{ width: '33%' }}
+                            className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': SupportDefinition === 'buildplate' })}
+                            onClick={() => {
+                                this.actions.onChangeSupportDefinition('support_enable', true);
+                                this.actions.onChangeSupportDefinition('support_type', 'buildplate');
+                            }}
+                        >
+                            {i18n._('Touching Buildplate')}
+                        </button>
+                        <button
+                            type="button"
+                            style={{ width: '33%' }}
+                            className={classNames('sm-tab', 'sm-tab-large', { 'sm-selected': SupportDefinition === 'everywhere' })}
+                            onClick={() => {
+                                this.actions.onChangeSupportDefinition('support_enable', true);
+                                this.actions.onChangeSupportDefinition('support_type', 'everywhere');
+                            }}
+                        >
+                            {i18n._('Everywhere')}
                         </button>
                     </div>
                 )}

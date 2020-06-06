@@ -323,122 +323,206 @@ class Model {
         return clone;
     }
 
+    // layFlat2() {
+    //     if (this.sourceType !== '3d') {
+    //         return;
+    //     }
+    //
+    //     const positionX = this.meshObject.position.x;
+    //     const positionZ = this.meshObject.position.z;
+    //
+    //     if (!this.convexGeometry) {
+    //         return;
+    //     }
+    //
+    //     // Attention: the minY-vertex and min-angle-vertex must be in the same face
+    //     // transform convexGeometry clone
+    //     let convexGeometryClone = this.convexGeometry.clone();
+    //
+    //     // this.updateMatrix();
+    //     this.meshObject.updateMatrix();
+    //     convexGeometryClone.applyMatrix(this.meshObject.matrix);
+    //     // let faces = convexGeometryClone.faces;
+    //     let vertices = convexGeometryClone.vertices;
+    //
+    //     // find out the following params:
+    //     let minY = Number.MAX_VALUE;
+    //     let minYVertexIndex = -1;
+    //     let minAngleVertexIndex = -1; // The angle between the vector(minY-vertex -> min-angle-vertex) and the x-z plane is minimal
+    //     let minAngleFace = null;
+    //     const minl = 2;
+    //
+    //     // find minY and minYVertexIndex
+    //     for (let i = 0; i < vertices.length; i++) {
+    //         if (vertices[i].y < minY) {
+    //             minY = vertices[i].y;
+    //             minYVertexIndex = i;
+    //         }
+    //     }
+    //
+    //     // get minY vertices count
+    //
+    //     console.log(vertices[minYVertexIndex]);
+    //     // find minAngleVertexIndex
+    //     {
+    //         let sinValue = Number.MAX_VALUE; // sin value of the angle between directionVector3 and x-z plane
+    //         for (let i = 0; i < vertices.length; i++) {
+    //             if (i !== minYVertexIndex) {
+    //                 const directionVector3 = new THREE.Vector3().subVectors(vertices[i], vertices[minYVertexIndex]);
+    //                 const length = directionVector3.length();
+    //                 // console.log(length);
+    //                 if (length < minl) {
+    //                     continue;
+    //                 }
+    //                 // min sinValue corresponds minAngleVertexIndex
+    //                 if (directionVector3.y / length < sinValue) {
+    //                     sinValue = directionVector3.y / length;
+    //                     minAngleVertexIndex = i;
+    //                 }
+    //             }
+    //         }
+    //         console.log(vertices[minAngleVertexIndex]);
+    //         // transform model to make min-angle-vertex y equal to minY
+    //         const vb1 = new THREE.Vector3().subVectors(vertices[minAngleVertexIndex], vertices[minYVertexIndex]);
+    //         const va1 = new THREE.Vector3(vb1.x, 0, vb1.z);
+    //         const matrix1 = this._getRotateMatrix(va1, vb1);
+    //         this.meshObject.applyMatrix(matrix1);
+    //         this.stickToPlate();
+    //
+    //         // update geometry
+    //         convexGeometryClone = this.convexGeometry.clone();
+    //         convexGeometryClone.applyMatrix(this.meshObject.matrix);
+    //         // faces = convexGeometryClone.faces;
+    //         vertices = convexGeometryClone.vertices;
+    //     }
+    //     // now there must be 2 minY vertices
+    //     // find minAngleFace
+    //     const newG = convexGeometryClone.clone();
+    //     const fl = newG.faces.length;
+    //     for (let i = 0; i < fl; i++) {
+    //         newG.faces.pop();
+    //     }
+    //     for (let i = 0; i < vertices.length; i++) {
+    //         if (i !== minYVertexIndex && i !== minAngleVertexIndex) {
+    //             const lg1 = vertices[minYVertexIndex].distanceTo(vertices[i]);
+    //             // const lg2 = vertices[minAngleVertexIndex].distanceTo(vertices[i]);
+    //             if (lg1 < minl) {
+    //                 continue;
+    //             }
+    //             const face = new THREE.Face3(minYVertexIndex, minAngleVertexIndex, i);
+    //             newG.faces.push(face);
+    //         }
+    //     }
+    //     newG.computeFaceNormals();
+    //     let cosValue = Number.MIN_VALUE;
+    //     for (let i = 0; i < newG.faces.length; i++) {
+    //         // faceNormal points model outer surface
+    //         const faceNormal = newG.faces[i].normal;
+    //         if (faceNormal.y < 0) {
+    //             const cos = -faceNormal.y / faceNormal.length();
+    //             if (cos > cosValue) {
+    //                 cosValue = cos;
+    //                 minAngleFace = newG.faces[i];
+    //             }
+    //         }
+    //     }
+    //     console.log(minAngleFace);
+    //     console.log(vertices[minAngleFace.a], vertices[minAngleFace.b], vertices[minAngleFace.c]);
+    //     const xzPlaneNormal = new THREE.Vector3(0, -1, 0);
+    //     const vb2 = minAngleFace.normal;
+    //     const matrix2 = this._getRotateMatrix(xzPlaneNormal, vb2);
+    //     this.meshObject.applyMatrix(matrix2);
+    //     this.stickToPlate();
+    //     this.meshObject.position.x = positionX;
+    //     this.meshObject.position.z = positionZ;
+    //
+    //     this.onTransform();
+    // }
+
     layFlat() {
         if (this.sourceType !== '3d') {
             return;
         }
-        const epsilon = 1e-6;
         const positionX = this.meshObject.position.x;
         const positionZ = this.meshObject.position.z;
-
         if (!this.convexGeometry) {
             return;
         }
-
-        // Attention: the minY-vertex and min-angle-vertex must be in the same face
-        // transform convexGeometry clone
         let convexGeometryClone = this.convexGeometry.clone();
-
         // this.updateMatrix();
         this.meshObject.updateMatrix();
         convexGeometryClone.applyMatrix(this.meshObject.matrix);
-        let faces = convexGeometryClone.faces;
-        const vertices = convexGeometryClone.vertices;
+        let vertices = convexGeometryClone.vertices;
 
         // find out the following params:
-        let minY = Number.MAX_VALUE;
-        let minYVertexIndex = -1;
-        let minAngleVertexIndex = -1; // The angle between the vector(minY-vertex -> min-angle-vertex) and the x-z plane is minimal
-        let minAngleFace = null;
+        let minV = vertices[0];
+        let dotMin = 1.0;
+        let dotV = null;
 
-        // find minY and minYVertexIndex
         for (let i = 0; i < vertices.length; i++) {
-            if (vertices[i].y < minY) {
-                minY = vertices[i].y;
-                minYVertexIndex = i;
+            if (vertices[i].y < minV.y) {
+                minV = vertices[i];
             }
         }
-
-        // get minY vertices count
-        let minYVerticesCount = 0;
         for (let i = 0; i < vertices.length; i++) {
-            if (vertices[i].y - minY < epsilon) {
-                ++minYVerticesCount;
+            const diff = new THREE.Vector3().subVectors(vertices[i], minV);
+            const length = diff.length();
+            if (length < 5) {
+                continue;
+            }
+            const dot = diff.y / length;
+            if (dotMin > dot) {
+                dotMin = dot;
+                dotV = diff;
             }
         }
-
-        if (minYVerticesCount >= 3) {
-            // already lay flat
+        if (dotV === null) {
             return;
         }
-
-        // find minAngleVertexIndex
-        if (minYVerticesCount === 2) {
-            for (let i = 0; i < vertices.length; i++) {
-                if (vertices[i].y - minY < epsilon && i !== minYVertexIndex) {
-                    minAngleVertexIndex = i;
-                }
-            }
-        } else if (minYVerticesCount === 1) {
-            let sinValue = Number.MAX_VALUE; // sin value of the angle between directionVector3 and x-z plane
-            for (let i = 1; i < vertices.length; i++) {
-                if (i !== minYVertexIndex) {
-                    const directionVector3 = new THREE.Vector3().subVectors(vertices[i], vertices[minYVertexIndex]);
-                    const length = directionVector3.length();
-                    // min sinValue corresponds minAngleVertexIndex
-                    if (directionVector3.y / length < sinValue) {
-                        sinValue = directionVector3.y / length;
-                        minAngleVertexIndex = i;
-                    }
-                }
-            }
-            // transform model to make min-angle-vertex y equal to minY
-            const vb1 = new THREE.Vector3().subVectors(vertices[minAngleVertexIndex], vertices[minYVertexIndex]);
-            const va1 = new THREE.Vector3(vb1.x, 0, vb1.z);
-            const matrix1 = this._getRotateMatrix(va1, vb1);
-            this.meshObject.applyMatrix(matrix1);
-            this.stickToPlate();
-
-            // update geometry
-            convexGeometryClone = this.convexGeometry.clone();
-            convexGeometryClone.applyMatrix(this.meshObject.matrix);
-            faces = convexGeometryClone.faces;
-        }
-
-        // now there must be 2 minY vertices
-        // find minAngleFace
-        const candidateFaces = [];
-        for (let i = 0; i < faces.length; i++) {
-            const face = faces[i];
-            if ([face.a, face.b, face.c].includes(minYVertexIndex)
-                && [face.a, face.b, face.c].includes(minAngleVertexIndex)) {
-                candidateFaces.push(face);
+        const angleY = Math.atan2(dotV.z, dotV.x) / 2.0;
+        const angleZ = -Math.asin(dotMin) / 2.0;
+        const q1 = new THREE.Quaternion(0, Math.sin(angleY), 0, Math.cos(angleY));
+        const q2 = new THREE.Quaternion(0, 0, Math.sin(angleZ), Math.cos(angleZ)).multiply(q1).normalize();
+        const Matrix2 = new THREE.Matrix4().makeRotationFromQuaternion(q2);
+        this.meshObject.applyMatrix(Matrix2);
+        this.stickToPlate();
+        convexGeometryClone = this.convexGeometry.clone();
+        convexGeometryClone.applyMatrix(this.meshObject.matrix);
+        vertices = convexGeometryClone.vertices;
+        minV = vertices[0];
+        for (let i = 0; i < vertices.length; i++) {
+            if (vertices[i].y < minV.y) {
+                minV = vertices[i];
             }
         }
-
-        // max cos value corresponds min angle
-        convexGeometryClone.computeFaceNormals();
-        let cosValue = Number.MIN_VALUE;
-        for (let i = 0; i < candidateFaces.length; i++) {
-            // faceNormal points model outer surface
-            const faceNormal = candidateFaces[i].normal;
-            if (faceNormal.y < 0) {
-                const cos = -faceNormal.y / faceNormal.length();
-                if (cos > cosValue) {
-                    cosValue = cos;
-                    minAngleFace = candidateFaces[i];
-                }
+        dotMin = 1.0;
+        dotV = null;
+        for (let i = 0; i < vertices.length; i++) {
+            const diff = new THREE.Vector3().subVectors(vertices[i], minV);
+            const length = Math.sqrt(diff.y * diff.y + diff.z * diff.z);
+            if (length < 5) {
+                continue;
+            }
+            const dot = diff.y / length;
+            if (dotMin > dot) {
+                dotMin = dot;
+                dotV = diff;
             }
         }
-
-        const xzPlaneNormal = new THREE.Vector3(0, -1, 0);
-        const vb2 = minAngleFace.normal;
-        const matrix2 = this._getRotateMatrix(xzPlaneNormal, vb2);
-        this.meshObject.applyMatrix(matrix2);
+        if (dotV === null) {
+            return;
+        }
+        let angleX = Math.asin(dotMin) / 2.0;
+        if (dotV.z < 0) {
+            angleX = -angleX;
+        }
+        const q3 = new THREE.Quaternion(Math.sin(angleX), 0, 0, Math.cos(angleX));
+        const q4 = new THREE.Quaternion(0, Math.sin(-angleY), 0, Math.cos(-angleY)).multiply(q3).normalize();
+        const MatrixC = new THREE.Matrix4().makeRotationFromQuaternion(q4);
+        this.meshObject.applyMatrix(MatrixC);
         this.stickToPlate();
         this.meshObject.position.x = positionX;
         this.meshObject.position.z = positionZ;
-
         this.onTransform();
     }
 

@@ -9,7 +9,6 @@ import { actions as printingActions } from '../flux/printing';
 import { actions as textActions } from '../flux/text';
 import api from '../api';
 import Printing from './Printing';
-import DevelopTools from './DevelopTools';
 import Settings from './Settings';
 import CaseLibrary from './CaseLibrary';
 import styles from './App.styl';
@@ -90,9 +89,6 @@ class App extends PureComponent {
                                 hidden={location.pathname !== '/'}
                             />
                         )}
-                        <div style={{ display: (location.pathname === '/developTools') ? 'block' : 'none' }}>
-                            <DevelopTools />
-                        </div>
 
                         {location.pathname.indexOf('/settings') === 0 && (
                             <Settings {...this.props} />

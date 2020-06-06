@@ -2,10 +2,9 @@
   "name": "Rose3D",
   "version": "0.0.5",
   "description": "A web-based interface for Rose3D Printer",
-  "homepage": "https://github.com/whimsycwd/Snapmakerjs",
+  "homepage": "https://github.com/leykinmg/Rose3d",
   "author": "Rose3D Dev Team <374406742@qq.com>",
-  "contributors": [
-  ],
+  "contributors": [],
   "main": "./dist/Snapmakerjs/server-cli.js",
   "bin": {
     "luban": "bin/cli"
@@ -105,6 +104,7 @@
     },
     "win": {
       "target": [
+        "nsis",
         "zip"
       ],
       "icon": "build/electron/snap-icon.ico"
@@ -116,16 +116,23 @@
         "deb"
       ]
     },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./build/icons/rose3d.ico",
+      "uninstallerIcon": "./build/icons/rose3d.ico",
+      "installerHeaderIcon": "./build/icons/rose3d.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "rose3d",
+      "include": "build/installer.nsh"
+    },
     "publish": []
   },
   "keywords": [
-    "Snapmaker",
-    "Luban",
-    "3D Printing",
-    "Laser",
-    "CNC",
-    "G-code",
-    "Marlin"
+    "Rose3d",
+    "3D Printing"
   ],
   "dependencies": {
     "@trendmicro/react-anchor": "~0.5.6",
@@ -329,7 +336,6 @@
   },
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-push": "npm run eslint:debug"
     }
   }

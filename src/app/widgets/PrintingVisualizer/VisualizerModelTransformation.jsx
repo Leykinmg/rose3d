@@ -34,7 +34,8 @@ class VisualizerModelTransformation extends PureComponent {
 
         onModelAfterTransform: PropTypes.func.isRequired,
         updateSelectedModelTransformation: PropTypes.func.isRequired,
-        setTransformMode: PropTypes.func.isRequired
+        setTransformMode: PropTypes.func.isRequired,
+        layFlatSelectedModel: PropTypes.func.isRequired
     };
 
     fileInput = React.createRef();
@@ -95,6 +96,9 @@ class VisualizerModelTransformation extends PureComponent {
         },
         setTransformMode: (value) => {
             this.props.setTransformMode(value);
+        },
+        layFlatSelectedModel: () => {
+            this.props.layFlatSelectedModel();
         }
     };
 
@@ -174,6 +178,20 @@ class VisualizerModelTransformation extends PureComponent {
                         )}
                         onClick={() => {
                             actions.setTransformMode('rotate');
+                        }}
+                        disabled={disabled}
+                    />
+                    <Anchor
+                        componentClass="button"
+                        className={classNames(
+                            styles['model-operation'],
+                            styles['operation-scale'],
+                            {
+                                [styles.selected]: transformMode === 'scale'
+                            }
+                        )}
+                        onClick={() => {
+                            actions.layFlatSelectedModel();
                         }}
                         disabled={disabled}
                     />
@@ -441,7 +459,8 @@ const mapDispatchToProps = (dispatch) => ({
     uploadModel: (file) => dispatch(printingActions.uploadModel(file)),
     onModelAfterTransform: () => dispatch(printingActions.onModelAfterTransform()),
     updateSelectedModelTransformation: (transformation) => dispatch(printingActions.updateSelectedModelTransformation(transformation)),
-    setTransformMode: (value) => dispatch(printingActions.setTransformMode(value))
+    setTransformMode: (value) => dispatch(printingActions.setTransformMode(value)),
+    layFlatSelectedModel: () => dispatch(printingActions.layFlatSelectedModel())
 });
 
 
