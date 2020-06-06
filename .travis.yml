@@ -1,110 +1,121 @@
 os:
-    - osx
-    - linux
-
-# https://docs.travis-ci.com/user/reference/osx/#OS-X-Version
-# Default: 9.4
-osx_image: xcode11.3  # macOS 10.14
-
-# Linux Ubuntu Precise
+- osx
+- linux
+osx_image: xcode11.5
 sudo: required
-dist: trusty
+dist: xenial
 group: travis_latest
-
 language: node_js
 node_js:
-    - '10'
-
+- '10'
 cache:
-    directories:
-        - $HOME/.electron
-
+  directories:
+  - "$HOME/.electron"
 addons:
-    apt:
-        packages:
-            - icnsutils
-            - graphicsmagick
-            - gcc-multilib
-            - g++-multilib
-
+  apt:
+    packages:
+    - icnsutils
+    - graphicsmagick
+    - gcc-multilib
+    - g++-multilib
 before_install:
-    - git --version
-    - git config --global user.name "Travis CI"
-    - git config --global user.email "travis@travis-ci.org"
-    - |
-        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-            brew update;
-        fi
-    - npm install -g npm@latest
-    - npm --version
-
+- git --version
+- git config --global user.name "Travis CI"
+- git config --global user.email "travis@travis-ci.org"
+- |
+  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      brew update;
+  fi
+- npm install -g npm@latest
+- npm --version
+- |
+    if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+        sudo dpkg --add-architecture i386
+        wget -O - https://dl.winehq.org/wine-builds/winehq.key | sudo apt-key add -
+        sudo add-apt-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
+        sudo apt update
+        sudo apt install --install-recommends winehq-stable
+    fi
 install:
-    - travis_wait 40 npm install
-
+- travis_wait 40 npm install
 script:
-    - npm run build
-
+- npm run build
 after_success:
-    - npm run coveralls
-    - mkdir -p releases
-    - PRODUCT_NAME='Rose3D'
-    - PACKAGE_NAME=`node -e "console.log(require('./src/package.json').name)"`
-    - PACKAGE_VERSION=`node -e "console.log(require('./src/package.json').version)"`
-    - RELEASE=${PACKAGE_NAME}-${PACKAGE_VERSION}
-    - COMMIT_LOG=`git log -1 --format='%ci %H %s'`
-    - |
-        # build:mac-x64
-        if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-            # https://github.com/electron-userland/electron-osx-sign/issues/83
-            # Temporarily Bypass Gatekeeper
-            sudo spctl --master-disable;
-            sudo spctl --status;
-            travis_wait 30 npm run build:mac-x64;
-            ls -al output output/*;
-            cp -af "output/${PRODUCT_NAME}-${PACKAGE_VERSION}.dmg" "releases/${RELEASE}-mac-x64.dmg";
-            ls -al releases/*;
-        fi
-    - |
-        # build:linux-x64
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-            npm run build:linux-x64;
-            ls -al output output/*;
-            cp -af "output/${PACKAGE_NAME}_${PACKAGE_VERSION}_amd64.deb" "releases/${RELEASE}-linux-amd64.deb";
-            pushd releases;
-            ln -sf ../output/linux-unpacked "${RELEASE}-linux-x64";
-            tar zcfh "${RELEASE}-linux-x64.tar.gz" "${RELEASE}-linux-x64";
-            rm -f "${RELEASE}-linux-x64";
-            popd;
-            ls -al releases/*;
-        fi
-    - |
-        # build:linux-ia32
-        if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-            npm run build:linux-ia32;
-            ls -al output output/*;
-            cp -af "output/${PACKAGE_NAME}_${PACKAGE_VERSION}_i386.deb" "releases/${RELEASE}-linux-i386.deb";
-            pushd releases;
-            ln -sf ../output/linux-ia32-unpacked "${RELEASE}-linux-ia32";
-            tar zcfh "${RELEASE}-linux-ia32.tar.gz" "${RELEASE}-linux-ia32";
-            rm -f "${RELEASE}-linux-ia32";
-            popd;
-            ls -al releases/*;
-        fi
-
+- npm run coveralls
+- mkdir -p releases
+- PRODUCT_NAME='Rose3D'
+- PACKAGE_NAME=`node -e "console.log(require('./src/package.json').name)"`
+- PACKAGE_VERSION=`node -e "console.log(require('./src/package.json').version)"`
+- RELEASE=${PACKAGE_NAME}-${PACKAGE_VERSION}
+- COMMIT_LOG=`git log -1 --format='%ci %H %s'`
+- |
+  # build:mac-x64
+  if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      # https://github.com/electron-userland/electron-osx-sign/issues/83
+      # Temporarily Bypass Gatekeeper
+      sudo spctl --master-disable;
+      sudo spctl --status;
+      travis_wait 30 npm run build:mac-x64;
+      ls -al output output/*;
+      cp -af "output/${PRODUCT_NAME}-${PACKAGE_VERSION}.dmg" "releases/${RELEASE}-mac-x64.dmg";
+      ls -al releases/*;
+  fi
+- |
+  # build:linux-x64
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      npm run build:linux-x64;
+      ls -al output output/*;
+      cp -af "output/${PACKAGE_NAME}_${PACKAGE_VERSION}_amd64.deb" "releases/${RELEASE}-linux-amd64.deb";
+      pushd releases;
+      ln -sf ../output/linux-unpacked "${RELEASE}-linux-x64";
+      tar zcfh "${RELEASE}-linux-x64.tar.gz" "${RELEASE}-linux-x64";
+      rm -f "${RELEASE}-linux-x64";
+      popd;
+      ls -al releases/*;
+  fi
+- |
+  # build:linux-ia32
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      npm run build:linux-ia32;
+      ls -al output output/*;
+      cp -af "output/${PACKAGE_NAME}_${PACKAGE_VERSION}_i386.deb" "releases/${RELEASE}-linux-i386.deb";
+      pushd releases;
+      ln -sf ../output/linux-ia32-unpacked "${RELEASE}-linux-ia32";
+      tar zcfh "${RELEASE}-linux-ia32.tar.gz" "${RELEASE}-linux-ia32";
+      rm -f "${RELEASE}-linux-ia32";
+      popd;
+      ls -al releases/*;
+  fi
+- |
+  # build:win-64
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      npm run build:win-x64;
+      ls -al output output/*;
+      cp -af "output/${PACKAGE_NAME}-${PACKAGE_VERSION}-win.zip" "releases/${RELEASE}-win.zip";
+      cp -af "output/${PACKAGE_NAME} Setup ${PACKAGE_VERSION}.exe" "releases/${RELEASE}-win.exe";
+      ls -al releases/*;
+  fi
+- |
+  # build:win-ia32
+  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      npm run build:win-ia32;
+      ls -al output output/*;
+      cp -af "output/${PACKAGE_NAME}-${PACKAGE_VERSION}-ia32-win.zip" "releases/${RELEASE}-win-ia32.zip";
+      cp -af "output/${PACKAGE_NAME} Setup ${PACKAGE_VERSION}.exe" "releases/${RELEASE}-win-ia32.exe";
+      ls -al releases/*;
+  fi
 before_deploy:
-    - echo "Deploying to GitHub releases"
-
+- echo "Deploying to GitHub releases"
 deploy:
-    provider: releases
-    api_key:
-        secure: "QtewfRD/MvdNFkslx4GWC9cWUGcENWW29sOnfeggK+x41QZs7Z42142/Ca0k48B9vqKRaw3ORwuRb0CtItqH/LIZo4UhQ/m7qfkNRyVrU95a1fMImJ4G+FYmBdXj095SxFFIxaNAUeyeDB/xr1aCkXu4niG6ESes9nx4s2SBSj/XQs2zD1dVNMWwFWooXVflumyKSPpLd6KoD939rwAHPmv6qZHOawrI75zHuMuzxHR8PZw8XS4BSasq/J6pkLFmCedOrIvhGIO49j80YwaeaJQGCNionpNQNV0Tk7FQ73irz6apxr1n3WecenZZxYY6i0ohoSWNtRQ13GUrv4KJ74o+4kWWHq00tBEjpusYhBOOz/rn1MqtRi7+F5MnGwnMZC8BqjTE4fZujtknCeaJL+P+4c+Mj3qTTaE58Xc3SMIxJTo4sxQJnMvil5tGDZ+z7ToS3O+P8hjwdATlQDWQJq/FjRIMYHG8ZSJKzEl8If8qOXNptm2RS9T+nkI11z1ODww4t30VkHZwVsEUjPabklhFxVOar8bRx8zTeCxBz80tR1OjX2mbUzCX+i4oOpiGv0u3SSXivxlq3okPW9CmLjnQc0k3XV7uo3rceg5y1AXms5/SdCQowbG1mj/0pgCBvQX1fmvMY5ugxGgEOalDOOKS5BzP2C1Dj4bNA8pbEW4="
-    file_glob: true
-    file:
-        - 'releases/*.*'
-    overwrite: true
-    skip_cleanup: true
-    on:
-        # https://docs.travis-ci.com/user/deployment#Conditional-Releases-with-on
-        tags: true  # Deploy app only when a tag is applied to the commit
-        node: '10'
-        repo: Snapmaker/Luban
+  provider: releases
+  api_key:
+    secure: rjVRkwqoxoMGnT8y4i45ilzmitPQLWrZV5yRIC0IvwPhF9nkjwetk1OPjMn4NF+5sPbdpwq+32WzCa2vu1cZZffrFhTkZMQCDIkeGeCtPCNNysqG+QFkTVuwOZjGPlx4yOGWjvzGwvJ2mxFlBo1bOLM+uf1SI1YoAJwYnTQlNWOAV6oVzvAfYmmlg0O5Nd1kQ7GrDIQYifiepzMjiBFpU8OsvRW4OIN4ysjDK7cpA8ZLlNQc4Ek7vm0jUyvPRltFiUe+pX+FjwsJwZuh68N6kQfX/axd8sv5fzlJecwgRItF1ZvJjRAko6EUY9e+DjoxZ+kH9IEJb46oGAvozrRt1hUtz8hz9CTlVgjkfjiAk3omLgxwwABtVdGWlOw8iGoBTXsGGmE7J2Ay45fxWnFRZKvUK11U3xbk6NPkz1cEpvHoIh9fH27+8K3Ucl5saK+rTHGBDUyF1aLFmd0qkblgh7SR1GtwgDaTVTET887CNZA8DqI7q6pD2Ux0+gWVg4xKhaOvNkEpp+N0yogm32GAScC8OqbT5yxfLlPdu/Su3Hmmd/S+A1K4LumcsJ8RWnrRgqyQOgPI2wEJmF+/o2Wq/Uz/L2BHa9zh8CajQ2wUTD1NFkvorfg6x0BSlhru/4DNmM87+36m0KN7Pec8HAy7dssYf25ABJCY4T0BpNWvyqM=
+  file_glob: true
+  file:
+  - releases/*.*
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: false
+    node: '10'
+    repo: Leykinmg/rose3d

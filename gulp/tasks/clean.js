@@ -1,8 +1,8 @@
 import del from 'del';
 
 const list = [
-    'dist/Snapmakerjs/server',
-    'dist/Snapmakerjs/app',
+    'dist/rose3d/server',
+    'dist/rose3d/app',
     'src/app/**/*.css',
     'src/app/**/*.css.map',
     'src/app/**/*.js.map',

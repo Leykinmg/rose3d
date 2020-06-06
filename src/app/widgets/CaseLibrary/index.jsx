@@ -8,7 +8,7 @@ import { MACHINE_SERIES } from '../../constants';
 import api from '../../api';
 import modal from '../../lib/modal';
 import { timestamp } from '../../../shared/lib/random-utils';
-import { CaseConfig150, CaseConfig250, CaseConfig350 } from './CaseConfig';
+import { CaseConfig150 } from './CaseConfig';
 import { actions as printingActions } from '../../flux/printing';
 import { actions as sharedActions } from '../../flux/cncLaserShared';
 import i18n from '../../lib/i18n';
@@ -157,10 +157,6 @@ class CaseLibrary extends PureComponent {
         let CaseConfig;
         if (this.state.currentSize === MACHINE_SERIES.A150.value) {
             CaseConfig = CaseConfig150;
-        } else if (this.state.currentSize === MACHINE_SERIES.A250.value) {
-            CaseConfig = CaseConfig250;
-        } else if (this.state.currentSize === MACHINE_SERIES.A350.value) {
-            CaseConfig = CaseConfig350;
         } else {
             CaseConfig = CaseConfig150;
         }

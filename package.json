@@ -1,11 +1,11 @@
 {
   "name": "Rose3D",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "A web-based interface for Rose3D Printer",
-  "homepage": "https://github.com/leykinmg/Rose3d",
-  "author": "Rose3D Dev Team <374406742@qq.com>",
+  "homepage": "https://github.com/Leykinmg/rose3d",
+  "author": "Rose3D Dev Team <958901283@qq.com>",
   "contributors": [],
-  "main": "./dist/Snapmakerjs/server-cli.js",
+  "main": "./dist/rose3d/server-cli.js",
   "bin": {
     "luban": "bin/cli"
   },
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:whimsycwd/Snapmakerjs.git"
+    "url": "git@github.com:Leykinmg/rose3d.git"
   },
   "license": "AGPL-3.0-or-later",
   "engines": {
@@ -42,7 +42,7 @@
     "build:win-ia32": "bash -c \"build/electron-builder.sh --win --ia32\"",
     "build:win-x64": "bash -c \"build/electron-builder.sh --win --x64\"",
     "clean": "bash -c \"rm -rf ./dist ./output\"",
-    "start-electron": "electron ./dist/Snapmakerjs/main",
+    "start-electron": "electron ./dist/rose3d/main",
     "start-dev": "gulp serverStartDevelopment",
     "start-prod": "cross-env NODE_ENV=production ./bin/cli",
     "dev": "npm run build-dev && npm run start-dev",
@@ -62,7 +62,7 @@
     "directories": {
       "buildResources": "build",
       "output": "output",
-      "app": "dist/Snapmakerjs"
+      "app": "dist/rose3d"
     },
     "mac": {
       "category": "public.app-category.productivity",
@@ -107,11 +107,10 @@
         "nsis",
         "zip"
       ],
-      "icon": "build/electron/snap-icon.ico"
+      "icon": "build/electron/rose3d.ico"
     },
     "linux": {
       "category": "Utility",
-      "maintainer": "parachvte <ryan@snapmaker.com>",
       "target": [
         "deb"
       ]
@@ -120,12 +119,11 @@
       "oneClick": false,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "./build/icons/rose3d.ico",
-      "uninstallerIcon": "./build/icons/rose3d.ico",
-      "installerHeaderIcon": "./build/icons/rose3d.ico",
+      "installerIcon": "./build/electron/rose3d.ico",
+      "uninstallerIcon": "./build/electron/rose3d.ico",
+      "installerHeaderIcon": "./build/electron/rose3d.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "rose3d",
       "include": "build/installer.nsh"
     },
     "publish": []
@@ -279,7 +277,7 @@
     "electron": "~2.0.18",
     "electron-builder": "~21.2.0",
     "electron-notarize": "~0.2.1",
-    "electron-rebuild": "~1.8.8",
+    "electron-rebuild": "^1.8.8",
     "eslint": "~5.16.0",
     "eslint-config-snapmaker": "~0.0.2",
     "eslint-import-resolver-webpack": "~0.10.1",

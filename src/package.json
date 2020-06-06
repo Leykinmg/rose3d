@@ -1,18 +1,14 @@
 {
   "name": "Rose3D",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "A web-based interface for Rose3D Printer",
-  "homepage": "https://github.com/whimsycwd/Snapmakerjs",
-  "author": "Rose3D Dev Team <374406742@qq.com>",
-  "contributors": [
-    "David Chen <whimsycwd@snapmaker.com>",
-    "parachvte <ryan@snapmaker.com>",
-    "walker <walker@snapmaker.com>"
-  ],
+  "homepage": "https://github.com/Leykinmg/rose3d",
+  "author": "Rose3D Dev Team <958901283@qq.com>",
+  "contributors": [],
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "git@github.com:whimsycwd/Snapmakerjs.git"
+    "url": "git@github.com:Leykinmg/rose3d.git"
   },
   "main": "main.js",
   "dependencies": {
