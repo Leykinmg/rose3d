@@ -97,7 +97,7 @@ before_deploy:
 deploy:
     provider: releases
     api_key:
-        secure: "QtewfRD/MvdNFkslx4GWC9cWUGcENWW29sOnfeggK+x41QZs7Z42142/Ca0k48B9vqKRaw3ORwuRb0CtItqH/LIZo4UhQ/m7qfkNRyVrU95a1fMImJ4G+FYmBdXj095SxFFIxaNAUeyeDB/xr1aCkXu4niG6ESes9nx4s2SBSj/XQs2zD1dVNMWwFWooXVflumyKSPpLd6KoD939rwAHPmv6qZHOawrI75zHuMuzxHR8PZw8XS4BSasq/J6pkLFmCedOrIvhGIO49j80YwaeaJQGCNionpNQNV0Tk7FQ73irz6apxr1n3WecenZZxYY6i0ohoSWNtRQ13GUrv4KJ74o+4kWWHq00tBEjpusYhBOOz/rn1MqtRi7+F5MnGwnMZC8BqjTE4fZujtknCeaJL+P+4c+Mj3qTTaE58Xc3SMIxJTo4sxQJnMvil5tGDZ+z7ToS3O+P8hjwdATlQDWQJq/FjRIMYHG8ZSJKzEl8If8qOXNptm2RS9T+nkI11z1ODww4t30VkHZwVsEUjPabklhFxVOar8bRx8zTeCxBz80tR1OjX2mbUzCX+i4oOpiGv0u3SSXivxlq3okPW9CmLjnQc0k3XV7uo3rceg5y1AXms5/SdCQowbG1mj/0pgCBvQX1fmvMY5ugxGgEOalDOOKS5BzP2C1Dj4bNA8pbEW4="
+        secure: "$API_KEY"
     file_glob: true
     file:
         - 'releases/*.*'
@@ -107,4 +107,4 @@ deploy:
         # https://docs.travis-ci.com/user/deployment#Conditional-Releases-with-on
         tags: true  # Deploy app only when a tag is applied to the commit
         node: '10'
-        repo: Snapmaker/Luban
+        repo: Leykinmg/rose3d

@@ -2,7 +2,7 @@
   "name": "Rose3D",
   "version": "0.0.5",
   "description": "A web-based interface for Rose3D Printer",
-  "homepage": "https://github.com/leykinmg/Rose3d",
+  "homepage": "https://github.com/Leykinmg/rose3d",
   "author": "Rose3D Dev Team <374406742@qq.com>",
   "contributors": [],
   "main": "./dist/Snapmakerjs/server-cli.js",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:whimsycwd/Snapmakerjs.git"
+    "url": "git@github.com:Leykinmg/rose3d.git"
   },
   "license": "AGPL-3.0-or-later",
   "engines": {
