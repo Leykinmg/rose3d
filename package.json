@@ -5,7 +5,7 @@
   "homepage": "https://github.com/Leykinmg/rose3d",
   "author": "Rose3D Dev Team <374406742@qq.com>",
   "contributors": [],
-  "main": "./dist/Snapmakerjs/server-cli.js",
+  "main": "./dist/rose3d/server-cli.js",
   "bin": {
     "luban": "bin/cli"
   },
@@ -42,7 +42,7 @@
     "build:win-ia32": "bash -c \"build/electron-builder.sh --win --ia32\"",
     "build:win-x64": "bash -c \"build/electron-builder.sh --win --x64\"",
     "clean": "bash -c \"rm -rf ./dist ./output\"",
-    "start-electron": "electron ./dist/Snapmakerjs/main",
+    "start-electron": "electron ./dist/rose3d/main",
     "start-dev": "gulp serverStartDevelopment",
     "start-prod": "cross-env NODE_ENV=production ./bin/cli",
     "dev": "npm run build-dev && npm run start-dev",
@@ -62,7 +62,7 @@
     "directories": {
       "buildResources": "build",
       "output": "output",
-      "app": "dist/Snapmakerjs"
+      "app": "dist/rose3d"
     },
     "mac": {
       "category": "public.app-category.productivity",

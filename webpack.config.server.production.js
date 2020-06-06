@@ -38,7 +38,7 @@ module.exports = {
         ]
     },
     output: {
-        path: path.resolve(__dirname, 'dist/Snapmakerjs/server'),
+        path: path.resolve(__dirname, 'dist/rose3d/server'),
         filename: '[name].js',
         libraryTarget: 'commonjs2'
     },
