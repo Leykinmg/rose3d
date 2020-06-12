@@ -4,8 +4,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import i18next from 'i18next';
 import Select from 'react-select';
+import { actions as machineActions } from '../../flux/machine';
 import Anchor from '../../components/Anchor';
 import styles from './styles.styl';
+import MachineSelectModal from '../../modals/modal-machine-select';
 import { actions as printingActions } from '../../flux/printing';
 
 const LANGUAGE_OPTIONS = [
@@ -28,7 +30,12 @@ class VisualizerTopLeft extends PureComponent {
         canUndo: PropTypes.bool.isRequired,
         canRedo: PropTypes.bool.isRequired,
         undo: PropTypes.func.isRequired,
-        redo: PropTypes.func.isRequired
+        redo: PropTypes.func.isRequired,
+        series: PropTypes.string.isRequired,
+        headType: PropTypes.string,
+
+        updateMachineState: PropTypes.func.isRequired
+
     };
 
     fileInput = React.createRef();
@@ -61,6 +68,19 @@ class VisualizerTopLeft extends PureComponent {
                     window.location.search = uri.toString();
                 });
             }
+        },
+        onClick: () => {
+            const { series, headType } = this.props;
+            MachineSelectModal({
+                series,
+                headType,
+                onConfirm: (seriesT, headTypeT) => {
+                    this.props.updateMachineState({
+                        series: seriesT,
+                        headType: headTypeT
+                    });
+                }
+            });
         }
     };
 
@@ -68,10 +88,10 @@ class VisualizerTopLeft extends PureComponent {
         const actions = this.actions;
         const { canUndo, canRedo } = this.props;
         const langOption = getOption(this.state.lang);
-        //select use: https://github.com/JedWatson/react-select/blob/v1.x/examples/src/components/States.js
+        // select use: https://github.com/JedWatson/react-select/blob/v1.x/examples/src/components/States.js
         return (
             <React.Fragment>
-                <Anchor className={styles['rose-icon']}>
+                <Anchor className={styles['rose-icon']} onClick={this.actions.onClick}>
                     <img src="/images/rose/rose.png" width="30" height="30" alt="rose" />
                 </Anchor>
                 <Anchor
@@ -109,7 +129,10 @@ const mapStateToProps = (state) => {
     const printing = state.printing;
     const { canUndo, canRedo } = printing;
 
+    const { series, headType } = state.machine;
     return {
+        series,
+        headType,
         canUndo,
         canRedo
     };
@@ -118,7 +141,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
     uploadModel: (file) => dispatch(printingActions.uploadModel(file)),
     undo: () => dispatch(printingActions.undo()),
-    redo: () => dispatch(printingActions.redo())
+    redo: () => dispatch(printingActions.redo()),
+    updateMachineState: (state) => dispatch(machineActions.updateMachineState(state))
 });
 
 

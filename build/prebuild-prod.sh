@@ -31,7 +31,7 @@ mkdir -p "$RESOURCES_DIR"
 # copy Cura Engine
 #
 CURA_DIR="$RESOURCES_DIR/CuraEngine"
-CURA_VERSION="3.6"
+CURA_VERSION="4.6"
 
 mkdir -p "$CURA_DIR"
 mkdir -p "$CURA_DIR/$CURA_VERSION"

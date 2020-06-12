@@ -116,6 +116,6 @@ deploy:
   overwrite: true
   skip_cleanup: true
   on:
-    tags: false
+    tags: true
     node: '10'
     repo: Leykinmg/rose3d

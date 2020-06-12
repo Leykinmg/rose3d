@@ -1,7 +1,7 @@
 {
     "name": "PLA",
     "version": 2,
-    "inherits": "snapmaker",
+    "inherits": "rose",
     "overrides": {
         "material_flow": {
             "default_value": 100

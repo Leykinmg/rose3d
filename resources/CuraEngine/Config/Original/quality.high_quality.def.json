@@ -1,7 +1,7 @@
 {
     "name": "High Quality",
     "version": 2,
-    "inherits": "snapmaker",
+    "inherits": "rose",
     "overrides": {
         "resolution": {
             "type": "category",

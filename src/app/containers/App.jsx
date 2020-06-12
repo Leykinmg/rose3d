@@ -10,7 +10,6 @@ import { actions as textActions } from '../flux/text';
 import api from '../api';
 import Printing from './Printing';
 import Settings from './Settings';
-import CaseLibrary from './CaseLibrary';
 import styles from './App.styl';
 
 
@@ -92,10 +91,6 @@ class App extends PureComponent {
 
                         {location.pathname.indexOf('/settings') === 0 && (
                             <Settings {...this.props} />
-                        )}
-
-                        {location.pathname.indexOf('/caselibrary') === 0 && (
-                            <CaseLibrary {...this.props} />
                         )}
                     </div>
                 </div>

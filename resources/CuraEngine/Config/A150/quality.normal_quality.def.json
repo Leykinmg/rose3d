@@ -1,7 +1,7 @@
 {
     "name": "Normal Quality",
     "version": 2,
-    "inherits": "snapmaker2",
+    "inherits": "rose2",
     "overrides": {
         "resolution": {
             "type": "category",

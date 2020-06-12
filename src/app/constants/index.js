@@ -101,95 +101,35 @@ export const LASER_PRINT_MODE_MANUAL = 'manual';
 export const MACHINE_SERIES = {
     ORIGINAL: {
         value: 'Original',
-        label: 'Snapmaker Original',
+        label: 'Rose Go',
         setting: {
             size: {
                 x: 125, // width
-                y: 110, // depth
-                z: 120 // height
+                y: 115, // depth
+                z: 125 // height
             }
         }
     },
     A150: {
         value: 'A150',
-        label: 'Snapmaker 2.0 A150',
+        label: 'Rose Go Plus',
         setting: {
             size: {
-                x: 160,
-                y: 160,
-                z: 145
-            },
-            laserSize: {
-                x: 166,
-                y: 168,
+                x: 150,
+                y: 150,
                 z: 150
             }
-        },
-        alias: ['SM2-S', 'Snapmaker 2.0 A150']
-    },
-    A250: {
-        value: 'A250',
-        label: 'Snapmaker 2.0 A250',
-        setting: {
-            size: {
-                x: 230,
-                y: 250,
-                z: 235
-            },
-            laserSize: {
-                x: 252,
-                y: 260,
-                z: 235
-            }
-        },
-        alias: ['SM2-M', 'Snapmaker 2.0 A250']
-
-    },
-    A350: {
-        value: 'A350',
-        label: 'Snapmaker 2.0 A350',
-        setting: {
-            size: {
-                x: 320,
-                y: 350,
-                z: 330
-            },
-            laserSize: {
-                x: 345,
-                y: 360,
-                z: 334
-            }
-        },
-        alias: ['SM2-L', 'Snapmaker 2.0 A350']
+        }
     }
 };
 
 export const MACHINE_HEAD_TYPE = {
-    WORKSPACE: {
-        value: 'workspace',
-        label: 'Workspace'
-    },
     '3DP': {
         value: '3dp',
         label: '3D Printing',
         alias: ['3DP', '1']
-    },
-    LASER: {
-        value: 'laser',
-        label: 'Laser',
-        alias: ['LASER', 'LASER350', 'LASER1600', '3']
-    },
-    CNC: {
-        value: 'cnc',
-        label: 'CNC',
-        alias: ['CNC', '2']
     }
 };
 
-export const IMAGE_WIFI_CONNECTING = '../../images/connection/Screen.png';
-export const IMAGE_WIFI_CONNECT_WAITING = '../../images/connection/ic_waiting-64x64.png';
-export const IMAGE_WIFI_CONNECTED = '../../images/connection/ic_complete_64x64.png';
-export const IMAGE_WIFI_ERROR = '../../images/connection/ic_error_64x64.png';
-export const IMAGE_WIFI_WAITING = '../../images/connection/ic_Wi-FI_64x64.png';
 
 export const LASER_MOCK_PLATE_HEIGHT = 6;

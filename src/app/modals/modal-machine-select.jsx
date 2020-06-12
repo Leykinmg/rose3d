@@ -16,7 +16,6 @@ class MachineSelectModal extends PureComponent {
         series: PropTypes.string,
         headType: PropTypes.string,
 
-        hasHead: PropTypes.bool,
         onConfirm: PropTypes.func
     };
 
@@ -69,40 +68,12 @@ class MachineSelectModal extends PureComponent {
             {
                 value: MACHINE_SERIES.ORIGINAL.value,
                 label: MACHINE_SERIES.ORIGINAL.label,
-                img: 'images/machine/size-1.0-original.jpg'
+                img: 'images/rose/rose.png'
             },
             {
                 value: MACHINE_SERIES.A150.value,
                 label: MACHINE_SERIES.A150.label,
-                img: 'images/machine/size-2.0-A150.jpg'
-            },
-            {
-                value: MACHINE_SERIES.A250.value,
-                label: MACHINE_SERIES.A250.label,
-                img: 'images/machine/size-2.0-A250.jpg'
-            },
-            {
-                value: MACHINE_SERIES.A350.value,
-                label: MACHINE_SERIES.A350.label,
-                img: 'images/machine/size-2.0-A350.jpg'
-            }
-        ];
-        const machineHeadTypeOptions = [
-            {
-                value: MACHINE_HEAD_TYPE['3DP'].value,
-                label: MACHINE_HEAD_TYPE['3DP'].label,
-                img: 'images/machine/function-3d-printing.jpg'
-            },
-            {
-                value: MACHINE_HEAD_TYPE.LASER.value,
-                label: MACHINE_HEAD_TYPE.LASER.label,
-                img: 'images/machine/function-laser.jpg'
-
-            },
-            {
-                value: MACHINE_HEAD_TYPE.CNC.value,
-                label: MACHINE_HEAD_TYPE.CNC.label,
-                img: 'images/machine/function-cnc.jpg'
+                img: 'images/rose-logo-256x256.png'
             }
         ];
 
@@ -110,13 +81,12 @@ class MachineSelectModal extends PureComponent {
             <Modal disableOverlay showCloseButton={false} size="md" onClose={this.handleClose}>
                 <Modal.Header>
                     <Modal.Title>
-                        <div className={styles['device-not-recognized']}>{i18n._('Device Not Recognized')}</div>
-                        <div className={styles['device-not-recognized-detail']}>{i18n._('Oops, Snapmaker Luban doesn\'t recognize your connected device.')}</div>
+                        {/*TODO 加翻译 删除原本的翻译*/}
+                        <div className={styles['which-model']}>{i18n._('Which Machine wants to choose?')}
+                        </div>
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className={styles['which-model']}>{i18n._('Which model is connected to Snapmaker Luban?')}
-                    </div>
                     <div className={styles['select-tools']}>
                         { machineSeriesOptions.map(v => {
                             return (
@@ -136,35 +106,10 @@ class MachineSelectModal extends PureComponent {
                             );
                         })}
                     </div>
-                    {this.props.hasHead !== false && (
-                        <div>
-                            <div className={classNames(styles.separator, styles['separator-underline'])} />
-                            <div className={styles['which-toolhead']}>{i18n._('Which toolhead is attached to your Snapmaker Luban?')}</div>
-                            <div className={styles['select-tools']}>
-                                { machineHeadTypeOptions.map(v => {
-                                    return (
-                                        <div key={v.value} className={styles['select-tool']}>
-                                            <Anchor
-                                                className={classNames(styles.selectToolBtn, { [styles.selected]: state.headType === v.value })}
-                                                onClick={() => actions.onChangeHeadType(v)}
-                                            >
-                                                <img
-                                                    src={v.img}
-                                                    role="presentation"
-                                                    alt="V-Bit"
-                                                />
-                                            </Anchor>
-                                            <span className={styles.selectToolText}>{i18n._(v.label)}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button
-                        btnStyle="primary"
+                        btnStyle="default"
                         onClick={this.handleConfirm}
                     >
                         {i18n._('Choose')}

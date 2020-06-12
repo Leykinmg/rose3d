@@ -17,10 +17,10 @@ class DefinitionManager {
         let res;
 
         if (this.series === MACHINE_SERIES.ORIGINAL.value) {
-            res = await api.printingConfigs.getDefinition('snapmaker');
+            res = await api.printingConfigs.getDefinition('rose');
             this.snapmakerDefinition = res.body.definition;
         } else {
-            res = await api.printingConfigs.getDefinition('snapmaker2');
+            res = await api.printingConfigs.getDefinition('rose2');
             this.snapmakerDefinition = res.body.definition;
         }
 
@@ -124,7 +124,7 @@ class DefinitionManager {
             inherits: 'fdmprinter',
             metadata: {
                 machine_extruder_trains: {
-                    0: 'snapmaker_extruder_0'
+                    0: 'rose_extruder_0'
                 }
             },
             settings: {},
