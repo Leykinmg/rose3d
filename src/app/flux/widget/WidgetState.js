@@ -186,27 +186,7 @@ const defaultState = {
 };
 const seriesStates = {
     original: {},
-    A150: {
-        laser: {
-            default: {
-                widgets: ['laser-params', 'laser-output']
-            }
-        }
-    },
-    A250: {
-        laser: {
-            default: {
-                widgets: ['laser-params', 'laser-output']
-            }
-        }
-    },
-    A350: {
-        laser: {
-            default: {
-                widgets: ['laser-params', 'laser-output']
-            }
-        }
-    }
+    RoseX: {}
 };
 
 function customizer(objValue, srcValue) {

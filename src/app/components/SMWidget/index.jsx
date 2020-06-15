@@ -1,6 +1,4 @@
 // SMWidget
-// Snapmaker Widget, styled wrapper on top of Widget.
-//
 
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';

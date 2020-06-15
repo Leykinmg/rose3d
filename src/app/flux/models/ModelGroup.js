@@ -17,7 +17,7 @@ class ModelGroup {
 
         this.selectedModel = null;
         this.estimatedTime = 0;
-
+        this.isStick = true;
         this.candidatePoints = null;
         this.onSelectedModelTransformChanged = null;
 
@@ -37,7 +37,7 @@ class ModelGroup {
     };
 
     _getState(model) {
-        const { headerType, sourceType, mode, modelID, transformation, boundingBox, originalName } = model;
+        const { headerType, sourceType, mode, modelID, transformation, boundingBox, originalName, extruder, isStick } = model;
         return {
             headerType: headerType,
             sourceType: sourceType,
@@ -49,7 +49,9 @@ class ModelGroup {
             boundingBox, // only used in 3dp
             estimatedTime: this.estimatedTime,
             hasModel: this._hasModel(),
-            isAnyModelOverstepped: this._checkAnyModelOverstepped()
+            isAnyModelOverstepped: this._checkAnyModelOverstepped(),
+            extruder: extruder,
+            isStick: isStick
         };
     }
 
@@ -314,6 +316,7 @@ class ModelGroup {
         for (const model of models) {
             model.stickToPlate();
             model.meshObject.position.x = 0;
+            model.meshObject.position.y = 0;
             model.meshObject.position.z = 0;
             const xz = this._computeAvailableXZ(model);
             model.meshObject.position.x = xz.x;

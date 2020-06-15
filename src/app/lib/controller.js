@@ -222,7 +222,7 @@ class SerialPortClient {
         socketController.emit('serialport:close', { port, dataSource: this.dataSource });
     }
 
-    // Discover Wi-Fi enabled Snapmakers
+    // Discover Wi-Fi enabled
     listHTTPServers() {
         socketController.emit('http:discover');
     }

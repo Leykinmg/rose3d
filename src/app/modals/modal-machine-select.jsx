@@ -71,8 +71,8 @@ class MachineSelectModal extends PureComponent {
                 img: 'images/rose/rose.png'
             },
             {
-                value: MACHINE_SERIES.A150.value,
-                label: MACHINE_SERIES.A150.label,
+                value: MACHINE_SERIES.RoseX.value,
+                label: MACHINE_SERIES.RoseX.label,
                 img: 'images/rose-logo-256x256.png'
             }
         ];
@@ -81,7 +81,7 @@ class MachineSelectModal extends PureComponent {
             <Modal disableOverlay showCloseButton={false} size="md" onClose={this.handleClose}>
                 <Modal.Header>
                     <Modal.Title>
-                        {/*TODO 加翻译 删除原本的翻译*/}
+                        {/* TODO 加翻译 删除原本的翻译*/}
                         <div className={styles['which-model']}>{i18n._('Which Machine wants to choose?')}
                         </div>
                     </Modal.Title>

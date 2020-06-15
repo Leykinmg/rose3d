@@ -148,7 +148,6 @@ class Visualizer extends PureComponent {
 
     componentWillReceiveProps(nextProps) {
         const { size, transformMode, selectedModelID, renderingTimestamp } = nextProps;
-
         if (transformMode !== this.props.transformMode) {
             this.canvas.current.setTransformMode(transformMode);
         }

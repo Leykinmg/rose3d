@@ -27,7 +27,8 @@ export const EVENTS = {
     SELECT_OBJECT: 'object:select',
     UNSELECT_OBJECT: 'object:unselect',
     TRANSFORM_OBJECT: 'object:transform',
-    AFTER_TRANSFORM_OBJECT: 'object:aftertransform'
+    AFTER_TRANSFORM_OBJECT: 'object:aftertransform',
+    MUL_SELECT_OBJECT: 'object:mulselect'
 };
 
 class Controls extends EventEmitter {
@@ -193,6 +194,11 @@ class Controls extends EventEmitter {
 
         switch (event.button) {
             case THREE.MOUSE.LEFT: {
+                // if (event.shiftKey) {
+                //     this.emit(EVENTS.MUL_SELECT_OBJECT);
+                //     console.log('a ');
+                //     break;
+                // }
                 // Transform on selected object
                 if (this.selectedObject) {
                     const coord = this.getMouseCoord(event);

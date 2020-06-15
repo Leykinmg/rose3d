@@ -54,17 +54,7 @@ export const STAGES_3DP = {
 const publicPath = global.PUBLIC_PATH || '';
 export const DATA_PREFIX = `${publicPath}/data/Tmp`;
 
-export const CNC_TOOL_SNAP_V_BIT = 'snap.v-bit';
-export const CNC_TOOL_SNAP_V_BIT_CONFIG = { diameter: 3.175, angle: 30 };
-export const CNC_TOOL_SNAP_FLAT_END_MILL = 'snap.flat-end-mill';
-export const CNC_TOOL_SNAP_FLAT_END_MILL_CONFIG = { diameter: 3.175, angle: 180 };
-export const CNC_TOOL_SNAP_BALL_END_MILL = 'snap.ball-end-mill';
-export const CNC_TOOL_SNAP_BALL_END_MILL_CONFIG = { diameter: 3.175, angle: 180 };
-export const CNC_TOOL_CUSTOM = 'custom';
-export const CNC_TOOL_CUSTOM_CONFIG = { diameter: 3.175, angle: 180 };
 
-export const LASER_GCODE_SUFFIX = '.nc';
-export const CNC_GCODE_SUFFIX = '.cnc';
 export const PRINTING_GCODE_SUFFIX = '.gcode';
 
 // Replacements for null value
@@ -88,8 +78,6 @@ export const SPEED_FACTOR_MIN = 0;
 export const SPEED_FACTOR_MAX = 500;
 
 export const HEAD_3DP = '3dp';
-export const HEAD_LASER = 'laser';
-export const HEAD_CNC = 'cnc';
 export const HEAD_UNKNOWN = 'unknown';
 
 export const CONNECTION_TYPE_SERIAL = 'serial';
@@ -110,9 +98,9 @@ export const MACHINE_SERIES = {
             }
         }
     },
-    A150: {
-        value: 'A150',
-        label: 'Rose Go Plus',
+    RoseX: {
+        value: 'RoseX',
+        label: 'Rose X',
         setting: {
             size: {
                 x: 150,

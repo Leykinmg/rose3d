@@ -57,7 +57,6 @@ class VisualizerTopLeft extends PureComponent {
                 return;
             }
             const lang = selectedOption.value;
-            console.log(lang);
             this.setState(
                 { lang }
             );

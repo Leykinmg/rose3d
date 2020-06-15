@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ControlWidget from './Control/index';
-import ScreenConnectionWidget from './ScreenConnection';
 import ConsoleWidget from './Console';
 import GCodeWidget from './GCode';
 import MacroWidget from './Macro';
@@ -15,7 +14,6 @@ import PrintingOutputWidget from './PrintingOutput';
 const getWidgetByName = (name) => {
     const Widget = {
         'control': ControlWidget,
-        'connectionPanel': ScreenConnectionWidget,
         'console': ConsoleWidget,
         'gcode': GCodeWidget,
         'macro': MacroWidget,

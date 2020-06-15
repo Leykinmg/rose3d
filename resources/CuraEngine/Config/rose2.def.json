@@ -10,10 +10,14 @@
         "manufacturer": "Rose",
         "file_formats": "text/x-gcode",
         "machine_extruder_trains": {
-            "0": "snapmaker_extruder_0"
+            "0": "rose_extruder_0",
+            "1": "rose_extruder_1"
         }
     },
     "overrides": {
+        "machine_extruders_share_heater": {
+            "default_value": true
+        },
         "machine_name": {
             "default_value": "Rose"
         },

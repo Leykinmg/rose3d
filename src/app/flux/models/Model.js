@@ -2,7 +2,6 @@ import uuid from 'uuid';
 import * as THREE from 'three';
 import { DATA_PREFIX } from '../../constants';
 import { sizeModelByMachineSize } from './ModelInfoUtils';
-
 import ThreeUtils from '../../components/three-extensions/ThreeUtils';
 
 const EVENTS = {
@@ -10,7 +9,8 @@ const EVENTS = {
 };
 
 // const materialSelected = new THREE.MeshPhongMaterial({ color: 0xf0f0f0, specular: 0xb0b0b0, shininess: 30 });
-const materialNormal = new THREE.MeshPhongMaterial({ color: 0xa0a0a0, specular: 0xb0b0b0, shininess: 30 });
+const materialNormal = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, specular: 0xb0b0b0, shininess: 30 });
+const materialNormal2 = new THREE.MeshPhongMaterial({ color: 0xFF9900, specular: 0xb0b0b0, shininess: 100 });
 const materialOverstepped = new THREE.MeshPhongMaterial({
     color: 0xff0000,
     shininess: 30,
@@ -67,6 +67,9 @@ class Model {
         this.boundingBox = null;
         this.overstepped = false;
         this.convexGeometry = null;
+        this.extruder = '0';
+        this.material = materialNormal;
+        this.isStick = true;
     }
 
     getTaskInfo() {
@@ -272,6 +275,9 @@ class Model {
         if (this.sourceType !== '3d') {
             return;
         }
+        if (!this.isStick) {
+            return;
+        }
         this.computeBoundingBox();
         this.meshObject.position.y = this.meshObject.position.y - this.boundingBox.min.y;
         this.onTransform();
@@ -304,8 +310,20 @@ class Model {
             this.meshObject.material = materialOverstepped;
         } else {
             // this.material = (this.selected ? materialSelected : materialNormal);
-            this.meshObject.material = materialNormal;
+            this.meshObject.material = this.material;
         }
+    }
+
+    setMaterial(type) {
+        if (type === '0') {
+            this.material = materialNormal;
+        } else {
+            this.material = materialNormal2;
+        }
+        if (this.overstepped === false) {
+            this.meshObject.material = this.material;
+        }
+        this.stickToPlate();
     }
 
     clone() {

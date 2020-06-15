@@ -4,6 +4,10 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import * as THREE from 'three';
+import Radio from '@material-ui/core/Radio';
+// import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import { toFixed } from '../../lib/numeric-utils';
 import Anchor from '../../components/Anchor';
 import { NumberInput as Input } from '../../components/Input';
@@ -21,6 +25,8 @@ class VisualizerModelTransformation extends PureComponent {
         hasModel: PropTypes.bool.isRequired,
         transformMode: PropTypes.string.isRequired,
         uploadModel: PropTypes.func.isRequired,
+        extruder: PropTypes.string,
+        isStick: PropTypes.bool,
         transformation: PropTypes.shape({
             positionX: PropTypes.number,
             positionZ: PropTypes.number,
@@ -35,7 +41,9 @@ class VisualizerModelTransformation extends PureComponent {
         onModelAfterTransform: PropTypes.func.isRequired,
         updateSelectedModelTransformation: PropTypes.func.isRequired,
         setTransformMode: PropTypes.func.isRequired,
-        layFlatSelectedModel: PropTypes.func.isRequired
+        layFlatSelectedModel: PropTypes.func.isRequired,
+        setModelextruder: PropTypes.func.isRequired,
+        setModelstick: PropTypes.func.isRequired
     };
 
     fileInput = React.createRef();
@@ -99,12 +107,24 @@ class VisualizerModelTransformation extends PureComponent {
         },
         layFlatSelectedModel: () => {
             this.props.layFlatSelectedModel();
+        },
+        setModelextruder: (extruder) => {
+            this.props.setModelextruder(extruder);
+        },
+        setModelstick: (isStick) => {
+            this.props.setModelstick(isStick);
         }
     };
 
+    state = {
+        isStick: false,
+        extruder: '0'
+    }
+
     render() {
         const actions = this.actions;
-        const { size, selectedModelID, hasModel, transformMode } = this.props;
+        // eslint-disable-next-line no-unused-vars
+        const { size, selectedModelID, hasModel, transformMode, extruder, isStick } = this.props;
         const { positionX, positionZ, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ } = this.props.transformation;
         const disabled = !(selectedModelID && hasModel);
         const moveX = Number(toFixed(positionX, 1));
@@ -115,7 +135,8 @@ class VisualizerModelTransformation extends PureComponent {
         const rotateX = Number(toFixed(THREE.Math.radToDeg(rotationX), 1));
         const rotateY = Number(toFixed(THREE.Math.radToDeg(rotationY), 1));
         const rotateZ = Number(toFixed(THREE.Math.radToDeg(rotationZ), 1));
-
+        // eslint-disable-next-line react/no-unused-state
+        this.setState({ isStick: isStick, extruder: extruder });
         return (
             <React.Fragment>
                 <div className={classNames(styles['model-transformation__open'])}>
@@ -138,7 +159,7 @@ class VisualizerModelTransformation extends PureComponent {
                         onChange={actions.onChangeFile}
                     />
                 </div>
-                <div className={classNames(styles['model-transformation__container'], { [styles.disabled]: disabled })}>
+                <div className={classNames(styles['model-transformation__container'])}>
                     <Anchor
                         componentClass="button"
                         className={classNames(
@@ -181,19 +202,54 @@ class VisualizerModelTransformation extends PureComponent {
                         }}
                         disabled={disabled}
                     />
-                    <Anchor
-                        componentClass="button"
-                        className={classNames(
-                            styles['model-operation'],
-                            styles['operation-scale'],
-                            {
-                                [styles.selected]: transformMode === 'scale'
-                            }
+                </div>
+                <div className={classNames(styles['model-extruder__select'])}>
+                    <FormControlLabel
+                        value="0"
+                        control={(
+                            <Radio
+                                checked={this.state.extruder === '0'}
+                                onChange={() => {
+                                    actions.setModelextruder('0');
+                                    actions.onModelAfterTransform();
+                                }}
+                                value="0"
+                                name="extruder0"
+                            />
                         )}
-                        onClick={() => {
-                            actions.layFlatSelectedModel();
-                        }}
-                        disabled={disabled}
+                        label="extruder0"
+                    />
+                    <FormControlLabel
+                        value="1"
+                        control={(
+                            <Radio
+                                checked={this.state.extruder === '1'}
+                                onChange={() => {
+                                    actions.setModelextruder('1');
+                                    actions.onModelAfterTransform();
+                                }}
+                                value="1"
+                                name="extruder0"
+                            />
+                        )}
+                        label="extruder1"
+                    />
+
+                </div>
+                <div className={classNames(styles['model-isStick'])}>
+                    <FormControlLabel
+                        control={(
+                            <Switch
+                                disabled={disabled}
+                                checked={this.state.isStick}
+                                onChange={() => {
+                                    actions.setModelstick(!isStick);
+                                    actions.onModelAfterTransform();
+                                }}
+                                name="isStick"
+                            />
+                        )}
+                        label="isStick"
                     />
                 </div>
                 {!disabled && transformMode === 'translate' && (
@@ -428,6 +484,18 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                         </div>
+                        <div className={styles.axis}>
+                            <Anchor
+                                componentClass="button"
+                                className={styles['btn-lay']}
+                                onClick={() => {
+                                    actions.layFlatSelectedModel();
+                                }}
+                                disabled={disabled}
+                            >
+                                {i18n._('layflat')}
+                            </Anchor>
+                        </div>
                     </div>
                 )}
             </React.Fragment>
@@ -442,7 +510,9 @@ const mapStateToProps = (state) => {
         selectedModelID,
         hasModel,
         transformMode,
-        transformation
+        transformation,
+        extruder,
+        isStick
     } = printing;
 
     return {
@@ -450,7 +520,9 @@ const mapStateToProps = (state) => {
         selectedModelID,
         hasModel,
         transformMode,
-        transformation
+        transformation,
+        extruder,
+        isStick
     };
 };
 
@@ -460,7 +532,9 @@ const mapDispatchToProps = (dispatch) => ({
     onModelAfterTransform: () => dispatch(printingActions.onModelAfterTransform()),
     updateSelectedModelTransformation: (transformation) => dispatch(printingActions.updateSelectedModelTransformation(transformation)),
     setTransformMode: (value) => dispatch(printingActions.setTransformMode(value)),
-    layFlatSelectedModel: () => dispatch(printingActions.layFlatSelectedModel())
+    layFlatSelectedModel: () => dispatch(printingActions.layFlatSelectedModel()),
+    setModelextruder: (extruder) => dispatch(printingActions.setModelextruder(extruder)),
+    setModelstick: (isStick) => dispatch(printingActions.setModelstick(isStick))
 });
 
 

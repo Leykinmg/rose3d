@@ -2,7 +2,7 @@ import api from '../../api';
 import { MACHINE_SERIES } from '../../constants';
 
 class DefinitionManager {
-    snapmakerDefinition = null;
+    roseDefinition = null;
 
     activeDefinition = null;
 
@@ -18,10 +18,10 @@ class DefinitionManager {
 
         if (this.series === MACHINE_SERIES.ORIGINAL.value) {
             res = await api.printingConfigs.getDefinition('rose');
-            this.snapmakerDefinition = res.body.definition;
+            this.roseDefinition = res.body.definition;
         } else {
             res = await api.printingConfigs.getDefinition('rose2');
-            this.snapmakerDefinition = res.body.definition;
+            this.roseDefinition = res.body.definition;
         }
 
         // active definition

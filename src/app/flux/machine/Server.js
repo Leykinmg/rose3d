@@ -4,7 +4,7 @@ import { MACHINE_HEAD_TYPE, MACHINE_SERIES, WORKFLOW_STATUS_IDLE, WORKFLOW_STATU
 import { valueOf } from '../../lib/contants-utils';
 
 /**
- * Server represents HTTP Server on Snapmaker 2.
+ * Server represents HTTP Server.
  */
 
 const isNotNull = (value) => {

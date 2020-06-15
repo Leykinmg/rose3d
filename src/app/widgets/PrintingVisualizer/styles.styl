@@ -89,14 +89,26 @@ $visualizer-padding = 10px
             .btn-remove
                 background-image: url("/images/14x14/delete-disabled-14x14.png")
 
+
+
+
+
+
 .visualizer-model-transformation
     z-index: $z-index-float
-    position: absolute
+    position: relative
     left: $visualizer-padding
     top: 50%
     transform: translate(0, -50%)
     border-radius: 0px
+    width: 56px
 
+    .btn-lay
+        height: 30px
+        width: 195px
+        cursor: default
+        position relative
+        left 20px
 
     .model-transformation__open
         position: relative
@@ -106,10 +118,20 @@ $visualizer-padding = 10px
 
 
     .model-transformation__container
-        border: 1px solid $border-color
-
+        position: relative
+        border: 0px solid $border-color
         &.disabled
             opacity(.5)
+
+    .model-extruder__select
+        position: relative
+        top: 20px
+        //border: 1px solid $border-color
+
+    .model-isStick
+        position: relative
+        top: 20px
+        left: 20px
 
     .model-operation
         display: block
@@ -127,19 +149,23 @@ $visualizer-padding = 10px
             border-top-right-radius: $border-radius
             background-image: url('/images/48x48/open-a.png')
         &.operation-move
-            border-top-left-radius: $border-radius
-            border-top-right-radius: $border-radius
+            border: 1px solid $border-color
+            border-bottom: 0px
             background-image: url('/images/48x48/move-a.png')
         &.operation-scale
+            border: 1px solid $border-color
+            border-top: 0px
+            border-bottom: 0px
             background-image: url('/images/48x48/scale-a.png')
         &.operation-rotate
-            border-bottom-left-radius: $border-radius
-            border-bottom-right-radius: $border-radius
+            border: 1px solid $border-color
+            border-top: 0px
             background-image: url('/images/48x48/rotate-a.png')
 
         &:hover,
         &.selected
             background-color: $dark-red-color
+            border-color: $dark-red-color
             &.operation-open
                 background-image: url('/images/48x48/open-b.png')
             &.operation-move
@@ -151,6 +177,7 @@ $visualizer-padding = 10px
 
         &:disabled
             background-color: $background-color
+            border-color: $border-color
             &.operation-open
                 background-image: url('/images/48x48/open-c.png')
             &.operation-move
@@ -181,8 +208,8 @@ $visualizer-padding = 10px
             width: 118px
         &.rotate-panel
             top: 0
-            transform: translate(0, 64px * 3.5 - 133px / 2)
-            height: 133px
+            transform: translate(0, 64px * 3 - 133px / 2)
+            height: 163px
 
         .axis
             margin: 12px 0
