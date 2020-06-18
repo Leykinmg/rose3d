@@ -15,7 +15,8 @@ module.exports = async function notarizing(context) {
     }
 
     console.log('Notarizing application...');
-
+    return;
+    // eslint-disable-next-line no-unreachable
     const appName = context.packager.appInfo.productFilename;
 
     const appleId = process.env.APPLEID;

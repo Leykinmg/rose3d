@@ -90,7 +90,7 @@ class VisualizerTopLeft extends PureComponent {
         // select use: https://github.com/JedWatson/react-select/blob/v1.x/examples/src/components/States.js
         return (
             <React.Fragment>
-                <Anchor className={styles['rose-icon']} onClick={this.actions.onClick}>
+                <Anchor className={styles['rose-icon']} onClick>
                     <img src="/images/rose/rose.png" width="30" height="30" alt="rose" />
                 </Anchor>
                 <Anchor

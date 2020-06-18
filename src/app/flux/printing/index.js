@@ -636,13 +636,13 @@ export const actions = {
         }));
 
         // Prepare model file
-        const { series } = getState().machine;
+        // const { series } = getState().machine;
         const result = await dispatch(actions.prepareModel());
-        if (series === 'RoseX') {
-            const resultLeft = await dispatch(actions.prepareLeftModel());
-            const resultRight = await dispatch(actions.prepareRightModel());
-            console.log(resultLeft, resultRight);
-        }
+        // if (series === 'RoseX') {
+        //     const resultLeft = await dispatch(actions.prepareLeftModel());
+        //     const resultRight = await dispatch(actions.prepareRightModel());
+        //     console.log(resultLeft, resultRight);
+        // }
         const { originalName, uploadName } = result;
 
         // Prepare definition file
@@ -707,7 +707,7 @@ export const actions = {
             const LeftModelGroup = new THREE.Group();
             for (const model of modelGroup.getModels()) {
                 if (model.extruder === '0') {
-                    LeftModelGroup.add(model.meshObject);
+                    LeftModelGroup.add(model.meshObject.clone());
                 }
             }
             // Use setTimeout to force export executes in next tick, preventing block of updateState()
@@ -739,7 +739,7 @@ export const actions = {
             const RightModelGroup = new THREE.Group();
             for (const model of modelGroup.getModels()) {
                 if (model.extruder === '1') {
-                    RightModelGroup.add(model.meshObject);
+                    RightModelGroup.add(model.meshObject.clone());
                 }
             }
             // Use setTimeout to force export executes in next tick, preventing block of updateState()
