@@ -31,6 +31,8 @@ class TransformControls extends Object3D {
 
     object = null;
 
+    selection = null;
+
     _mode = 'translate';
 
     _axis = null;
@@ -450,6 +452,10 @@ class TransformControls extends Object3D {
         super.updateMatrixWorld(force);
     }
 
+    setSelection(selection) {
+        this.selection = selection;
+    }
+
     attach(object) {
         this.object = object;
         this.visible = true;
@@ -506,9 +512,10 @@ class TransformControls extends Object3D {
             return false;
         }
 
-        this.positionStart.copy(this.object.position);
-        this.quaternionStart.copy(this.object.quaternion);
-        this.scaleStart.copy(this.object.scale);
+        this.selection.recordInformation();
+        // this.positionStart.copy(this.object.position);
+        // this.quaternionStart.copy(this.object.quaternion);
+        // this.scaleStart.copy(this.object.scale);
 
         // pointStart is in world space
         this.pointStart.copy(intersect.point);
@@ -544,7 +551,8 @@ class TransformControls extends Object3D {
                 // Dive in to object local offset
                 offset.applyQuaternion(this.parentQuaternionInv).divide(this.parentScale);
 
-                this.object.position.copy(this.positionStart).add(offset);
+                this.selection.changePosition(offset);
+                // this.object.position.copy(this.positionStart).add(offset);
                 break;
             }
             case 'rotate': {
@@ -561,7 +569,8 @@ class TransformControls extends Object3D {
                 rotationAxis.applyQuaternion(this.parentQuaternionInv);
                 const quaternion = new Quaternion().setFromAxisAngle(rotationAxis, rotationAngle);
 
-                this.object.quaternion.copy(quaternion).multiply(this.quaternionStart).normalize();
+                this.selection.changeQuaternion(quaternion);
+                // this.object.quaternion.copy(quaternion).multiply(this.quaternionStart).normalize();
                 break;
             }
             case 'scale': {
@@ -575,7 +584,8 @@ class TransformControls extends Object3D {
                 eVec.y = (this.axis === 'Y' ? eVec.y : 1);
                 eVec.z = (this.axis === 'Z' ? eVec.z : 1);
 
-                this.object.scale.copy(this.scaleStart).multiply(eVec);
+                this.selection.changeScale(eVec);
+                // this.object.scale.copy(this.scaleStart).multiply(eVec);
                 break;
             }
             default:

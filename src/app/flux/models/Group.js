@@ -28,7 +28,7 @@ const DEFAULT_TRANSFORMATION = {
 };
 
 // class Model extends THREE.Mesh {
-class Model {
+class Group {
     constructor(modelInfo) {
         const { limitSize, headerType, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material,
             transformation } = modelInfo;
@@ -265,7 +265,7 @@ class Model {
     }
 
     clone() {
-        const clone = new Model({
+        const clone = new Group({
             ...this,
             geometry: this.meshObject.geometry.clone(),
             material: this.meshObject.material.clone()
@@ -372,4 +372,4 @@ class Model {
     }
 }
 
-export default Model;
+export default Group;

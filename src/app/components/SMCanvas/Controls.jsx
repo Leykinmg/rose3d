@@ -7,7 +7,6 @@
 import * as THREE from 'three';
 import EventEmitter from 'events';
 import TransformControls from './TransformControls';
-import TransformControls2D from './TransformControls2D';
 // const EPSILON = 0.000001;
 
 const EPS = 0.000001;
@@ -27,8 +26,7 @@ export const EVENTS = {
     SELECT_OBJECT: 'object:select',
     UNSELECT_OBJECT: 'object:unselect',
     TRANSFORM_OBJECT: 'object:transform',
-    AFTER_TRANSFORM_OBJECT: 'object:aftertransform',
-    MUL_SELECT_OBJECT: 'object:mulselect'
+    AFTER_TRANSFORM_OBJECT: 'object:aftertransform'
 };
 
 class Controls extends EventEmitter {
@@ -79,6 +77,8 @@ class Controls extends EventEmitter {
     // detection
     selectableObjects = null;
 
+    selection = null;
+
     selectedObject = null;
 
     ray = new THREE.Raycaster();
@@ -97,11 +97,8 @@ class Controls extends EventEmitter {
     }
 
     initTransformControls() {
-        if (this.sourceType === '3D') {
-            this.transformControl = new TransformControls(this.camera);
-        } else {
-            this.transformControl = new TransformControls2D(this.camera);
-        }
+        this.transformControl = new TransformControls(this.camera);
+
         this.transformControl.addEventListener('update', () => {
             this.emit(EVENTS.UPDATE);
         });
@@ -194,11 +191,7 @@ class Controls extends EventEmitter {
 
         switch (event.button) {
             case THREE.MOUSE.LEFT: {
-                // if (event.shiftKey) {
-                //     this.emit(EVENTS.MUL_SELECT_OBJECT);
-                //     console.log('a ');
-                //     break;
-                // }
+                this.shiftDown = event.shiftKey;
                 // Transform on selected object
                 if (this.selectedObject) {
                     const coord = this.getMouseCoord(event);
@@ -216,10 +209,10 @@ class Controls extends EventEmitter {
                     this.ray.setFromCamera(coord, this.camera);
 
                     const intersect = this.ray.intersectObjects(this.selectableObjects, false)[0];
-                    if (intersect && intersect.object !== this.selectedObject) {
+                    if (intersect) {
                         this.selectedObject = intersect.object;
                         this.transformControl.attach(this.selectedObject);
-                        this.emit(EVENTS.SELECT_OBJECT, this.selectedObject);
+                        this.emit(EVENTS.SELECT_OBJECT, this.selectedObject, this.shiftDown);
                         this.emit(EVENTS.UPDATE);
                         break;
                     }
@@ -372,6 +365,11 @@ class Controls extends EventEmitter {
 
     setSelectableObjects(objects) {
         this.selectableObjects = objects;
+    }
+
+    setSelection(selection) {
+        this.selection = selection;
+        this.transformControl.setSelection(this.selection);
     }
 
     attach(object) {

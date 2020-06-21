@@ -103,13 +103,6 @@ $visualizer-padding = 10px
     border-radius: 0px
     width: 56px
 
-    .btn-lay
-        height: 30px
-        width: 195px
-        cursor: default
-        position relative
-        left 20px
-
     .model-transformation__open
         position: relative
         //top: px
@@ -190,22 +183,29 @@ $visualizer-padding = 10px
     > .panel
         background-color: rgba(250, 250, 250, 0.3)
         display: block
-        width: 235px
+        width: 125px
         position: absolute
         left: (56px + $visualizer-padding)
         border: 1px solid $border-color
         border-radius: $border-radius
         opacity(.8)
 
+        .btn-lay
+            height: 30px
+            width: 100px
+            cursor: default
+            position relative
+            left 10px
+
         &.move-panel
             top: 0
-            height: 93px
-            transform: translate(0, 64px * 1.5 - 93px / 2)
+            height: 133px
+            transform: translate(0, 64px * 1.5 - 133px / 2)
         &.scale-panel
             top: 0
             transform: translate(0, 64px * 2.5 - 133px / 2)
             height: 133px
-            width: 118px
+            width: 125px
         &.rotate-panel
             top: 0
             transform: translate(0, 64px * 3 - 133px / 2)
@@ -240,7 +240,7 @@ $visualizer-padding = 10px
         .axis-input-1
             display: inline-block
             > input
-                width: 80px
+                width: 90px
 
         .axis-unit-1
         .axis-unit-2
@@ -252,7 +252,7 @@ $visualizer-padding = 10px
 
         // mm
         .axis-unit-1
-            left: 75px
+            left: 85px
         // %
         .axis-unit-2
             left: 85px

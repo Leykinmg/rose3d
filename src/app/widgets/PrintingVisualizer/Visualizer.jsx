@@ -30,6 +30,7 @@ class Visualizer extends PureComponent {
         transformMode: PropTypes.string.isRequired,
         progress: PropTypes.number.isRequired,
         displayedType: PropTypes.string.isRequired,
+        selectedCount: PropTypes.number.isRequired,
         renderingTimestamp: PropTypes.number.isRequired,
 
         selectModel: PropTypes.func.isRequired,
@@ -42,7 +43,8 @@ class Visualizer extends PureComponent {
         onModelAfterTransform: PropTypes.func.isRequired,
         updateSelectedModelTransformation: PropTypes.func.isRequired,
         multiplySelectedModel: PropTypes.func.isRequired,
-        layFlatSelectedModel: PropTypes.func.isRequired
+        layFlatSelectedModel: PropTypes.func.isRequired,
+        mergeSelected: PropTypes.func.isRequired
     };
 
 
@@ -77,8 +79,8 @@ class Visualizer extends PureComponent {
         toBottom: () => {
             this.canvas.current.toBottom();
         },
-        onSelectModel: (modelMesh) => {
-            this.props.selectModel(modelMesh);
+        onSelectModel: (modelMesh, shiftDown) => {
+            this.props.selectModel(modelMesh, shiftDown);
         },
         onUnselectAllModels: () => {
             this.props.unselectAllModels();
@@ -91,6 +93,7 @@ class Visualizer extends PureComponent {
         },
         // context menu
         centerSelectedModel: () => {
+            console.log('4');
             this.props.updateSelectedModelTransformation({ positionX: 0, positionZ: 0 });
             this.props.onModelAfterTransform();
         },
@@ -101,6 +104,7 @@ class Visualizer extends PureComponent {
             this.props.multiplySelectedModel(1);
         },
         resetSelectedModelTransformation: () => {
+            console.log('5');
             this.props.updateSelectedModelTransformation({
                 scaleX: 1,
                 scaleY: 1,
@@ -119,6 +123,9 @@ class Visualizer extends PureComponent {
         },
         layFlatSelectedModel: () => {
             this.props.layFlatSelectedModel();
+        },
+        mergeSelected: () => {
+            this.props.mergeSelected();
         }
     };
 
@@ -217,7 +224,7 @@ class Visualizer extends PureComponent {
     };
 
     render() {
-        const { size, hasModel, selectedModelID, modelGroup, gcodeLineGroup, progress, displayedType } = this.props;
+        const { size, hasModel, selectedModelID, modelGroup, gcodeLineGroup, progress, displayedType, selectedCount } = this.props;
 
         // const actions = this.actions;
 
@@ -322,6 +329,12 @@ class Visualizer extends PureComponent {
                                 label: i18n._('Arrange All Models'),
                                 disabled: !hasModel || !isModelDisplayed,
                                 onClick: this.actions.arrangeAllModels
+                            },
+                            {
+                                type: 'item',
+                                label: i18n._('Merge Selected'),
+                                disabled: !hasModel || !isModelDisplayed || selectedCount < 2,
+                                onClick: this.actions.mergeSelected
                             }
                         ]
                     }
@@ -336,7 +349,7 @@ const mapStateToProps = (state) => {
     const printing = state.printing;
     const { size } = machine;
     // TODO: be to organized
-    const { stage, selectedModelID, modelGroup, hasModel, gcodeLineGroup, transformMode, progress, displayedType, renderingTimestamp } = printing;
+    const { stage, selectedModelID, modelGroup, hasModel, gcodeLineGroup, transformMode, progress, displayedType, renderingTimestamp, selectedCount } = printing;
 
     return {
         stage,
@@ -348,12 +361,13 @@ const mapStateToProps = (state) => {
         transformMode,
         progress,
         displayedType,
-        renderingTimestamp
+        renderingTimestamp,
+        selectedCount
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    selectModel: (modelMesh) => dispatch(printingActions.selectModel(modelMesh)),
+    selectModel: (modelMesh, shiftDown) => dispatch(printingActions.selectModel(modelMesh, shiftDown)),
     getSelectedModel: () => dispatch(printingActions.getSelectedModel()),
     unselectAllModels: () => dispatch(printingActions.unselectAllModels()),
     removeSelectedModel: () => dispatch(printingActions.removeSelectedModel()),
@@ -363,7 +377,8 @@ const mapDispatchToProps = (dispatch) => ({
     onModelAfterTransform: () => dispatch(printingActions.onModelAfterTransform()),
     updateSelectedModelTransformation: (transformation) => dispatch(printingActions.updateSelectedModelTransformation(transformation)),
     multiplySelectedModel: (count) => dispatch(printingActions.multiplySelectedModel(count)),
-    layFlatSelectedModel: () => dispatch(printingActions.layFlatSelectedModel())
+    layFlatSelectedModel: () => dispatch(printingActions.layFlatSelectedModel()),
+    mergeSelected: () => dispatch(printingActions.mergeSelected())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Visualizer);

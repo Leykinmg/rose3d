@@ -60,6 +60,7 @@ const INITIAL_STATE = {
     stage: PRINTING_STAGE.EMPTY,
 
     selectedModelID: null,
+    SelectedCount: 0,
     mergeModelID: [],
     modelGroup: new ModelGroup(),
     // G-code
@@ -540,7 +541,7 @@ export const actions = {
 
                     const bufferGeometry = new THREE.BufferGeometry();
                     const modelPositionAttribute = new THREE.BufferAttribute(positions, 3);
-                    const material = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, specular: 0xb0b0b0, shininess: 30 });
+                    const material = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, emissive: 0xffff10, emissiveIntensity: 0.5 });
 
                     bufferGeometry.addAttribute('position', modelPositionAttribute);
                     bufferGeometry.computeVertexNormals();
@@ -578,9 +579,9 @@ export const actions = {
                     const convexGeometry = new THREE.BufferGeometry();
                     const positionAttribute = new THREE.BufferAttribute(positions, 3);
                     convexGeometry.addAttribute('position', positionAttribute);
-
                     // const model = modelGroup.children.find(m => m.uploadName === uploadName);
                     modelGroup.setConvexGeometry(uploadName, convexGeometry);
+                    console.log(modelGroup);
 
                     break;
                 }
@@ -636,13 +637,13 @@ export const actions = {
         }));
 
         // Prepare model file
-        // const { series } = getState().machine;
+        const { series } = getState().machine;
         const result = await dispatch(actions.prepareModel());
-        // if (series === 'RoseX') {
-        //     const resultLeft = await dispatch(actions.prepareLeftModel());
-        //     const resultRight = await dispatch(actions.prepareRightModel());
-        //     console.log(resultLeft, resultRight);
-        // }
+        if (series === 'RoseX') {
+            const resultLeft = await dispatch(actions.prepareLeftModel());
+            const resultRight = await dispatch(actions.prepareRightModel());
+            console.log(resultLeft, resultRight);
+        }
         const { originalName, uploadName } = result;
 
         // Prepare definition file
@@ -830,9 +831,9 @@ export const actions = {
         dispatch(actions.render());
     },
 
-    selectModel: (modelMeshObject) => (dispatch, getState) => {
+    selectModel: (modelMeshObject, shiftDown) => (dispatch, getState) => {
         const { modelGroup } = getState().printing;
-        modelGroup.selectModel(modelMeshObject);
+        modelGroup.selectModel(modelMeshObject, shiftDown);
         const modelState = modelGroup.getSelectedModelState();
         modelMeshObject.material.opacity = 0.5;
         dispatch(actions.updateState(modelState));
@@ -847,7 +848,7 @@ export const actions = {
 
     setModelstick: (isStick) => (dispatch, getState) => {
         const { modelGroup } = getState().printing;
-        modelGroup.selectedModel.isStick = isStick;
+        modelGroup.selection.setStick(isStick);
         dispatch(actions.updateState({ isStick: isStick }));
     },
 
@@ -969,6 +970,15 @@ export const actions = {
         const { modelGroup } = getState().printing;
         const modelState = modelGroup.layFlatSelectedModel();
         console.log(modelGroup.object);
+        dispatch(actions.updateState(modelState));
+        dispatch(actions.recordSnapshot());
+        dispatch(actions.destroyGcodeLine());
+        dispatch(actions.displayModel());
+    },
+
+    mergeSelected: () => (dispatch, getState) => {
+        const { modelGroup } = getState().printing;
+        const modelState = modelGroup.mergeSelected();
         dispatch(actions.updateState(modelState));
         dispatch(actions.recordSnapshot());
         dispatch(actions.destroyGcodeLine());

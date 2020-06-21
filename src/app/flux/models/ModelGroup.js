@@ -2,6 +2,7 @@
 import { Vector3, Group } from 'three';
 // import { EPSILON } from '../../constants';
 import Model from './Model';
+import Selection from './Selection';
 
 const EVENTS = {
     UPDATE: { type: 'update' }
@@ -14,10 +15,11 @@ class ModelGroup {
         this.object = new Group();
 
         this.models = [];
+        this.selection = new Selection();
+        this.object.userData.selection = this.selection;
 
         this.selectedModel = null;
         this.estimatedTime = 0;
-        this.isStick = true;
         this.candidatePoints = null;
         this.onSelectedModelTransformChanged = null;
 
@@ -37,7 +39,7 @@ class ModelGroup {
     };
 
     _getState(model) {
-        const { headerType, sourceType, mode, modelID, transformation, boundingBox, originalName, extruder, isStick } = model;
+        const { headerType, sourceType, mode, modelID, transformation, boundingBox, originalName, extruder } = model;
         return {
             headerType: headerType,
             sourceType: sourceType,
@@ -51,14 +53,15 @@ class ModelGroup {
             hasModel: this._hasModel(),
             isAnyModelOverstepped: this._checkAnyModelOverstepped(),
             extruder: extruder,
-            isStick: isStick
+            isStick: this.selection.getIsStick(),
+            selectedCount: this.selection.selecteds.length
         };
     }
 
     addModel(model) {
         if (model) {
-            this.selectedModel = model;
-            this.selectedModel.computeBoundingBox();
+            // this.selectedModel = model;
+            model.computeBoundingBox();
             model.meshObject.position.x = 0;
             model.meshObject.position.y = 0;
             model.meshObject.position.z = 0;
@@ -92,28 +95,6 @@ class ModelGroup {
         return null;
     }
 
-    // model.transformation.positionZ !== model.meshObject3D.position.z
-    bringSelectedModelToFront() {
-        const margin = 0.01;
-        const sorted = this.getSortedModelsByPositionZ();
-        for (let i = 0; i < sorted.length; i++) {
-            sorted[i].meshObject.position.z = (i + 1) * margin;
-        }
-        const selected = this.getSelectedModel();
-        selected.meshObject.position.z = (sorted.length + 2) * margin;
-    }
-
-    // keep the origin order
-    sendSelectedModelToBack() {
-        const margin = 0.01;
-        const sorted = this.getSortedModelsByPositionZ();
-        for (let i = 0; i < sorted.length; i++) {
-            sorted[i].meshObject.position.z = (i + 1) * margin;
-        }
-        const selected = this.getSelectedModel();
-        selected.meshObject.position.z = 0;
-    }
-
     getSortedModelsByPositionZ() {
         // bubble sort
         const sorted = this.getModels();
@@ -128,97 +109,6 @@ class ModelGroup {
             }
         }
         return sorted;
-    }
-
-    arrangeAllModels2D() {
-        const generateCandidatePoints = (minX, minY, maxX, maxY, step) => {
-            const computeDis = (point) => {
-                return point.x * point.x + point.y * point.y;
-            };
-
-            const quickSort = (origArray) => {
-                if (origArray.length <= 1) {
-                    return origArray;
-                } else {
-                    const left = [];
-                    const right = [];
-                    const newArray = [];
-                    const pivot = origArray.pop();
-                    const length = origArray.length;
-                    for (let i = 0; i < length; i++) {
-                        if (computeDis(origArray[i]) <= computeDis(pivot)) {
-                            left.push(origArray[i]);
-                        } else {
-                            right.push(origArray[i]);
-                        }
-                    }
-                    return newArray.concat(quickSort(left), pivot, quickSort(right));
-                }
-            };
-
-            const points = [];
-            for (let i = 0; i <= (maxX - minX) / step; i++) {
-                for (let j = 0; j <= (maxY - minY) / step; j++) {
-                    points.push(
-                        {
-                            x: minX + step * i,
-                            y: minY + step * j
-                        }
-                    );
-                }
-            }
-
-            return quickSort(points);
-        };
-
-        const setSuitablePosition = (modelGroup, newModel, candidatePoints) => {
-            // if (modelGroup.children.length === 0) {
-            if (modelGroup.models.length === 0) {
-                newModel.meshObject.position.x = 0;
-                newModel.meshObject.position.y = 0;
-                newModel.transformation.positionX = 0;
-                newModel.transformation.positionY = 0;
-                return;
-            }
-
-            /**
-             * check whether the model.bbox intersects the bbox of modelGroup.children
-             */
-            const intersect = (model) => {
-                for (const m of modelGroup.models) {
-                    if (model.boundingBox.intersectsBox(m.boundingBox)) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            for (const p of candidatePoints) {
-                newModel.meshObject.position.x = p.x;
-                newModel.meshObject.position.y = p.y;
-                newModel.transformation.positionX = p.x;
-                newModel.transformation.positionY = p.y;
-                newModel.computeBoundingBox();
-                if (!intersect(newModel, modelGroup)) {
-                    return;
-                }
-            }
-        };
-        if (!this.candidatePoints) {
-            // TODO: replace with real machine size
-            this.candidatePoints = generateCandidatePoints(-200, -200, 200, 200, 5);
-        }
-        const models = this.getModels();
-        for (const model of models) {
-            model.computeBoundingBox();
-            this.object.remove(model.meshObject);
-        }
-        this.models.splice(0);
-        for (const model of models) {
-            setSuitablePosition(this, model, this.candidatePoints);
-            this.models.push(model);
-            this.object.add(model.meshObject);
-        }
-        this.onSelectedModelTransformChanged && this.onSelectedModelTransformChanged();
     }
 
     setConvexGeometry(uploadName, convexGeometry) {
@@ -287,10 +177,21 @@ class ModelGroup {
         return null;
     }
 
-    selectModel(modelMeshObject) {
+    selectModel(modelMeshObject, shiftDown) {
         if (modelMeshObject) {
             const model = this.models.find(d => d.meshObject === modelMeshObject);
             this.selectedModel = model;
+            if (shiftDown) {
+                if (this.selection.check(model)) {
+                    this.selection.unSelect(model);
+                } else {
+                    this.selection.select(model);
+                }
+            } else {
+                this.selection.unSelectAll();
+                this.selection.select(model);
+            }
+            this.selection.calTransformation();
             if (model.estimatedTime) {
                 this.estimatedTime = model.estimatedTime;
             }
@@ -301,6 +202,7 @@ class ModelGroup {
     }
 
     unselectAllModels() {
+        this.selection.unSelectAll();
         this.selectedModel = null;
         return this._emptyState;
     }
@@ -367,25 +269,11 @@ class ModelGroup {
         return this.selectedModel;
     }
 
-    getSelectedModelTaskInfo() {
-        if (this.selectedModel) {
-            return this.selectedModel.getTaskInfo();
-        }
-        return null;
-    }
-
     generateModel(modelInfo) {
         const model = new Model(modelInfo);
         model.meshObject.addEventListener('update', this.onModelUpdate);
-        model.generateModelObject3D();
         this.addModel(model);
         return this._getState(model);
-    }
-
-    updateSelectedSource(source) {
-        if (this.selectedModel) {
-            this.selectedModel.updateSource(source);
-        }
     }
 
 
@@ -416,10 +304,14 @@ class ModelGroup {
     }
 
     updateSelectedModelTransformation(transformation) {
-        if (this.selectedModel) {
-            this.selectedModel.updateTransformation(transformation);
+        if (this.selection.selecteds.length) {
+            this.selection.updateTransformation(transformation);
             return this._getState(this.selectedModel);
         }
+        // if (this.selectedModel) {
+        //     this.selectedModel.updateTransformation(transformation);
+        //     return this._getState(this.selectedModel);
+        // }
         return null;
     }
 
@@ -431,26 +323,10 @@ class ModelGroup {
         }
 
         if (selected.sourceType === '3d') {
-            selected.stickToPlate();
+            this.selection.stickToPlate();
         }
         selected.computeBoundingBox();
         return this._getState(selected);
-    }
-
-    showAllModelsObj3D() {
-        for (const model of this.models) {
-            model && model.modelObject3D && (model.modelObject3D.visible = true);
-        }
-    }
-
-    showModelObj3D(modelID) {
-        const model = this.getModel(modelID);
-        model && model.modelObject3D && (model.modelObject3D.visible = true);
-    }
-
-    hideModelObj3D(modelID) {
-        const model = this.getModel(modelID);
-        model && model.modelObject3D && (model.modelObject3D.visible = false);
     }
 
     _computeAvailableXZ(model) {
@@ -521,23 +397,7 @@ class ModelGroup {
     getAllBoundingBox() {
         const boundingBox = { max: { x: null, y: null, z: null }, min: { x: null, y: null, z: null } };
         for (const model of this.models) {
-            let modelBoundingBox;
-            if (model.headerType === '3dp') {
-                modelBoundingBox = model.boundingBox;
-            } else {
-                modelBoundingBox = {
-                    max: {
-                        x: model.transformation.positionX + model.transformation.width / 2,
-                        y: model.transformation.positionY + model.transformation.height / 2,
-                        z: 0
-                    },
-                    min: {
-                        x: model.transformation.positionX - model.transformation.width / 2,
-                        y: model.transformation.positionY - model.transformation.height / 2,
-                        z: 0
-                    }
-                };
-            }
+            const modelBoundingBox = model.boundingBox;
             boundingBox.max.x = boundingBox.max.x ? Math.max(boundingBox.max.x, modelBoundingBox.max.x) : modelBoundingBox.max.x;
             boundingBox.max.y = boundingBox.max.y ? Math.max(boundingBox.max.y, modelBoundingBox.max.y) : modelBoundingBox.max.y;
             boundingBox.max.z = boundingBox.max.z ? Math.max(boundingBox.max.z, modelBoundingBox.max.z) : modelBoundingBox.max.z;
@@ -610,6 +470,16 @@ class ModelGroup {
 
     cloneModels() {
         return this.models.map(d => d.clone());
+    }
+
+    // groupSelected() {
+    //     const group = new Group();
+    // }
+
+    mergeSelected() {
+        this.selection.mergeSelected();
+        // console.log(mesh);
+        // this.object.add(mesh);
     }
 }
 

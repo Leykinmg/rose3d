@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import Slider from 'rc-slider';
+// import Slider from 'rc-slider';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -27,9 +27,11 @@ class VisualizerModelTransformation extends PureComponent {
         uploadModel: PropTypes.func.isRequired,
         extruder: PropTypes.string,
         isStick: PropTypes.bool,
+        selectedCount: PropTypes.number,
         transformation: PropTypes.shape({
             positionX: PropTypes.number,
             positionZ: PropTypes.number,
+            positionY: PropTypes.number,
             rotationX: PropTypes.number,
             rotationY: PropTypes.number,
             rotationZ: PropTypes.number,
@@ -65,16 +67,20 @@ class VisualizerModelTransformation extends PureComponent {
             }
         },
         onModelTransform: (type, value) => {
-            const { size } = this.props;
+            // const { size } = this.props;
             const transformation = {};
             switch (type) {
                 case 'moveX':
-                    value = Math.min(Math.max(value, -size.x / 2), size.x / 2);
+                    // value = Math.min(Math.max(value, -size.x / 2), size.x / 2);
                     transformation.positionX = value;
                     break;
                 case 'moveZ':
-                    value = Math.min(Math.max(value, -size.z / 2), size.z / 2);
+                    // value = Math.min(Math.max(value, -size.z / 2), size.z / 2);
                     transformation.positionZ = value;
+                    break;
+                case 'moveY':
+                    // value = Math.min(Math.max(value, -size.z / 2), size.z / 2);
+                    transformation.positionY = value;
                     break;
                 case 'scaleX':
                     transformation.scaleX = value;
@@ -124,11 +130,12 @@ class VisualizerModelTransformation extends PureComponent {
     render() {
         const actions = this.actions;
         // eslint-disable-next-line no-unused-vars
-        const { size, selectedModelID, hasModel, transformMode, extruder, isStick } = this.props;
-        const { positionX, positionZ, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ } = this.props.transformation;
-        const disabled = !(selectedModelID && hasModel);
-        const moveX = Number(toFixed(positionX, 1));
-        const moveZ = Number(toFixed(positionZ, 1));
+        const { size, selectedModelID, hasModel, transformMode, extruder, isStick, selectedCount } = this.props;
+        const { positionX, positionZ, positionY, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ } = this.props.transformation;
+        const disabled = !(selectedCount && selectedModelID && hasModel);
+        const moveX = Number(toFixed(positionX, 4));
+        const moveZ = Number(toFixed(positionZ, 4));
+        const moveY = Number(toFixed(positionY, 4));
         const scaleXPercent = Number(toFixed((scaleX * 100), 1));
         const scaleYPercent = Number(toFixed((scaleY * 100), 1));
         const scaleZPercent = Number(toFixed((scaleZ * 100), 1));
@@ -208,6 +215,7 @@ class VisualizerModelTransformation extends PureComponent {
                         value="0"
                         control={(
                             <Radio
+                                disabled={disabled}
                                 checked={this.state.extruder === '0'}
                                 onChange={() => {
                                     actions.setModelextruder('0');
@@ -223,8 +231,10 @@ class VisualizerModelTransformation extends PureComponent {
                         value="1"
                         control={(
                             <Radio
+                                disabled={disabled}
                                 checked={this.state.extruder === '1'}
                                 onChange={() => {
+                                    console.log('?');
                                     actions.setModelextruder('1');
                                     actions.onModelAfterTransform();
                                 }}
@@ -258,8 +268,6 @@ class VisualizerModelTransformation extends PureComponent {
                             <span className={classNames(styles['axis-label'], styles['axis-red'])}>X</span>
                             <span className={styles['axis-input-1']}>
                                 <Input
-                                    min={-size.x / 2}
-                                    max={size.x / 2}
                                     value={moveX}
                                     onChange={(value) => {
                                         actions.onModelTransform('moveX', value);
@@ -268,34 +276,11 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-1']}>mm</span>
-                            <span className={styles['axis-slider']}>
-                                <Slider
-                                    handleStyle={{
-                                        borderColor: 'white',
-                                        backgroundColor: '#e83100'
-                                    }}
-                                    trackStyle={{
-                                        backgroundColor: '#e9e9e9'
-                                    }}
-                                    value={moveX}
-                                    min={-size.x / 2}
-                                    max={size.x / 2}
-                                    step={0.1}
-                                    onChange={(value) => {
-                                        actions.onModelTransform('moveX', value);
-                                    }}
-                                    onAfterChange={() => {
-                                        actions.onModelAfterTransform();
-                                    }}
-                                />
-                            </span>
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-green'])}>Y</span>
                             <span className={styles['axis-input-1']}>
                                 <Input
-                                    min={-size.y / 2}
-                                    max={size.y / 2}
                                     value={moveZ}
                                     onChange={(value) => {
                                         actions.onModelTransform('moveZ', value);
@@ -304,27 +289,19 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-1']}>mm</span>
-                            <span className={styles['axis-slider']}>
-                                <Slider
-                                    handleStyle={{
-                                        borderColor: 'white',
-                                        backgroundColor: '#22ac38'
-                                    }}
-                                    trackStyle={{
-                                        backgroundColor: '#e9e9e9'
-                                    }}
-                                    value={moveZ}
-                                    min={-size.y / 2}
-                                    max={size.y / 2}
-                                    step={0.1}
+                        </div>
+                        <div className={styles.axis}>
+                            <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Z</span>
+                            <span className={styles['axis-input-1']}>
+                                <Input
+                                    value={moveY}
                                     onChange={(value) => {
-                                        actions.onModelTransform('moveZ', value);
-                                    }}
-                                    onAfterChange={() => {
+                                        actions.onModelTransform('moveY', value);
                                         actions.onModelAfterTransform();
                                     }}
                                 />
                             </span>
+                            <span className={styles['axis-unit-1']}>mm</span>
                         </div>
                     </div>
                 )}
@@ -345,7 +322,7 @@ class VisualizerModelTransformation extends PureComponent {
                             <span className={styles['axis-unit-2']}>%</span>
                         </div>
                         <div className={styles.axis}>
-                            <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Y</span>
+                            <span className={classNames(styles['axis-label'], styles['axis-green'])}>Y</span>
                             <span className={styles['axis-input-1']}>
                                 <Input
                                     min={0}
@@ -359,7 +336,7 @@ class VisualizerModelTransformation extends PureComponent {
                             <span className={styles['axis-unit-2']}>%</span>
                         </div>
                         <div className={styles.axis}>
-                            <span className={classNames(styles['axis-label'], styles['axis-green'])}>Z</span>
+                            <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Z</span>
                             <span className={styles['axis-input-1']}>
                                 <Input
                                     min={0}
@@ -390,27 +367,27 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-3']}>°</span>
-                            <span className={styles['axis-slider']}>
-                                <Slider
-                                    handleStyle={{
-                                        borderColor: 'white',
-                                        backgroundColor: '#e83100'
-                                    }}
-                                    trackStyle={{
-                                        backgroundColor: '#e9e9e9'
-                                    }}
-                                    value={rotateX}
-                                    min={-180}
-                                    max={180}
-                                    step={0.1}
-                                    onChange={(degree) => {
-                                        actions.onModelTransform('rotateX', THREE.Math.degToRad(degree));
-                                    }}
-                                    onAfterChange={() => {
-                                        actions.onModelAfterTransform();
-                                    }}
-                                />
-                            </span>
+                            {/*<span className={styles['axis-slider']}>*/}
+                            {/*    <Slider*/}
+                            {/*        handleStyle={{*/}
+                            {/*            borderColor: 'white',*/}
+                            {/*            backgroundColor: '#e83100'*/}
+                            {/*        }}*/}
+                            {/*        trackStyle={{*/}
+                            {/*            backgroundColor: '#e9e9e9'*/}
+                            {/*        }}*/}
+                            {/*        value={rotateX}*/}
+                            {/*        min={-180}*/}
+                            {/*        max={180}*/}
+                            {/*        step={0.1}*/}
+                            {/*        onChange={(degree) => {*/}
+                            {/*            actions.onModelTransform('rotateX', THREE.Math.degToRad(degree));*/}
+                            {/*        }}*/}
+                            {/*        onAfterChange={() => {*/}
+                            {/*            actions.onModelAfterTransform();*/}
+                            {/*        }}*/}
+                            {/*    />*/}
+                            {/*</span>*/}
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-green'])}>Y</span>
@@ -426,27 +403,27 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-3']}>°</span>
-                            <span className={styles['axis-slider']}>
-                                <Slider
-                                    handleStyle={{
-                                        borderColor: 'white',
-                                        backgroundColor: '#22ac38'
-                                    }}
-                                    trackStyle={{
-                                        backgroundColor: '#e9e9e9'
-                                    }}
-                                    value={rotateZ}
-                                    min={-180}
-                                    max={180}
-                                    step={0.1}
-                                    onChange={(degree) => {
-                                        actions.onModelTransform('rotateZ', THREE.Math.degToRad(degree));
-                                    }}
-                                    onAfterChange={() => {
-                                        actions.onModelAfterTransform();
-                                    }}
-                                />
-                            </span>
+                            {/*<span className={styles['axis-slider']}>*/}
+                            {/*    <Slider*/}
+                            {/*        handleStyle={{*/}
+                            {/*            borderColor: 'white',*/}
+                            {/*            backgroundColor: '#22ac38'*/}
+                            {/*        }}*/}
+                            {/*        trackStyle={{*/}
+                            {/*            backgroundColor: '#e9e9e9'*/}
+                            {/*        }}*/}
+                            {/*        value={rotateZ}*/}
+                            {/*        min={-180}*/}
+                            {/*        max={180}*/}
+                            {/*        step={0.1}*/}
+                            {/*        onChange={(degree) => {*/}
+                            {/*            actions.onModelTransform('rotateZ', THREE.Math.degToRad(degree));*/}
+                            {/*        }}*/}
+                            {/*        onAfterChange={() => {*/}
+                            {/*            actions.onModelAfterTransform();*/}
+                            {/*        }}*/}
+                            {/*    />*/}
+                            {/*</span>*/}
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Z</span>
@@ -462,27 +439,27 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-3']}>°</span>
-                            <span className={styles['axis-slider']}>
-                                <Slider
-                                    handleStyle={{
-                                        borderColor: 'white',
-                                        backgroundColor: '#00b7ee'
-                                    }}
-                                    trackStyle={{
-                                        backgroundColor: '#e9e9e9'
-                                    }}
-                                    value={rotateY}
-                                    min={-180}
-                                    max={180}
-                                    step={0.1}
-                                    onChange={(degree) => {
-                                        actions.onModelTransform('rotateY', THREE.Math.degToRad(degree));
-                                    }}
-                                    onAfterChange={() => {
-                                        actions.onModelAfterTransform();
-                                    }}
-                                />
-                            </span>
+                            {/*<span className={styles['axis-slider']}>*/}
+                            {/*    <Slider*/}
+                            {/*        handleStyle={{*/}
+                            {/*            borderColor: 'white',*/}
+                            {/*            backgroundColor: '#00b7ee'*/}
+                            {/*        }}*/}
+                            {/*        trackStyle={{*/}
+                            {/*            backgroundColor: '#e9e9e9'*/}
+                            {/*        }}*/}
+                            {/*        value={rotateY}*/}
+                            {/*        min={-180}*/}
+                            {/*        max={180}*/}
+                            {/*        step={0.1}*/}
+                            {/*        onChange={(degree) => {*/}
+                            {/*            actions.onModelTransform('rotateY', THREE.Math.degToRad(degree));*/}
+                            {/*        }}*/}
+                            {/*        onAfterChange={() => {*/}
+                            {/*            actions.onModelAfterTransform();*/}
+                            {/*        }}*/}
+                            {/*    />*/}
+                            {/*</span>*/}
                         </div>
                         <div className={styles.axis}>
                             <Anchor
@@ -512,7 +489,8 @@ const mapStateToProps = (state) => {
         transformMode,
         transformation,
         extruder,
-        isStick
+        isStick,
+        selectedCount
     } = printing;
 
     return {
@@ -522,7 +500,8 @@ const mapStateToProps = (state) => {
         transformMode,
         transformation,
         extruder,
-        isStick
+        isStick,
+        selectedCount
     };
 };
 

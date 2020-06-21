@@ -29,7 +29,6 @@ class Canvas extends Component {
         modelGroup: PropTypes.object.isRequired,
         printableArea: PropTypes.object.isRequired,
         transformSourceType: PropTypes.string, // 2D, 3D. Default is 3D
-        toolPathModelGroup: PropTypes.object,
         gcodeLineGroup: PropTypes.object,
         cameraInitialPosition: PropTypes.object.isRequired,
         // callback
@@ -58,7 +57,6 @@ class Canvas extends Component {
         this.printableArea = this.props.printableArea;
         this.modelGroup = this.props.modelGroup;
         this.transformSourceType = this.props.transformSourceType || '3D';
-        this.toolPathModelGroup = this.props.toolPathModelGroup;
         this.gcodeLineGroup = this.props.gcodeLineGroup;
         this.cameraInitialPosition = this.props.cameraInitialPosition;
 
@@ -90,7 +88,6 @@ class Canvas extends Component {
 
         this.group.add(this.modelGroup);
 
-        this.toolPathModelGroup && this.group.add(this.toolPathModelGroup);
         this.gcodeLineGroup && this.group.add(this.gcodeLineGroup);
         this.backgroundGroup && this.group.add(this.backgroundGroup);
 
@@ -149,6 +146,7 @@ class Canvas extends Component {
 
         this.controls.setTarget(this.initialTarget);
         this.controls.setSelectableObjects(this.modelGroup.children);
+        this.controls.setSelection(this.modelGroup.userData.selection);
 
 
         this.controls.on(EVENTS.UPDATE, () => {
@@ -159,8 +157,8 @@ class Canvas extends Component {
                 this.props.showContextMenu(e);
             }
         });
-        this.controls.on(EVENTS.SELECT_OBJECT, (object) => {
-            this.onSelectModel(object);
+        this.controls.on(EVENTS.SELECT_OBJECT, (object, shiftDown) => {
+            this.onSelectModel(object, shiftDown);
         });
         this.controls.on(EVENTS.UNSELECT_OBJECT, () => {
             this.onUnselectAllModels();
