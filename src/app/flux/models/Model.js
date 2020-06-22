@@ -30,7 +30,7 @@ const DEFAULT_TRANSFORMATION = {
 // class Model extends THREE.Mesh {
 class Model {
     constructor(modelInfo) {
-        const { limitSize, headerType, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material,
+        const { limitSize, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material, center,
             transformation } = modelInfo;
         this.limitSize = limitSize;
 
@@ -38,12 +38,14 @@ class Model {
 
         this.modelID = uuid.v4();
 
-        this.headerType = headerType;
         this.sourceType = sourceType; // 3d, raster, svg, text
         this.sourceHeight = sourceHeight;
         this.sourceWidth = sourceWidth;
         this.originalName = originalName;
+        console.log(modelInfo);
         this.uploadName = uploadName;
+        this.center = new THREE.Vector3(center.x, center.y, center.z);
+
         this.mode = mode;
 
         this.transformation = {
@@ -55,6 +57,7 @@ class Model {
             this.transformation.width = width;
             this.transformation.height = height;
         }
+        console.log(this.transformation);
 
         this.estimatedTime = 0;
 
@@ -63,7 +66,7 @@ class Model {
         this.convexGeometry = null;
         this.extruder = '0';
         this.material = materialNormal;
-        this.isStick = true;
+        this.isStick = false;
 
         this.positionStart = new THREE.Vector3();
         this.quaternionStart = new THREE.Quaternion();
@@ -210,9 +213,6 @@ class Model {
     }
 
     stickToPlate() {
-        if (this.sourceType !== '3d') {
-            return;
-        }
         if (!this.isStick) {
             return;
         }
@@ -279,9 +279,6 @@ class Model {
     }
 
     layFlat() {
-        if (this.sourceType !== '3d') {
-            return;
-        }
         const positionX = this.meshObject.position.x;
         const positionZ = this.meshObject.position.z;
         if (!this.convexGeometry) {

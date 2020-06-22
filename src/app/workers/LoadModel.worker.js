@@ -16,13 +16,14 @@ onmessage = (e) => {
             geometry.computeBoundingBox();
             const box3 = geometry.boundingBox;
             const x = -(box3.max.x + box3.min.x) / 2;
-            const y = -(box3.max.y + box3.min.y) / 2;
+            const y = -box3.min.y;
             const z = -(box3.max.z + box3.min.z) / 2;
+            const center = new THREE.Vector3((box3.max.x + box3.min.x) / 2, box3.min.y, (box3.max.z + box3.min.z) / 2);
             geometry.translate(x, y, z);
 
             // Send positions back to caller
             const positions = geometry.getAttribute('position').array;
-            postMessage({ type: 'LOAD_MODEL_POSITIONS', positions });
+            postMessage({ type: 'LOAD_MODEL_POSITIONS', positions, center: center });
 
             // Calculate convex of model
             const vertices = [];

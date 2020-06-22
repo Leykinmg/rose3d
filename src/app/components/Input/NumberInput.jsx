@@ -33,7 +33,8 @@ class NumberInput extends PureComponent {
         };
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase,react/sort-comp
+    UNSAFE_componentWillReceiveProps(nextProps) {
         // If any of .min, .max changed, call .onAfterChangeWrapper once again
         // to check if value is valid.
         const checkKeys = ['min', 'max'];

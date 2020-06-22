@@ -134,7 +134,8 @@ class GCode extends PureComponent {
         this.addControllerEvents();
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase,react/sort-comp
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.boundingBox !== this.props.boundingBox) {
             if (nextProps.boundingBox === null) {
                 this.setState({

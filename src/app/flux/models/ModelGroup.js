@@ -39,9 +39,8 @@ class ModelGroup {
     };
 
     _getState(model) {
-        const { headerType, sourceType, mode, modelID, transformation, boundingBox, originalName, extruder } = model;
+        const { sourceType, mode, modelID, transformation, boundingBox, originalName, extruder } = model;
         return {
-            headerType: headerType,
             sourceType: sourceType,
             originalName: originalName,
             mode: mode,
@@ -65,12 +64,10 @@ class ModelGroup {
             model.meshObject.position.x = 0;
             model.meshObject.position.y = 0;
             model.meshObject.position.z = 0;
-            if (model.sourceType === '3d') {
-                model.stickToPlate();
-                const xz = this._computeAvailableXZ(model);
-                model.meshObject.position.x = xz.x;
-                model.meshObject.position.z = xz.z;
-            }
+            model.stickToPlate();
+            const xz = this._computeAvailableXZ(model);
+            model.meshObject.position.x = xz.x;
+            model.meshObject.position.z = xz.z;
 
             this.models.push(model);
             this.object.add(model.meshObject);
@@ -322,9 +319,8 @@ class ModelGroup {
             return null;
         }
 
-        if (selected.sourceType === '3d') {
-            this.selection.stickToPlate();
-        }
+        this.selection.stickToPlate();
+
         selected.computeBoundingBox();
         return this._getState(selected);
     }
@@ -411,11 +407,9 @@ class ModelGroup {
     _checkAnyModelOverstepped() {
         let isAnyModelOverstepped = false;
         for (const model of this.getModels()) {
-            if (model.sourceType === '3d') {
-                const overstepped = this._checkOverstepped(model);
-                model.setOverstepped(overstepped);
-                isAnyModelOverstepped = (isAnyModelOverstepped || overstepped);
-            }
+            const overstepped = this._checkOverstepped(model);
+            model.setOverstepped(overstepped);
+            isAnyModelOverstepped = (isAnyModelOverstepped || overstepped);
         }
         return isAnyModelOverstepped;
     }
@@ -477,7 +471,7 @@ class ModelGroup {
     // }
 
     mergeSelected() {
-        this.selection.mergeSelected();
+        this.object.add(this.selection.mergeSelected());
         // console.log(mesh);
         // this.object.add(mesh);
     }

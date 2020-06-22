@@ -47,7 +47,8 @@ class MarlinWidget extends PureComponent {
         this.actions.setTitle(headType);
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { isConnected, headType } = nextProps;
         if (isConnected && !this.props.isConnected) {
             this.props.setDisplay(true);

@@ -520,7 +520,6 @@ export const actions = {
         const uploadPath = `${DATA_PREFIX}/${uploadName}`;
 
         const { size } = getState().machine;
-        const headerType = '3dp';
         const sourceType = '3d';
         const mode = '3d';
         const width = 0;
@@ -537,7 +536,7 @@ export const actions = {
             const { type } = data;
             switch (type) {
                 case 'LOAD_MODEL_POSITIONS': {
-                    const { positions } = data;
+                    const { positions, center } = data;
 
                     const bufferGeometry = new THREE.BufferGeometry();
                     const modelPositionAttribute = new THREE.BufferAttribute(positions, 3);
@@ -550,7 +549,6 @@ export const actions = {
 
                     const modelState = modelGroup.generateModel({
                         limitSize: size,
-                        headerType,
                         sourceType,
                         originalName,
                         uploadName,
@@ -559,9 +557,9 @@ export const actions = {
                         sourceHeight: height,
                         geometry: bufferGeometry,
                         material: material,
-                        transformation: {}
+                        transformation: {},
+                        center
                     });
-
                     dispatch(actions.updateState(modelState));
                     dispatch(actions.displayModel());
                     dispatch(actions.destroyGcodeLine());

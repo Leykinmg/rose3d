@@ -24,6 +24,7 @@ class Console extends PureComponent {
         port: PropTypes.string.isRequired,
         server: PropTypes.object.isRequired,
         isConnected: PropTypes.bool.isRequired,
+        // eslint-disable-next-line react/no-unused-prop-types
         connectionType: PropTypes.string.isRequired,
         executeGcode: PropTypes.func.isRequired
     };
@@ -210,7 +211,8 @@ class Console extends PureComponent {
         this.subscribe();
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase,react/sort-comp
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.isConnected && (this.props.isConnected !== nextProps.isConnected
             || nextProps.port !== this.props.port
             || nextProps.server !== this.props.server)) {

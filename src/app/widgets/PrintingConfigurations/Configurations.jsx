@@ -311,7 +311,8 @@ class Configurations extends PureComponent {
         this.props.setTitle(i18n._('Printing Settings'));
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.qualityDefinitions !== this.props.qualityDefinitions) {
             const newState = {};
 

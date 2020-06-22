@@ -13,21 +13,6 @@ const sizeModelByMachineSize = (size, width, height) => {
     return { width: width_, height: height_ };
 };
 
-const checkParams = (headerType, sourceType, mode) => {
-    if (headerType !== 'laser' && headerType !== 'cnc' && headerType !== '3dp') {
-        return false;
-    }
-    if (!['3d', 'raster', 'svg', 'text'].includes(sourceType)) {
-        return false;
-    }
-    if (!['bw', 'greyscale', 'vector', 'trace'].includes(mode)) {
-        return false;
-    }
-    return true;
-};
-
-
 export {
-    sizeModelByMachineSize,
-    checkParams
+    sizeModelByMachineSize
 };

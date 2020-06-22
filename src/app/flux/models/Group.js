@@ -30,7 +30,7 @@ const DEFAULT_TRANSFORMATION = {
 // class Model extends THREE.Mesh {
 class Group {
     constructor(modelInfo) {
-        const { limitSize, headerType, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material,
+        const { limitSize, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material,
             transformation } = modelInfo;
         this.limitSize = limitSize;
 
@@ -38,7 +38,6 @@ class Group {
 
         this.modelID = uuid.v4();
 
-        this.headerType = headerType;
         this.sourceType = sourceType; // 3d, raster, svg, text
         this.sourceHeight = sourceHeight;
         this.sourceWidth = sourceWidth;

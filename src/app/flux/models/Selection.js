@@ -145,12 +145,18 @@ class Selection {
     mergeSelected() {
         // const bufferGeometry = new THREE.Geometry();
         // const material = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, emissive: 0xffff10, emissiveIntensity: 0.5 });
-
+        const offset = new THREE.Vector3(0, 0, 0);
+        const group = new THREE.Group();
         for (const model of this.selecteds) {
-            // bufferGeometry.merge(new THREE.Geometry().fromBufferGeometry(model.meshObject.geometry.clone()));
-            model.isStick = false;
-            model.meshObject.position.copy(new THREE.Vector3(0, 0, 0));
+            offset.add(model.center);
         }
+        offset.divideScalar(this.selecteds.length);
+        for (const model of this.selecteds) {
+            model.isStick = false;
+            model.meshObject.position.copy(new THREE.Vector3().copy(model.center.clone().sub(offset.clone())));
+            group.add(model.meshObject);
+        }
+        return group;
         // return new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(bufferGeometry), material);
     }
 }

@@ -29,7 +29,8 @@ class ShuttleSettings extends Component {
         return { feedrateMin, feedrateMax, hertz, overshoot };
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase,react/sort-comp
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const {
             feedrateMin,
             feedrateMax,

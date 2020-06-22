@@ -157,7 +157,8 @@ class Material extends PureComponent {
         this.props.setTitle(i18n._('Material'));
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.materialDefinitions !== this.props.materialDefinitions) {
             const newState = {};
             if (this.props.materialDefinitions.length === 0) {

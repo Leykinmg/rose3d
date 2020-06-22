@@ -92,7 +92,8 @@ class VisualizerPreviewControl extends PureComponent {
         );
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.displayedType !== this.props.displayedType) {
             this.setState({
                 showPreviewPanel: nextProps.displayedType === 'gcode',

@@ -127,6 +127,21 @@ class VisualizerModelTransformation extends PureComponent {
         extruder: '0'
     }
 
+    // eslint-disable-next-line camelcase
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        if (nextProps.isStick !== this.props.isStick) {
+            this.setState({
+                isStick: nextProps.isStick
+            });
+        }
+
+        if (nextProps.extruder !== this.props.extruder) {
+            this.setState({
+                extruder: nextProps.extruder
+            });
+        }
+    }
+
     render() {
         const actions = this.actions;
         // eslint-disable-next-line no-unused-vars
@@ -142,8 +157,6 @@ class VisualizerModelTransformation extends PureComponent {
         const rotateX = Number(toFixed(THREE.Math.radToDeg(rotationX), 1));
         const rotateY = Number(toFixed(THREE.Math.radToDeg(rotationY), 1));
         const rotateZ = Number(toFixed(THREE.Math.radToDeg(rotationZ), 1));
-        // eslint-disable-next-line react/no-unused-state
-        this.setState({ isStick: isStick, extruder: extruder });
         return (
             <React.Fragment>
                 <div className={classNames(styles['model-transformation__open'])}>
@@ -367,7 +380,7 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-3']}>°</span>
-                            {/*<span className={styles['axis-slider']}>*/}
+                            {/* <span className={styles['axis-slider']}>*/}
                             {/*    <Slider*/}
                             {/*        handleStyle={{*/}
                             {/*            borderColor: 'white',*/}
@@ -387,7 +400,7 @@ class VisualizerModelTransformation extends PureComponent {
                             {/*            actions.onModelAfterTransform();*/}
                             {/*        }}*/}
                             {/*    />*/}
-                            {/*</span>*/}
+                            {/* </span>*/}
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-green'])}>Y</span>
@@ -403,7 +416,7 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-3']}>°</span>
-                            {/*<span className={styles['axis-slider']}>*/}
+                            {/* <span className={styles['axis-slider']}>*/}
                             {/*    <Slider*/}
                             {/*        handleStyle={{*/}
                             {/*            borderColor: 'white',*/}
@@ -423,7 +436,7 @@ class VisualizerModelTransformation extends PureComponent {
                             {/*            actions.onModelAfterTransform();*/}
                             {/*        }}*/}
                             {/*    />*/}
-                            {/*</span>*/}
+                            {/* </span>*/}
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Z</span>
@@ -439,7 +452,7 @@ class VisualizerModelTransformation extends PureComponent {
                                 />
                             </span>
                             <span className={styles['axis-unit-3']}>°</span>
-                            {/*<span className={styles['axis-slider']}>*/}
+                            {/* <span className={styles['axis-slider']}>*/}
                             {/*    <Slider*/}
                             {/*        handleStyle={{*/}
                             {/*            borderColor: 'white',*/}
@@ -459,7 +472,7 @@ class VisualizerModelTransformation extends PureComponent {
                             {/*            actions.onModelAfterTransform();*/}
                             {/*        }}*/}
                             {/*    />*/}
-                            {/*</span>*/}
+                            {/* </span>*/}
                         </div>
                         <div className={styles.axis}>
                             <Anchor

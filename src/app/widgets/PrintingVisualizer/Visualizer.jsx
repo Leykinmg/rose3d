@@ -30,7 +30,7 @@ class Visualizer extends PureComponent {
         transformMode: PropTypes.string.isRequired,
         progress: PropTypes.number.isRequired,
         displayedType: PropTypes.string.isRequired,
-        selectedCount: PropTypes.number.isRequired,
+        selectedCount: PropTypes.number,
         renderingTimestamp: PropTypes.number.isRequired,
 
         selectModel: PropTypes.func.isRequired,
@@ -153,7 +153,8 @@ class Visualizer extends PureComponent {
         );
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase,react/sort-comp
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { size, transformMode, selectedModelID, renderingTimestamp } = nextProps;
         if (transformMode !== this.props.transformMode) {
             this.canvas.current.setTransformMode(transformMode);
@@ -333,7 +334,7 @@ class Visualizer extends PureComponent {
                             {
                                 type: 'item',
                                 label: i18n._('Merge Selected'),
-                                disabled: !hasModel || !isModelDisplayed || selectedCount < 2,
+                                disabled: !hasModel || !isModelDisplayed || !selectedCount || selectedCount < 2,
                                 onClick: this.actions.mergeSelected
                             }
                         ]

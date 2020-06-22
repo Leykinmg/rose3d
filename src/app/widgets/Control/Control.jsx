@@ -308,7 +308,8 @@ class Control extends PureComponent {
         this.addShuttleControlEvents();
     }
 
-    componentWillReceiveProps(nextProps) {
+    // eslint-disable-next-line camelcase,react/sort-comp
+    UNSAFE_componentWillReceiveProps(nextProps) {
         if (nextProps.workflowState !== this.props.workflowState) {
             const { keypadJogging, selectedAxis } = this.state;
 
