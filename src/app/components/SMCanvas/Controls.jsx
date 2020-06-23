@@ -83,10 +83,9 @@ class Controls extends EventEmitter {
 
     ray = new THREE.Raycaster();
 
-    constructor(sourceType, camera, group, domElement) {
+    constructor(camera, group, domElement) {
         super();
 
-        this.sourceType = sourceType;
         this.camera = camera;
         this.group = group;
         this.domElement = (domElement !== undefined) ? domElement : document;
@@ -208,8 +207,9 @@ class Controls extends EventEmitter {
                     const coord = this.getMouseCoord(event);
                     this.ray.setFromCamera(coord, this.camera);
 
-                    const intersect = this.ray.intersectObjects(this.selectableObjects, false)[0];
+                    const intersect = this.ray.intersectObjects(this.selectableObjects, true)[0];
                     if (intersect) {
+                        console.log(intersect);
                         this.selectedObject = intersect.object;
                         this.transformControl.attach(this.selectedObject);
                         this.emit(EVENTS.SELECT_OBJECT, this.selectedObject, this.shiftDown);

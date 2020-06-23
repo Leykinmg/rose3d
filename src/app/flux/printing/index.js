@@ -519,8 +519,6 @@ export const actions = {
         // const modelName = name;
         const uploadPath = `${DATA_PREFIX}/${uploadName}`;
 
-        const { size } = getState().machine;
-        const sourceType = '3d';
         const mode = '3d';
         const width = 0;
         const height = 0;
@@ -548,8 +546,6 @@ export const actions = {
                     // modelGroup.generateModel(modelInfo);
 
                     const modelState = modelGroup.generateModel({
-                        limitSize: size,
-                        sourceType,
                         originalName,
                         uploadName,
                         mode: mode,

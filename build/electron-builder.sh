@@ -13,10 +13,10 @@ if [ $# -le 1 ]; then
     exit 1
 fi
 
-if [[ ( $# == "--help") ||  $# == "-h" ]]; then
-    display_usage
-    exit 0
-fi
+#if [[ ( $# == "--help") ||  $# == "-h" ]]; then
+#    display_usage
+#    exit 0
+#fi
 
 pushd "$__dirname/../dist/rose3d"
 echo "Cleaning up \"`pwd`/node_modules\""

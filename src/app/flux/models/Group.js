@@ -1,18 +1,6 @@
 import uuid from 'uuid';
 import * as THREE from 'three';
-import { sizeModelByMachineSize } from './ModelInfoUtils';
 import ThreeUtils from '../../components/three-extensions/ThreeUtils';
-
-
-// const materialSelected = new THREE.MeshPhongMaterial({ color: 0xf0f0f0, specular: 0xb0b0b0, shininess: 30 });
-const materialNormal = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, emissive: 0xffff10, emissiveIntensity: 0.5 });
-const materialNormal2 = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, emissive: 0xffff10, emissiveIntensity: 0.3 });
-const materialOverstepped = new THREE.MeshPhongMaterial({
-    color: 0xff0000,
-    shininess: 30,
-    transparent: true,
-    opacity: 0.6
-});
 
 const DEFAULT_TRANSFORMATION = {
     positionX: 0,
@@ -30,38 +18,27 @@ const DEFAULT_TRANSFORMATION = {
 // class Model extends THREE.Mesh {
 class Group {
     constructor(modelInfo) {
-        const { limitSize, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material,
-            transformation } = modelInfo;
-        this.limitSize = limitSize;
-
-        this.meshObject = new THREE.Mesh(geometry, material);
+        const { mode, transformation } = modelInfo;
 
         this.modelID = uuid.v4();
+        this.meshObject = new THREE.Group();
+        this.models = [];
 
-        this.sourceType = sourceType; // 3d, raster, svg, text
-        this.sourceHeight = sourceHeight;
-        this.sourceWidth = sourceWidth;
-        this.originalName = originalName;
-        this.uploadName = uploadName;
+        this.originalName = 'group';
+        this.uploadName = 'group';
+
         this.mode = mode;
 
         this.transformation = {
             ...DEFAULT_TRANSFORMATION,
             ...transformation
         };
-        if (!this.transformation.width && !this.transformation.height) {
-            const { width, height } = sizeModelByMachineSize(limitSize, sourceWidth, sourceHeight);
-            this.transformation.width = width;
-            this.transformation.height = height;
-        }
 
-        this.estimatedTime = 0;
 
         this.boundingBox = null;
         this.overstepped = false;
         this.convexGeometry = null;
         this.extruder = '0';
-        this.material = materialNormal;
         this.isStick = true;
 
         this.positionStart = new THREE.Vector3();
@@ -70,7 +47,6 @@ class Group {
     }
 
     onTransform() {
-        const geometrySize = ThreeUtils.getGeometrySize(this.meshObject.geometry, true);
         const { position, rotation, scale } = this.meshObject;
         const transformation = {
             positionX: position.x,
@@ -82,8 +58,8 @@ class Group {
             scaleX: scale.x,
             scaleY: scale.y,
             scaleZ: scale.z,
-            width: geometrySize.x * scale.x,
-            height: geometrySize.y * scale.y
+            width: this.boundingBox.max.x - this.boundingBox.min.x,
+            height: this.boundingBox.max.y - this.boundingBox.min.y
         };
         this.transformation = {
             ...this.transformation,
@@ -209,9 +185,6 @@ class Group {
     }
 
     stickToPlate() {
-        if (this.sourceType !== '3d') {
-            return;
-        }
         if (!this.isStick) {
             return;
         }
@@ -264,7 +237,7 @@ class Group {
     }
 
     clone() {
-        const clone = new Group({
+        const clone = new Model({
             ...this,
             geometry: this.meshObject.geometry.clone(),
             material: this.meshObject.material.clone()
@@ -278,9 +251,6 @@ class Group {
     }
 
     layFlat() {
-        if (this.sourceType !== '3d') {
-            return;
-        }
         const positionX = this.meshObject.position.x;
         const positionZ = this.meshObject.position.z;
         if (!this.convexGeometry) {

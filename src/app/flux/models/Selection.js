@@ -24,7 +24,6 @@ class Selection {
             ...DEFAULT_TRANSFORMATION
         };
         this.center = new THREE.Vector3(0, 0, 0);
-        this.estimatedTime = 0;
 
         this.boundingBox = null;
         this.overstepped = false;

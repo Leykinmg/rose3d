@@ -16,9 +16,9 @@ onmessage = (e) => {
             geometry.computeBoundingBox();
             const box3 = geometry.boundingBox;
             const x = -(box3.max.x + box3.min.x) / 2;
-            const y = -box3.min.y;
+            const y = -(box3.max.y + box3.min.y) / 2;
             const z = -(box3.max.z + box3.min.z) / 2;
-            const center = new THREE.Vector3((box3.max.x + box3.min.x) / 2, box3.min.y, (box3.max.z + box3.min.z) / 2);
+            const center = new THREE.Vector3((box3.max.x + box3.min.x) / 2, (box3.max.y + box3.min.y) / 2, (box3.max.z + box3.min.z) / 2);
             geometry.translate(x, y, z);
 
             // Send positions back to caller

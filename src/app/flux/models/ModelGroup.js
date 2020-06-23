@@ -19,7 +19,6 @@ class ModelGroup {
         this.object.userData.selection = this.selection;
 
         this.selectedModel = null;
-        this.estimatedTime = 0;
         this.candidatePoints = null;
         this.onSelectedModelTransformChanged = null;
 
@@ -39,16 +38,14 @@ class ModelGroup {
     };
 
     _getState(model) {
-        const { sourceType, mode, modelID, transformation, boundingBox, originalName, extruder } = model;
+        const { mode, modelID, transformation, boundingBox, originalName, extruder } = model;
         return {
-            sourceType: sourceType,
             originalName: originalName,
             mode: mode,
             selectedModelID: modelID,
             modelID: modelID,
             transformation: { ...transformation },
             boundingBox, // only used in 3dp
-            estimatedTime: this.estimatedTime,
             hasModel: this._hasModel(),
             isAnyModelOverstepped: this._checkAnyModelOverstepped(),
             extruder: extruder,
@@ -130,17 +127,6 @@ class ModelGroup {
         return this._emptyState;
     }
 
-    totalEstimatedTime() {
-        let totalEstimatedTime_ = 0;
-        for (const model of this.models) {
-            const estimatedTime_ = model.estimatedTime;
-            if (typeof estimatedTime_ !== 'number' || !Number.isNaN(estimatedTime_)) {
-                totalEstimatedTime_ += estimatedTime_;
-            }
-        }
-        return totalEstimatedTime_;
-    }
-
     undoRedo(models) {
         for (const model of this.models) {
             model.meshObject.removeEventListener('update', this.onModelUpdate);
@@ -189,10 +175,8 @@ class ModelGroup {
                 this.selection.select(model);
             }
             this.selection.calTransformation();
-            if (model.estimatedTime) {
-                this.estimatedTime = model.estimatedTime;
-            }
             model.computeBoundingBox();
+            // console.log(modelMeshObject.localToWorld);
             return this._getState(model);
         }
         return null;
@@ -287,9 +271,8 @@ class ModelGroup {
 
     onModelTransform() {
         this.selectedModel.onTransform();
-        const { sourceType, mode, modelID, transformation, boundingBox, originalName } = this.selectedModel;
+        const { mode, modelID, transformation, boundingBox, originalName } = this.selectedModel;
         return {
-            sourceType: sourceType,
             originalName: originalName,
             mode: mode,
             selectedModelID: modelID,

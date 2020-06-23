@@ -308,6 +308,7 @@ class TransformControls extends Object3D {
 
             this.object.updateMatrixWorld();
             this.object.matrixWorld.decompose(objectPosition, objectQuaternion, objectScale);
+            // objectPosition.y = (this.object.geometry.boundingBox.max.y + this.object.geometry.boundingBox.max.y) / 2
             // objectPosition.setFromMatrixPosition(this.object.matrixWorld);
             this.objectQuaternionInv.copy(objectQuaternion).inverse();
 

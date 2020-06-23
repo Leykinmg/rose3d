@@ -14,7 +14,6 @@ import TWEEN from '@tweenjs/tween.js';
 import Controls, { EVENTS } from './Controls';
 // import MSRControls from '../three-extensions/MSRControls';
 // import TransformControls from '../three-extensions/TransformControls';
-// import TransformControls2D from '../three-extensions/TransformControls2D';
 
 
 const ANIMATION_DURATION = 500;
@@ -28,7 +27,6 @@ class Canvas extends Component {
         backgroundGroup: PropTypes.object,
         modelGroup: PropTypes.object.isRequired,
         printableArea: PropTypes.object.isRequired,
-        transformSourceType: PropTypes.string, // 2D, 3D. Default is 3D
         gcodeLineGroup: PropTypes.object,
         cameraInitialPosition: PropTypes.object.isRequired,
         // callback
@@ -56,7 +54,6 @@ class Canvas extends Component {
         this.backgroundGroup = this.props.backgroundGroup;
         this.printableArea = this.props.printableArea;
         this.modelGroup = this.props.modelGroup;
-        this.transformSourceType = this.props.transformSourceType || '3D';
         this.gcodeLineGroup = this.props.gcodeLineGroup;
         this.cameraInitialPosition = this.props.cameraInitialPosition;
 
@@ -140,9 +137,7 @@ class Canvas extends Component {
     setupControls() {
         this.initialTarget.set(0, this.cameraInitialPosition.y, 0);
 
-        const sourceType = this.props.transformSourceType === '2D' ? '2D' : '3D';
-
-        this.controls = new Controls(sourceType, this.camera, this.group, this.renderer.domElement);
+        this.controls = new Controls(this.camera, this.group, this.renderer.domElement);
 
         this.controls.setTarget(this.initialTarget);
         this.controls.setSelectableObjects(this.modelGroup.children);
@@ -188,21 +183,6 @@ class Canvas extends Component {
             this.transformControls && this.transformControls.setMode(mode);
 
             this.controls && this.controls.setTransformMode(mode);
-        }
-    }
-
-    setTransformControls2DState(params) {
-        const { enabledTranslate, enabledScale, enabledRotate } = params;
-        if (this.transformSourceType === '2D' && this.transformControls) {
-            if (enabledTranslate !== undefined) {
-                this.transformControls.setEnabledTranslate(enabledTranslate);
-            }
-            if (enabledScale !== undefined) {
-                this.transformControls.setEnabledScale(enabledScale);
-            }
-            if (enabledRotate !== undefined) {
-                this.transformControls.setEnabledRotate(enabledRotate);
-            }
         }
     }
 
@@ -389,10 +369,6 @@ class Canvas extends Component {
 
     disable3D() {
         this.controls.enableRotate = false;
-    }
-
-    updateTransformControl2D() {
-        this.transformSourceType === '2D' && this.transformControls && this.transformControls.updateGizmo();
     }
 
     startTween(tween) {

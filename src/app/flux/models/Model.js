@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import * as THREE from 'three';
-import { sizeModelByMachineSize } from './ModelInfoUtils';
-import ThreeUtils from '../../components/three-extensions/ThreeUtils';
+// import ThreeUtils from '../../components/three-extensions/ThreeUtils';
 
 
 // const materialSelected = new THREE.MeshPhongMaterial({ color: 0xf0f0f0, specular: 0xb0b0b0, shininess: 30 });
@@ -30,19 +29,15 @@ const DEFAULT_TRANSFORMATION = {
 // class Model extends THREE.Mesh {
 class Model {
     constructor(modelInfo) {
-        const { limitSize, sourceType, sourceHeight, sourceWidth, originalName, uploadName, mode, geometry, material, center,
+        const { originalName, uploadName, mode, geometry, material, center,
             transformation } = modelInfo;
-        this.limitSize = limitSize;
 
         this.meshObject = new THREE.Mesh(geometry, material);
+        // this.meshObject.translate()
 
         this.modelID = uuid.v4();
 
-        this.sourceType = sourceType; // 3d, raster, svg, text
-        this.sourceHeight = sourceHeight;
-        this.sourceWidth = sourceWidth;
         this.originalName = originalName;
-        console.log(modelInfo);
         this.uploadName = uploadName;
         this.center = new THREE.Vector3(center.x, center.y, center.z);
 
@@ -52,21 +47,14 @@ class Model {
             ...DEFAULT_TRANSFORMATION,
             ...transformation
         };
-        if (!this.transformation.width && !this.transformation.height) {
-            const { width, height } = sizeModelByMachineSize(limitSize, sourceWidth, sourceHeight);
-            this.transformation.width = width;
-            this.transformation.height = height;
-        }
-        console.log(this.transformation);
 
-        this.estimatedTime = 0;
 
         this.boundingBox = null;
         this.overstepped = false;
         this.convexGeometry = null;
         this.extruder = '0';
         this.material = materialNormal;
-        this.isStick = false;
+        this.isStick = true;
 
         this.positionStart = new THREE.Vector3();
         this.quaternionStart = new THREE.Quaternion();
@@ -74,7 +62,6 @@ class Model {
     }
 
     onTransform() {
-        const geometrySize = ThreeUtils.getGeometrySize(this.meshObject.geometry, true);
         const { position, rotation, scale } = this.meshObject;
         const transformation = {
             positionX: position.x,
@@ -86,8 +73,8 @@ class Model {
             scaleX: scale.x,
             scaleY: scale.y,
             scaleZ: scale.z,
-            width: geometrySize.x * scale.x,
-            height: geometrySize.y * scale.y
+            width: this.boundingBox.max.x - this.boundingBox.min.x,
+            height: this.boundingBox.max.y - this.boundingBox.min.y
         };
         this.transformation = {
             ...this.transformation,
@@ -96,63 +83,63 @@ class Model {
         return this.transformation;
     }
 
-    updateTransformation(transformation) {
-        const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ, flip } = transformation;
-        let { width, height } = transformation;
-
-        if (positionX !== undefined) {
-            this.meshObject.position.x = positionX;
-            this.transformation.positionX = positionX;
-        }
-        if (positionY !== undefined) {
-            this.meshObject.position.y = positionY;
-            this.transformation.positionY = positionY;
-        }
-        if (positionZ !== undefined) {
-            this.meshObject.position.z = positionZ;
-            this.transformation.positionZ = positionZ;
-        }
-        if (rotationX !== undefined) {
-            this.meshObject.rotation.x = rotationX;
-            this.transformation.rotationX = rotationX;
-        }
-        if (rotationY !== undefined) {
-            this.meshObject.rotation.y = rotationY;
-            this.transformation.rotationY = rotationY;
-        }
-        if (rotationZ !== undefined) {
-            this.meshObject.rotation.z = rotationZ;
-            this.transformation.rotationZ = rotationZ;
-        }
-        if (scaleX !== undefined) {
-            this.meshObject.scale.x = scaleX;
-            this.transformation.scaleX = scaleX;
-        }
-        if (scaleY !== undefined) {
-            this.meshObject.scale.y = scaleY;
-            this.transformation.scaleY = scaleY;
-        }
-        if (scaleZ !== undefined) {
-            this.meshObject.scale.z = scaleZ;
-            this.transformation.scaleZ = scaleZ;
-        }
-        if (flip !== undefined) {
-            this.transformation.flip = flip;
-        }
-        if (width || height) {
-            const geometrySize = ThreeUtils.getGeometrySize(this.meshObject.geometry, true);
-            width = width || height * this.sourceWidth / this.sourceHeight;
-            height = height || width * this.sourceHeight / this.sourceWidth;
-
-            const scaleX_ = width / geometrySize.x;
-            const scaleY_ = height / geometrySize.y;
-
-            this.meshObject.scale.set(scaleX_, scaleY_, 1);
-            this.transformation.width = width;
-            this.transformation.height = height;
-        }
-        return this.transformation;
-    }
+    // updateTransformation(transformation) {
+    //     const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ, flip } = transformation;
+    //     let { width, height } = transformation;
+    //
+    //     if (positionX !== undefined) {
+    //         this.meshObject.position.x = positionX;
+    //         this.transformation.positionX = positionX;
+    //     }
+    //     if (positionY !== undefined) {
+    //         this.meshObject.position.y = positionY;
+    //         this.transformation.positionY = positionY;
+    //     }
+    //     if (positionZ !== undefined) {
+    //         this.meshObject.position.z = positionZ;
+    //         this.transformation.positionZ = positionZ;
+    //     }
+    //     if (rotationX !== undefined) {
+    //         this.meshObject.rotation.x = rotationX;
+    //         this.transformation.rotationX = rotationX;
+    //     }
+    //     if (rotationY !== undefined) {
+    //         this.meshObject.rotation.y = rotationY;
+    //         this.transformation.rotationY = rotationY;
+    //     }
+    //     if (rotationZ !== undefined) {
+    //         this.meshObject.rotation.z = rotationZ;
+    //         this.transformation.rotationZ = rotationZ;
+    //     }
+    //     if (scaleX !== undefined) {
+    //         this.meshObject.scale.x = scaleX;
+    //         this.transformation.scaleX = scaleX;
+    //     }
+    //     if (scaleY !== undefined) {
+    //         this.meshObject.scale.y = scaleY;
+    //         this.transformation.scaleY = scaleY;
+    //     }
+    //     if (scaleZ !== undefined) {
+    //         this.meshObject.scale.z = scaleZ;
+    //         this.transformation.scaleZ = scaleZ;
+    //     }
+    //     if (flip !== undefined) {
+    //         this.transformation.flip = flip;
+    //     }
+    //     if (width || height) {
+    //         const geometrySize = ThreeUtils.getGeometrySize(this.meshObject.geometry, true);
+    //         width = width || height * this.sourceWidth / this.sourceHeight;
+    //         height = height || width * this.sourceHeight / this.sourceWidth;
+    //
+    //         const scaleX_ = width / geometrySize.x;
+    //         const scaleY_ = height / geometrySize.y;
+    //
+    //         this.meshObject.scale.set(scaleX_, scaleY_, 1);
+    //         this.transformation.width = width;
+    //         this.transformation.height = height;
+    //     }
+    //     return this.transformation;
+    // }
 
 
     updatePosition(offset) {
