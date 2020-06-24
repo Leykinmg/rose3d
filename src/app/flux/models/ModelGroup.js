@@ -176,7 +176,7 @@ class ModelGroup {
             }
             this.selection.calTransformation();
             model.computeBoundingBox();
-            // console.log(modelMeshObject.localToWorld);
+            model.onTransform();
             return this._getState(model);
         }
         return null;
@@ -454,9 +454,89 @@ class ModelGroup {
     // }
 
     mergeSelected() {
-        this.object.add(this.selection.mergeSelected());
-        // console.log(mesh);
-        // this.object.add(mesh);
+        this.models = this.models.filter(model => !this.selection.selecteds.includes(model));
+        const group = this.selection.mergeSelected();
+        this.object.add(group.meshObject);
+        this.models.push(group);
+        this.selectedModel = group;
+        return this._getState(group);
+    }
+
+    groupSelected() {
+        this.models = this.models.filter(model => !this.selection.selecteds.includes(model));
+        const group = this.selection.groupSelected();
+        this.object.add(group.meshObject);
+        this.models.push(group);
+        this.selectedModel = group;
+        return this._getState(group);
+    }
+
+    unGroupSelected() {
+        this.models = this.models.filter(model => !this.selection.selecteds.includes(model));
+        this.object.remove(this.selection.selecteds[0].meshObject);
+        this.selection.unGroupSelected();
+        for (const model of this.selection.selecteds) {
+            this.object.add(model.meshObject);
+            this.models.push(model);
+            this.selectedModel = model;
+        }
+        return this._getState(this.selectedModel);
+    }
+
+    getSliceModel() {
+        const object = new Group();
+        for (const group of this.models) {
+            if (group.meshObject.name === 'g') {
+                for (const model of group.models) {
+                    const mesh = model.meshObject.clone();
+                    mesh.applyMatrix(group.meshObject.matrix);
+                    object.add(mesh);
+                }
+            } else {
+                object.add(group.meshObject.clone());
+            }
+        }
+        return object;
+    }
+
+    getSliceLeftModel() {
+        const object = new Group();
+        for (const group of this.models) {
+            if (group.meshObject.name === 'g') {
+                for (const model of group.models) {
+                    const mesh = model.meshObject.clone();
+                    mesh.applyMatrix(group.meshObject.matrix);
+                    if (model.extruder === '0') {
+                        object.add(mesh);
+                    }
+                }
+            } else {
+                if (group.extruder === '0') {
+                    object.add(group.meshObject.clone());
+                }
+            }
+        }
+        return object;
+    }
+
+    getSliceRightModel() {
+        const object = new Group();
+        for (const group of this.models) {
+            if (group.meshObject.name === 'g') {
+                for (const model of group.models) {
+                    const mesh = model.meshObject.clone();
+                    mesh.applyMatrix(group.meshObject.matrix);
+                    if (model.extruder === '1') {
+                        object.add(mesh);
+                    }
+                }
+            } else {
+                if (group.extruder === '1') {
+                    object.add(group.meshObject.clone());
+                }
+            }
+        }
+        return object;
     }
 }
 

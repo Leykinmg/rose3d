@@ -30,7 +30,6 @@ class Visualizer extends PureComponent {
         transformMode: PropTypes.string.isRequired,
         progress: PropTypes.number.isRequired,
         displayedType: PropTypes.string.isRequired,
-        selectedCount: PropTypes.number,
         renderingTimestamp: PropTypes.number.isRequired,
 
         selectModel: PropTypes.func.isRequired,
@@ -44,7 +43,10 @@ class Visualizer extends PureComponent {
         updateSelectedModelTransformation: PropTypes.func.isRequired,
         multiplySelectedModel: PropTypes.func.isRequired,
         layFlatSelectedModel: PropTypes.func.isRequired,
-        mergeSelected: PropTypes.func.isRequired
+        mergeSelected: PropTypes.func.isRequired,
+        groupSelected: PropTypes.func.isRequired,
+        unGroupSelected: PropTypes.func.isRequired
+
     };
 
 
@@ -93,7 +95,6 @@ class Visualizer extends PureComponent {
         },
         // context menu
         centerSelectedModel: () => {
-            console.log('4');
             this.props.updateSelectedModelTransformation({ positionX: 0, positionZ: 0 });
             this.props.onModelAfterTransform();
         },
@@ -104,7 +105,6 @@ class Visualizer extends PureComponent {
             this.props.multiplySelectedModel(1);
         },
         resetSelectedModelTransformation: () => {
-            console.log('5');
             this.props.updateSelectedModelTransformation({
                 scaleX: 1,
                 scaleY: 1,
@@ -126,6 +126,12 @@ class Visualizer extends PureComponent {
         },
         mergeSelected: () => {
             this.props.mergeSelected();
+        },
+        groupSelected: () => {
+            this.props.groupSelected();
+        },
+        unGroupSelected: () => {
+            this.props.unGroupSelected();
         }
     };
 
@@ -225,10 +231,14 @@ class Visualizer extends PureComponent {
     };
 
     render() {
-        const { size, hasModel, selectedModelID, modelGroup, gcodeLineGroup, progress, displayedType, selectedCount } = this.props;
+        const { size, hasModel, selectedModelID, modelGroup, gcodeLineGroup, progress, displayedType } = this.props;
 
         // const actions = this.actions;
-
+        let modelType = '';
+        const selectedCount = modelGroup.selection.selecteds.length;
+        if (selectedCount === 1) {
+            modelType = modelGroup.selection.selecteds[0].meshObject.name;
+        }
         const isModelSelected = !!selectedModelID;
         const isModelDisplayed = (displayedType === 'model');
 
@@ -334,8 +344,20 @@ class Visualizer extends PureComponent {
                             {
                                 type: 'item',
                                 label: i18n._('Merge Selected'),
-                                disabled: !hasModel || !isModelDisplayed || !selectedCount || selectedCount < 2,
+                                disabled: !hasModel || !isModelDisplayed || !isModelSelected || !selectedCount || selectedCount < 2,
                                 onClick: this.actions.mergeSelected
+                            },
+                            {
+                                type: 'item',
+                                label: i18n._('Group Selected'),
+                                disabled: !hasModel || !isModelDisplayed || !isModelSelected || !selectedCount || selectedCount < 2,
+                                onClick: this.actions.groupSelected
+                            },
+                            {
+                                type: 'item',
+                                label: i18n._('Ungroup Selected'),
+                                disabled: !hasModel || !isModelDisplayed || !selectedCount || !isModelSelected || selectedCount > 1 || modelType !== 'g',
+                                onClick: this.actions.unGroupSelected
                             }
                         ]
                     }
@@ -350,7 +372,7 @@ const mapStateToProps = (state) => {
     const printing = state.printing;
     const { size } = machine;
     // TODO: be to organized
-    const { stage, selectedModelID, modelGroup, hasModel, gcodeLineGroup, transformMode, progress, displayedType, renderingTimestamp, selectedCount } = printing;
+    const { stage, selectedModelID, modelGroup, hasModel, gcodeLineGroup, transformMode, progress, displayedType, renderingTimestamp } = printing;
 
     return {
         stage,
@@ -362,8 +384,7 @@ const mapStateToProps = (state) => {
         transformMode,
         progress,
         displayedType,
-        renderingTimestamp,
-        selectedCount
+        renderingTimestamp
     };
 };
 
@@ -379,7 +400,9 @@ const mapDispatchToProps = (dispatch) => ({
     updateSelectedModelTransformation: (transformation) => dispatch(printingActions.updateSelectedModelTransformation(transformation)),
     multiplySelectedModel: (count) => dispatch(printingActions.multiplySelectedModel(count)),
     layFlatSelectedModel: () => dispatch(printingActions.layFlatSelectedModel()),
-    mergeSelected: () => dispatch(printingActions.mergeSelected())
+    mergeSelected: () => dispatch(printingActions.mergeSelected()),
+    unGroupSelected: () => dispatch(printingActions.unGroupSelected()),
+    groupSelected: () => dispatch(printingActions.groupSelected())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Visualizer);

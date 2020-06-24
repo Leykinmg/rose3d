@@ -61,7 +61,6 @@ const INITIAL_STATE = {
 
     selectedModelID: null,
     SelectedCount: 0,
-    mergeModelID: [],
     modelGroup: new ModelGroup(),
     // G-code
     gcodeFile: null,
@@ -575,7 +574,6 @@ export const actions = {
                     convexGeometry.addAttribute('position', positionAttribute);
                     // const model = modelGroup.children.find(m => m.uploadName === uploadName);
                     modelGroup.setConvexGeometry(uploadName, convexGeometry);
-                    console.log(modelGroup);
 
                     break;
                 }
@@ -633,15 +631,17 @@ export const actions = {
         // Prepare model file
         const { series } = getState().machine;
         const result = await dispatch(actions.prepareModel());
+        let resultLeft, resultRight, uploadNameLeft, uploadNameRight;
         if (series === 'RoseX') {
-            const resultLeft = await dispatch(actions.prepareLeftModel());
-            const resultRight = await dispatch(actions.prepareRightModel());
-            console.log(resultLeft, resultRight);
+            resultLeft = await dispatch(actions.prepareLeftModel());
+            resultRight = await dispatch(actions.prepareRightModel());
+            uploadNameLeft = resultLeft.uploadName;
+            uploadNameRight = resultRight.uploadName;
         }
         const { originalName, uploadName } = result;
 
         // Prepare definition file
-        const finalDefinition = definitionManager.finalizeActiveDefinition(activeDefinition);
+        const finalDefinition = definitionManager.finalizeActiveDefinition(activeDefinition, series);
         await api.printingConfigs.createDefinition(finalDefinition);
 
         dispatch(actions.updateState({
@@ -649,19 +649,17 @@ export const actions = {
             progress: 0
         }));
 
-        // slice
-        /*
         const params = {
-            modelName: name,
-            modelFileName: filename
-        };
-        */
-        const params = {
+            series: series,
             originalName: originalName,
             uploadName: uploadName,
             boundingBox: boundingBox,
             thumbnail: thumbnail
         };
+        if (series === 'RoseX') {
+            params.uploadNameLeft = uploadNameLeft;
+            params.uploadNameRight = uploadNameRight;
+        }
         controller.slice(params);
     },
 
@@ -675,8 +673,8 @@ export const actions = {
             const stlFileName = `${basenameWithoutExt}.stl`;
             // Use setTimeout to force export executes in next tick, preventing block of updateState()
             setTimeout(async () => {
-                // const stl = new ModelExporter().parse(modelGroup, 'stl', true);
-                const stl = new ModelExporter().parse(modelGroup.object, 'stl', true);
+                const object = modelGroup.getSliceModel();
+                const stl = new ModelExporter().parse(object, 'stl', true);
                 const blob = new Blob([stl], { type: 'text/plain' });
                 const fileOfBlob = new File([blob], stlFileName);
 
@@ -699,12 +697,12 @@ export const actions = {
             const uploadPath = `${DATA_PREFIX}/${originalName}`;
             const basenameWithoutExt = path.basename(uploadPath, path.extname(uploadPath));
             const stlFileName = `${basenameWithoutExt}.stl`;
-            const LeftModelGroup = new THREE.Group();
-            for (const model of modelGroup.getModels()) {
-                if (model.extruder === '0') {
-                    LeftModelGroup.add(model.meshObject.clone());
-                }
-            }
+            const LeftModelGroup = modelGroup.getSliceLeftModel();
+            // for (const model of modelGroup.getModels()) {
+            //     if (model.extruder === '0') {
+            //         LeftModelGroup.add(model.meshObject.clone());
+            //     }
+            // }
             // Use setTimeout to force export executes in next tick, preventing block of updateState()
             setTimeout(async () => {
                 // const stl = new ModelExporter().parse(modelGroup, 'stl', true);
@@ -731,12 +729,7 @@ export const actions = {
             const uploadPath = `${DATA_PREFIX}/${originalName}`;
             const basenameWithoutExt = path.basename(uploadPath, path.extname(uploadPath));
             const stlFileName = `${basenameWithoutExt}.stl`;
-            const RightModelGroup = new THREE.Group();
-            for (const model of modelGroup.getModels()) {
-                if (model.extruder === '1') {
-                    RightModelGroup.add(model.meshObject.clone());
-                }
-            }
+            const RightModelGroup = modelGroup.getSliceRightModel();
             // Use setTimeout to force export executes in next tick, preventing block of updateState()
             setTimeout(async () => {
                 // const stl = new ModelExporter().parse(modelGroup, 'stl', true);
@@ -829,7 +822,6 @@ export const actions = {
         const { modelGroup } = getState().printing;
         modelGroup.selectModel(modelMeshObject, shiftDown);
         const modelState = modelGroup.getSelectedModelState();
-        modelMeshObject.material.opacity = 0.5;
         dispatch(actions.updateState(modelState));
     },
 
@@ -963,7 +955,6 @@ export const actions = {
     layFlatSelectedModel: () => (dispatch, getState) => {
         const { modelGroup } = getState().printing;
         const modelState = modelGroup.layFlatSelectedModel();
-        console.log(modelGroup.object);
         dispatch(actions.updateState(modelState));
         dispatch(actions.recordSnapshot());
         dispatch(actions.destroyGcodeLine());
@@ -978,6 +969,25 @@ export const actions = {
         dispatch(actions.destroyGcodeLine());
         dispatch(actions.displayModel());
     },
+
+    groupSelected: () => (dispatch, getState) => {
+        const { modelGroup } = getState().printing;
+        const modelState = modelGroup.groupSelected();
+        dispatch(actions.updateState(modelState));
+        dispatch(actions.recordSnapshot());
+        dispatch(actions.destroyGcodeLine());
+        dispatch(actions.displayModel());
+    },
+
+    unGroupSelected: () => (dispatch, getState) => {
+        const { modelGroup } = getState().printing;
+        const modelState = modelGroup.unGroupSelected();
+        dispatch(actions.updateState(modelState));
+        dispatch(actions.recordSnapshot());
+        dispatch(actions.destroyGcodeLine());
+        dispatch(actions.displayModel());
+    },
+
     // uploadModel
     undo: () => (dispatch, getState) => {
         const { modelGroup, undoSnapshots, redoSnapshots } = getState().printing;

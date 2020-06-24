@@ -65,7 +65,7 @@ class Model {
         const { position, rotation, scale } = this.meshObject;
         const transformation = {
             positionX: position.x,
-            positionY: position.y,
+            positionY: position.y - (this.boundingBox.max.y - this.boundingBox.min.y) / 2,
             positionZ: position.z,
             rotationX: rotation.x,
             rotationY: rotation.y,

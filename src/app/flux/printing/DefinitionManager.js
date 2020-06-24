@@ -117,7 +117,7 @@ class DefinitionManager {
         return settings;
     }
 
-    finalizeActiveDefinition(activeDefinition) {
+    finalizeActiveDefinition(activeDefinition, series) {
         const definition = {
             definitionId: 'active_final',
             name: 'Active Profile',
@@ -130,6 +130,9 @@ class DefinitionManager {
             settings: {},
             ownKeys: []
         };
+        if (series === 'RoseX') {
+            definition.metadata.machine_extruder_trains['1'] = 'rose_extruder_1';
+        }
 
         Object.keys(activeDefinition.settings).forEach(key => {
             const setting = activeDefinition.settings[key];

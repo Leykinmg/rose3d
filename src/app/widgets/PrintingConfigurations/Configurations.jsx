@@ -44,6 +44,7 @@ class Configurations extends PureComponent {
     static propTypes = {
         setTitle: PropTypes.func.isRequired,
         isAdvised: PropTypes.bool.isRequired,
+        // series: PropTypes.string.isRequired,
         defaultQualityId: PropTypes.string.isRequired,
         qualityDefinitions: PropTypes.array.isRequired,
         updateDefinitionSettings: PropTypes.func.isRequired,
@@ -151,6 +152,18 @@ class Configurations extends PureComponent {
                     'support_pattern',
                     'support_infill_rate',
                     'support_angle'
+                ]
+            },
+            {
+                name: i18n._('Dual'),
+                expanded: false,
+                fields: [
+                    'prime_tower_enable',
+                    'prime_tower_size',
+                    'prime_tower_min_volume',
+                    'prime_tower_position_x',
+                    'prime_tower_position_y',
+                    'switch_extruder_retraction_amount'
                 ]
             }
         ]
@@ -385,6 +398,7 @@ class Configurations extends PureComponent {
         const normalQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.normal_quality');
         const highQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.high_quality');
         const raceQualityDefinition = this.props.qualityDefinitions.find(d => d.definitionId === 'quality.race_quality');
+        // const series = this.props.series;
 
         const { isOfficialTab, officialQualityDefinition, customQualityDefinition, customDefinitionOptions, SupportDefinition } = this.state;
         const qualityDefinition = isOfficialTab ? officialQualityDefinition : customQualityDefinition;
@@ -673,7 +687,7 @@ class Configurations extends PureComponent {
                                                         if (enabledKey) {
                                                             if (qualityDefinition.settings[enabledKey]) {
                                                                 const value = qualityDefinition.settings[enabledKey].default_value;
-                                                                if (value === enabledValue) {
+                                                                if (value === enabledValue || (value === true && enabledValue === null)) {
                                                                     result = true;
                                                                 }
                                                             }
@@ -772,12 +786,14 @@ class Configurations extends PureComponent {
 }
 
 const mapStateToProps = (state) => {
+    const { series } = state.machine;
     const { qualityDefinitions, defaultQualityId, isAdvised, activeDefinition } = state.printing;
     return {
         qualityDefinitions,
         defaultQualityId,
         isAdvised,
-        activeDefinition
+        activeDefinition,
+        series
     };
 };
 

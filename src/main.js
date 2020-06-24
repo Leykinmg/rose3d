@@ -19,7 +19,11 @@ const options = {
 function openBrowserWindow(url) {
     const window = new BrowserWindow({
         ...options,
-        show: false
+        show: false,
+        webPreferences: {
+            nodeIntegration: true,
+            enableRemoteModule: true
+        }
     });
 
     configureWindow(window);
@@ -27,7 +31,7 @@ function openBrowserWindow(url) {
     // Ignore proxy settings
     // https://electronjs.org/docs/api/session#sessetproxyconfig-callback
     const session = window.webContents.session;
-    session.setProxy({ proxyRules: 'direct://' }, () => {
+    session.setProxy({ proxyRules: 'direct://' }).then(() => {
         window.loadURL(url);
         window.show();
     });

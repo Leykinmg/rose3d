@@ -31,7 +31,14 @@ let curaEnginePath;
     }
 })();
 
-function callCuraEngine(modelPath, configPath, outputPath) {
+function callCuraEngine(series, modelPath, configPath, outputPath, modelPathLeft, modelPathRight) {
+    if (series === 'RoseX') {
+        return childProcess.spawn(
+            curaEnginePath,
+            ['slice', '-v', '-p', '-j', configPath, '-o', outputPath,
+                '-g', '-e0', '-l', modelPathLeft, '-e1', '-l', modelPathRight]
+        );
+    }
     return childProcess.spawn(
         curaEnginePath,
         ['slice', '-v', '-p', '-j', configPath, '-o', outputPath, '-l', modelPath]
@@ -84,10 +91,11 @@ function slice(params, onProgress, onSucceed, onError) {
         onError(`Slice Error: Cura Engine not found: ${curaEnginePath}`);
         return;
     }
-
-    const { originalName, uploadName, boundingBox, thumbnail } = params;
+    const { originalName, uploadName, boundingBox, thumbnail, series } = params;
+    const { uploadNameLeft, uploadNameRight } = params;
 
     const uploadPath = `${DataStorage.tmpDir}/${uploadName}`;
+    let uploadPathLeft, uploadPathRight;
 
     if (!fs.existsSync(uploadPath)) {
         log.error(`Slice Error: 3d model file does not exist -> ${uploadPath}`);
@@ -95,12 +103,17 @@ function slice(params, onProgress, onSucceed, onError) {
         return;
     }
 
+    if (series === 'RoseX') {
+        uploadPathLeft = `${DataStorage.tmpDir}/${uploadNameLeft}`;
+        uploadPathRight = `${DataStorage.tmpDir}/${uploadNameRight}`;
+    }
+
     const configFilePath = `${DataStorage.configDir}/active_final.def.json`;
 
     const gcodeFilename = pathWithRandomSuffix(`${path.parse(originalName).name}.gcode`);
     const gcodeFilePath = `${DataStorage.tmpDir}/${gcodeFilename}`;
 
-    const process = callCuraEngine(uploadPath, configFilePath, gcodeFilePath);
+    const process = callCuraEngine(series, uploadPath, configFilePath, gcodeFilePath, uploadPathLeft, uploadPathRight);
 
     process.stderr.on('data', (data) => {
         const array = data.toString().split('\n');
@@ -109,13 +122,20 @@ function slice(params, onProgress, onSucceed, onError) {
             if (item.length < 10) {
                 return null;
             }
-            if (item.indexOf('Progress:inset+skin:') === 0 || item.indexOf('Progress:export:') === 0) {
+            if (item.indexOf('Progress:process:') === 0 && item.indexOf('1.0') !== -1 && item.indexOf('%') !== -1) {
+                onProgress(1.00);
+            } else if (item.indexOf('Progress:inset+skin:') === 0 || item.indexOf('Progress:export:') === 0) {
                 const start = item.indexOf('0.');
                 const end = item.indexOf('%');
                 sliceProgress = Number(item.slice(start, end));
                 onProgress(sliceProgress);
             } else if (item.indexOf(';Filament used:') === 0) {
-                filamentLength = Number(item.replace(';Filament used:', '').replace('m', ''));
+                if (series === 'RoseX') {
+                    const filament = item.replace(';Filament used:', '').replace('m', '').replace('m', '').split(',');
+                    filamentLength = Number(filament[0]) + Number(filament[1]);
+                } else {
+                    filamentLength = Number(item.replace(';Filament used:', '').replace('m', ''));
+                }
                 filamentWeight = Math.PI * (1.75 / 2) * (1.75 / 2) * filamentLength * 1.24;
             } else if (item.indexOf('Print time (s):') === 0) {
                 // Times empirical parameter: 1.07

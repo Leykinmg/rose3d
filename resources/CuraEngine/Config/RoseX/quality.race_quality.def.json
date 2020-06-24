@@ -171,6 +171,29 @@
                     }
                 }
             }
+        },
+        "dual": {
+            "type": "category",
+            "children": {
+                "prime_tower_enable": {
+                    "default_value": false
+                },
+                "prime_tower_size": {
+                    "default_value": 20
+                },
+                "prime_tower_min_volume": {
+                    "default_value": 6
+                },
+                "prime_tower_position_x": {
+                    "default_value": 100
+                },
+                "prime_tower_position_y": {
+                    "default_value": 100
+                },
+                "switch_extruder_retraction_amount": {
+                    "default_value": 20
+                }
+            }
         }
     }
 }

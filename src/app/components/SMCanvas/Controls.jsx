@@ -209,8 +209,10 @@ class Controls extends EventEmitter {
 
                     const intersect = this.ray.intersectObjects(this.selectableObjects, true)[0];
                     if (intersect) {
-                        console.log(intersect);
                         this.selectedObject = intersect.object;
+                        while (this.selectedObject.parent.name === 'g') {
+                            this.selectedObject = this.selectedObject.parent;
+                        }
                         this.transformControl.attach(this.selectedObject);
                         this.emit(EVENTS.SELECT_OBJECT, this.selectedObject, this.shiftDown);
                         this.emit(EVENTS.UPDATE);

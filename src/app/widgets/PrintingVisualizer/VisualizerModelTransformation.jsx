@@ -26,6 +26,7 @@ class VisualizerModelTransformation extends PureComponent {
         transformMode: PropTypes.string.isRequired,
         uploadModel: PropTypes.func.isRequired,
         extruder: PropTypes.string,
+        series: PropTypes.string,
         isStick: PropTypes.bool,
         selectedCount: PropTypes.number,
         transformation: PropTypes.shape({
@@ -145,12 +146,12 @@ class VisualizerModelTransformation extends PureComponent {
     render() {
         const actions = this.actions;
         // eslint-disable-next-line no-unused-vars
-        const { size, selectedModelID, hasModel, transformMode, extruder, isStick, selectedCount } = this.props;
+        const { size, selectedModelID, hasModel, transformMode, extruder, isStick, selectedCount, series } = this.props;
         const { positionX, positionZ, positionY, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ } = this.props.transformation;
         const disabled = !(selectedCount && selectedModelID && hasModel);
-        const moveX = Number(toFixed(positionX, 4));
-        const moveZ = Number(toFixed(positionZ, 4));
-        const moveY = Number(toFixed(positionY, 4));
+        const moveX = Number(toFixed(positionX, 3));
+        const moveZ = Number(toFixed(positionZ, 3));
+        const moveY = Number(toFixed(positionY, 3));
         const scaleXPercent = Number(toFixed((scaleX * 100), 1));
         const scaleYPercent = Number(toFixed((scaleY * 100), 1));
         const scaleZPercent = Number(toFixed((scaleZ * 100), 1));
@@ -223,42 +224,42 @@ class VisualizerModelTransformation extends PureComponent {
                         disabled={disabled}
                     />
                 </div>
-                <div className={classNames(styles['model-extruder__select'])}>
-                    <FormControlLabel
-                        value="0"
-                        control={(
-                            <Radio
-                                disabled={disabled}
-                                checked={this.state.extruder === '0'}
-                                onChange={() => {
-                                    actions.setModelextruder('0');
-                                    actions.onModelAfterTransform();
-                                }}
-                                value="0"
-                                name="extruder0"
-                            />
-                        )}
-                        label="extruder0"
-                    />
-                    <FormControlLabel
-                        value="1"
-                        control={(
-                            <Radio
-                                disabled={disabled}
-                                checked={this.state.extruder === '1'}
-                                onChange={() => {
-                                    console.log('?');
-                                    actions.setModelextruder('1');
-                                    actions.onModelAfterTransform();
-                                }}
-                                value="1"
-                                name="extruder0"
-                            />
-                        )}
-                        label="extruder1"
-                    />
-
-                </div>
+                {series === 'RoseX' && (
+                    <div className={classNames(styles['model-extruder__select'])}>
+                        <FormControlLabel
+                            value="0"
+                            control={(
+                                <Radio
+                                    disabled={disabled}
+                                    checked={this.state.extruder === '0'}
+                                    onChange={() => {
+                                        actions.setModelextruder('0');
+                                        actions.onModelAfterTransform();
+                                    }}
+                                    value="0"
+                                    name="extruder0"
+                                />
+                            )}
+                            label="extruder0"
+                        />
+                        <FormControlLabel
+                            value="1"
+                            control={(
+                                <Radio
+                                    disabled={disabled}
+                                    checked={this.state.extruder === '1'}
+                                    onChange={() => {
+                                        actions.setModelextruder('1');
+                                        actions.onModelAfterTransform();
+                                    }}
+                                    value="1"
+                                    name="extruder0"
+                                />
+                            )}
+                            label="extruder1"
+                        />
+                    </div>
+                )}
                 <div className={classNames(styles['model-isStick'])}>
                     <FormControlLabel
                         control={(
@@ -322,7 +323,7 @@ class VisualizerModelTransformation extends PureComponent {
                     <div className={classNames(styles.panel, styles['scale-panel'])}>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-red'])}>X</span>
-                            <span className={styles['axis-input-1']}>
+                            <span className={styles['axis-input-2']}>
                                 <Input
                                     min={0}
                                     value={scaleXPercent}
@@ -336,7 +337,7 @@ class VisualizerModelTransformation extends PureComponent {
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-green'])}>Y</span>
-                            <span className={styles['axis-input-1']}>
+                            <span className={styles['axis-input-2']}>
                                 <Input
                                     min={0}
                                     value={scaleZPercent}
@@ -350,7 +351,7 @@ class VisualizerModelTransformation extends PureComponent {
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Z</span>
-                            <span className={styles['axis-input-1']}>
+                            <span className={styles['axis-input-2']}>
                                 <Input
                                     min={0}
                                     value={scaleYPercent}
@@ -368,7 +369,7 @@ class VisualizerModelTransformation extends PureComponent {
                     <div className={classNames(styles.panel, styles['rotate-panel'])}>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-red'])}>X</span>
-                            <span className={styles['axis-input-1']}>
+                            <span className={styles['axis-input-3']}>
                                 <Input
                                     min={-180}
                                     max={180}
@@ -404,7 +405,7 @@ class VisualizerModelTransformation extends PureComponent {
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-green'])}>Y</span>
-                            <span className={styles['axis-input-1']}>
+                            <span className={styles['axis-input-3']}>
                                 <Input
                                     min={-180}
                                     max={180}
@@ -440,7 +441,7 @@ class VisualizerModelTransformation extends PureComponent {
                         </div>
                         <div className={styles.axis}>
                             <span className={classNames(styles['axis-label'], styles['axis-blue'])}>Z</span>
-                            <span className={styles['axis-input-1']}>
+                            <span className={styles['axis-input-3']}>
                                 <Input
                                     min={-180}
                                     max={180}
@@ -508,6 +509,7 @@ const mapStateToProps = (state) => {
 
     return {
         size: machine.size,
+        series: machine.series,
         selectedModelID,
         hasModel,
         transformMode,

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import Group from './Group';
 
 const DEFAULT_TRANSFORMATION = {
     positionX: 0,
@@ -142,10 +143,8 @@ class Selection {
     }
 
     mergeSelected() {
-        // const bufferGeometry = new THREE.Geometry();
-        // const material = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, emissive: 0xffff10, emissiveIntensity: 0.5 });
         const offset = new THREE.Vector3(0, 0, 0);
-        const group = new THREE.Group();
+        const group = new Group();
         for (const model of this.selecteds) {
             offset.add(model.center);
         }
@@ -153,10 +152,53 @@ class Selection {
         for (const model of this.selecteds) {
             model.isStick = false;
             model.meshObject.position.copy(new THREE.Vector3().copy(model.center.clone().sub(offset.clone())));
-            group.add(model.meshObject);
+            group.models.push(model);
+            group.meshObject.add(model.meshObject);
         }
+        group.computeBoundingBox();
+        const offset2 = group.boundingBox.max.clone().add(group.boundingBox.min.clone()).divideScalar(2);
+        for (const model of this.selecteds) {
+            model.meshObject.position.sub(offset2);
+        }
+        this.unSelectAll();
+        this.select(group);
+        group.stickToPlate();
         return group;
-        // return new THREE.Mesh(new THREE.BufferGeometry().fromGeometry(bufferGeometry), material);
+    }
+
+    groupSelected() {
+        const group = new Group();
+        for (const model of this.selecteds) {
+            group.isStick = group.isStick && model.isStick;
+            group.models.push(model);
+            group.meshObject.add(model.meshObject);
+        }
+        group.computeBoundingBox();
+        const offset = group.boundingBox.max.clone().add(group.boundingBox.min.clone()).divideScalar(2);
+        group.meshObject.position.copy(offset);
+        for (const model of this.selecteds) {
+            model.meshObject.position.sub(offset);
+        }
+        this.unSelectAll();
+        this.select(group);
+        group.stickToPlate();
+        return group;
+    }
+
+    unGroupSelected() {
+        if (this.selecteds.length !== 1) {
+            return;
+        }
+        if (this.selecteds[0].meshObject.name !== 'g') {
+            return;
+        }
+        const group = this.selecteds[0];
+        this.unSelectAll();
+        for (const model of group.models) {
+            model.meshObject.applyMatrix(group.meshObject.matrix);
+            this.selecteds.push(model);
+            model.stickToPlate();
+        }
     }
 }
 
