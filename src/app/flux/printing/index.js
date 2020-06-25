@@ -827,8 +827,7 @@ export const actions = {
 
     setModelextruder: (extruder) => (dispatch, getState) => {
         const { modelGroup } = getState().printing;
-        modelGroup.selectedModel.extruder = extruder;
-        modelGroup.selectedModel.setMaterial(extruder);
+        modelGroup.selection.setExtruder(extruder);
         dispatch(actions.updateState({ extruder: extruder }));
     },
 

@@ -33,7 +33,7 @@ class Group {
         this.boundingBox = new THREE.Box3();
         this.overstepped = false;
         this.convexGeometry = null;
-        this.extruder = '0';
+        this.extruder = '1';
         this.isStick = true;
 
         this.positionStart = new THREE.Vector3();
@@ -63,6 +63,15 @@ class Group {
         return this.transformation;
     }
 
+
+    calStick() {
+        for (const model of this.models) {
+            if (model.isStick === '0') {
+                this.isStick = '0';
+                return;
+            }
+        }
+    }
 
     updatePosition(offset) {
         const { x, y, z } = offset;
@@ -124,17 +133,15 @@ class Group {
         }
     }
 
-    setMaterial(type) {
-        for (const model of this.models) {
-            model.setMaterial(type);
-        }
-    }
-
     clone() {
         const clone = new Group({
             ...this
         });
         clone.modelID = this.modelID;
+        for (const model of this.models) {
+            clone.models.push(model);
+            clone.meshObject.add(model.meshObject.clone());
+        }
         this.meshObject.updateMatrix();
         clone.setMatrix(this.meshObject.matrix);
         return clone;
@@ -228,6 +235,13 @@ class Group {
         this.positionStart.copy(this.meshObject.position);
         this.quaternionStart.copy(this.meshObject.quaternion);
         this.scaleStart.copy(this.meshObject.scale);
+    }
+
+    setExtruder(type) {
+        this.extruder = type;
+        for (const model of this.models) {
+            model.setExtruder(type);
+        }
     }
 }
 

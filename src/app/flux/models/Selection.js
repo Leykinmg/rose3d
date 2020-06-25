@@ -139,6 +139,13 @@ class Selection {
     setStick(isStick) {
         for (const model of this.selecteds) {
             model.isStick = isStick;
+            model.stickToPlate();
+        }
+    }
+
+    setExtruder(type) {
+        for (const model of this.selecteds) {
+            model.setExtruder(type);
         }
     }
 
@@ -146,6 +153,8 @@ class Selection {
         const offset = new THREE.Vector3(0, 0, 0);
         const group = new Group();
         for (const model of this.selecteds) {
+            group.isStick = group.isStick && model.isStick;
+            model.isStick = false;
             offset.add(model.center);
         }
         offset.divideScalar(this.selecteds.length);
@@ -155,6 +164,7 @@ class Selection {
             group.models.push(model);
             group.meshObject.add(model.meshObject);
         }
+        group.calStick();
         group.computeBoundingBox();
         const offset2 = group.boundingBox.max.clone().add(group.boundingBox.min.clone()).divideScalar(2);
         for (const model of this.selecteds) {
@@ -170,9 +180,11 @@ class Selection {
         const group = new Group();
         for (const model of this.selecteds) {
             group.isStick = group.isStick && model.isStick;
+            model.isStick = false;
             group.models.push(model);
             group.meshObject.add(model.meshObject);
         }
+        group.calStick();
         group.computeBoundingBox();
         const offset = group.boundingBox.max.clone().add(group.boundingBox.min.clone()).divideScalar(2);
         group.meshObject.position.copy(offset);

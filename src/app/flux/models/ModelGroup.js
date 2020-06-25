@@ -449,9 +449,6 @@ class ModelGroup {
         return this.models.map(d => d.clone());
     }
 
-    // groupSelected() {
-    //     const group = new Group();
-    // }
 
     mergeSelected() {
         this.models = this.models.filter(model => !this.selection.selecteds.includes(model));
@@ -485,12 +482,21 @@ class ModelGroup {
 
     getSliceModel() {
         const object = new Group();
-        for (const group of this.models) {
+        const models = [];
+        for (const model of this.models) {
+            models.push(model);
+        }
+        for (const group of models) {
+            console.log(group);
             if (group.meshObject.name === 'g') {
                 for (const model of group.models) {
-                    const mesh = model.meshObject.clone();
-                    mesh.applyMatrix(group.meshObject.matrix);
-                    object.add(mesh);
+                    const modelClone = model.clone();
+                    modelClone.meshObject.applyMatrix(group.meshObject.matrix);
+                    if (modelClone.meshObject.name === 'g') {
+                        models.push(modelClone);
+                    } else {
+                        object.add(modelClone.meshObject);
+                    }
                 }
             } else {
                 object.add(group.meshObject.clone());
@@ -501,13 +507,21 @@ class ModelGroup {
 
     getSliceLeftModel() {
         const object = new Group();
-        for (const group of this.models) {
+        const models = [];
+        for (const model of this.models) {
+            models.push(model);
+        }
+        for (const group of models) {
             if (group.meshObject.name === 'g') {
                 for (const model of group.models) {
-                    const mesh = model.meshObject.clone();
-                    mesh.applyMatrix(group.meshObject.matrix);
-                    if (model.extruder === '0') {
-                        object.add(mesh);
+                    const modelClone = model.clone();
+                    modelClone.meshObject.applyMatrix(group.meshObject.matrix);
+                    if (modelClone.meshObject.name === 'g') {
+                        models.push(modelClone);
+                    } else {
+                        if (model.extruder === '0') {
+                            object.add(modelClone.meshObject);
+                        }
                     }
                 }
             } else {
@@ -521,13 +535,21 @@ class ModelGroup {
 
     getSliceRightModel() {
         const object = new Group();
-        for (const group of this.models) {
+        const models = [];
+        for (const model of this.models) {
+            models.push(model);
+        }
+        for (const group of models) {
             if (group.meshObject.name === 'g') {
                 for (const model of group.models) {
-                    const mesh = model.meshObject.clone();
-                    mesh.applyMatrix(group.meshObject.matrix);
-                    if (model.extruder === '1') {
-                        object.add(mesh);
+                    const modelClone = model.clone();
+                    modelClone.meshObject.applyMatrix(group.meshObject.matrix);
+                    if (modelClone.meshObject.name === 'g') {
+                        models.push(modelClone);
+                    } else {
+                        if (model.extruder === '1') {
+                            object.add(modelClone.meshObject);
+                        }
                     }
                 }
             } else {

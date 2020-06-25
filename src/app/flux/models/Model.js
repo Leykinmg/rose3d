@@ -239,7 +239,8 @@ class Model {
         }
     }
 
-    setMaterial(type) {
+    setExtruder(type) {
+        this.extruder = type;
         if (type === '0') {
             this.material = materialNormal;
         } else {
@@ -248,7 +249,6 @@ class Model {
         if (this.overstepped === false) {
             this.meshObject.material = this.material;
         }
-        this.stickToPlate();
     }
 
     clone() {
