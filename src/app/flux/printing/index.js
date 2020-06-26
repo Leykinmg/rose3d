@@ -15,22 +15,6 @@ import gcodeBufferGeometryToObj3d from '../../workers/GcodeToBufferGeometry/gcod
 import ModelExporter from '../../widgets/PrintingVisualizer/ModelExporter';
 import { controller } from '../../lib/controller';
 
-// eslint-disable-next-line no-unused-vars
-const customCompareTransformation = (tran1, tran2) => {
-    const { positionX: px1, positionZ: pz1, rotationX: rx1, rotationY: ry1, rotationZ: rz1, scaleX: sx1, scaleY: sy1, scaleZ: sz1 } = tran1;
-    const { positionX: px2, positionZ: pz2, rotationX: rx2, rotationY: ry2, rotationZ: rz2, scaleX: sx2, scaleY: sy2, scaleZ: sz2 } = tran2;
-    return (
-        Math.abs(px1 - px2) < EPSILON
-        && Math.abs(pz1 - pz2) < EPSILON
-        && Math.abs(rx1 - rx2) < EPSILON
-        && Math.abs(ry1 - ry2) < EPSILON
-        && Math.abs(rz1 - rz2) < EPSILON
-        && Math.abs(sx1 - sx2) < EPSILON
-        && Math.abs(sy1 - sy2) < EPSILON
-        && Math.abs(sz1 - sz2) < EPSILON
-    );
-};
-
 export const PRINTING_STAGE = {
     EMPTY: 0,
     LOADING_MODEL: 1,
@@ -220,10 +204,10 @@ export const actions = {
                     const layerIndexAttribute = new THREE.Float32BufferAttribute(layerIndices, 1);
                     const typeCodeAttribute = new THREE.Float32BufferAttribute(typeCodes, 1);
 
-                    bufferGeometry.addAttribute('position', positionAttribute);
-                    bufferGeometry.addAttribute('a_color', colorAttribute);
-                    bufferGeometry.addAttribute('a_layer_index', layerIndexAttribute);
-                    bufferGeometry.addAttribute('a_type_code', typeCodeAttribute);
+                    bufferGeometry.setAttribute('position', positionAttribute);
+                    bufferGeometry.setAttribute('a_color', colorAttribute);
+                    bufferGeometry.setAttribute('a_layer_index', layerIndexAttribute);
+                    bufferGeometry.setAttribute('a_type_code', typeCodeAttribute);
 
                     const object3D = gcodeBufferGeometryToObj3d('3DP', bufferGeometry);
 
@@ -539,7 +523,7 @@ export const actions = {
                     const modelPositionAttribute = new THREE.BufferAttribute(positions, 3);
                     const material = new THREE.MeshPhongMaterial({ color: 0xb0b0b0, emissive: 0xffff10, emissiveIntensity: 0.5 });
 
-                    bufferGeometry.addAttribute('position', modelPositionAttribute);
+                    bufferGeometry.setAttribute('position', modelPositionAttribute);
                     bufferGeometry.computeVertexNormals();
                     // Create model
                     // modelGroup.generateModel(modelInfo);
@@ -571,7 +555,7 @@ export const actions = {
 
                     const convexGeometry = new THREE.BufferGeometry();
                     const positionAttribute = new THREE.BufferAttribute(positions, 3);
-                    convexGeometry.addAttribute('position', positionAttribute);
+                    convexGeometry.setAttribute('position', positionAttribute);
                     // const model = modelGroup.children.find(m => m.uploadName === uploadName);
                     modelGroup.setConvexGeometry(uploadName, convexGeometry);
 
@@ -820,8 +804,7 @@ export const actions = {
 
     selectModel: (modelMeshObject, shiftDown) => (dispatch, getState) => {
         const { modelGroup } = getState().printing;
-        modelGroup.selectModel(modelMeshObject, shiftDown);
-        const modelState = modelGroup.getSelectedModelState();
+        const modelState = modelGroup.selectModel(modelMeshObject, shiftDown);
         dispatch(actions.updateState(modelState));
     },
 
@@ -987,7 +970,6 @@ export const actions = {
         dispatch(actions.displayModel());
     },
 
-    // uploadModel
     undo: () => (dispatch, getState) => {
         const { modelGroup, undoSnapshots, redoSnapshots } = getState().printing;
         if (undoSnapshots.length <= 1) {

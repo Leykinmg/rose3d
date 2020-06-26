@@ -8,7 +8,8 @@
 import noop from 'lodash/noop';
 import React, { Component } from 'react';
 import { Vector3, Color, PerspectiveCamera, Scene, Group, HemisphereLight, WebGLRenderer } from 'three';
-import Detector from 'three/examples/js/Detector';
+import { WEBGL } from 'three/examples/jsm/WebGL';
+import { OutlineEffect } from 'three/examples/jsm/effects/OutlineEffect';
 import PropTypes from 'prop-types';
 import TWEEN from '@tweenjs/tween.js';
 import Controls, { EVENTS } from './Controls';
@@ -74,9 +75,15 @@ class Canvas extends Component {
         this.renderer = null;
         this.scene = null;
         this.group = null;
+        this.scene2 = null;
+        this.group2 = null;
+        this.outline = null;
     }
 
     componentDidMount() {
+        if (!WEBGL.isWebGLAvailable()) {
+            return;
+        }
         this.setupScene();
         this.setupControls();
 
@@ -84,6 +91,9 @@ class Canvas extends Component {
         this.printableArea.addEventListener('update', () => this.renderScene()); // TODO: another way to trigger re-render
 
         this.group.add(this.modelGroup);
+        this.group2 = this.modelGroup.userData.selection.group;
+
+        this.scene2.children.push(this.group2);
 
         this.gcodeLineGroup && this.group.add(this.gcodeLineGroup);
         this.backgroundGroup && this.group.add(this.backgroundGroup);
@@ -118,20 +128,32 @@ class Canvas extends Component {
         this.camera.position.copy(this.cameraInitialPosition);
 
         this.renderer = new WebGLRenderer({ antialias: true });
+        this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setClearColor(new Color(0xffffff), 1);
         this.renderer.setSize(width, height);
         this.renderer.shadowMap.enabled = true;
 
         this.scene = new Scene();
         this.scene.add(this.camera);
+        this.scene2 = new Scene();
+        // this.scene2.add(this.camera);
 
         this.group = new Group();
         this.group.position.copy(DEFAULT_MODEL_POSITION);
         this.scene.add(this.group);
 
+
         this.scene.add(new HemisphereLight(0x000000, 0xe0e0e0));
+        // this.scene2.add(new HemisphereLight(0x000000, 0xe0e0e0));
 
         this.node.current.appendChild(this.renderer.domElement);
+
+        this.outline = new OutlineEffect(this.renderer, {
+            defaultThickness: 0.005,
+            defaultColor: [0, 0, 255],
+            defaultAlpha: 1,
+            defaultKeepAlive: true
+        });
     }
 
     setupControls() {
@@ -142,6 +164,8 @@ class Canvas extends Component {
         this.controls.setTarget(this.initialTarget);
         this.controls.setSelectableObjects(this.modelGroup.children);
         this.controls.setSelection(this.modelGroup.userData.selection);
+        this.controls.setOutline(this.outlinePass);
+        // this.outlinePass = this.modelGroup.userData.selection.group.children;
 
 
         this.controls.on(EVENTS.UPDATE, () => {
@@ -389,14 +413,12 @@ class Canvas extends Component {
 
     renderScene() {
         this.renderer.render(this.scene, this.camera);
+        this.outline.renderOutline(this.scene2, this.camera);
 
         TWEEN.update();
     }
 
     render() {
-        if (!Detector.webgl) {
-            return null;
-        }
         return (
             <div
                 ref={this.node}

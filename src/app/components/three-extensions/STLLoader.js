@@ -94,7 +94,7 @@ THREE.STLLoader.prototype = {
 				// If solid[ i ] does not match the i-th byte, then it is not an
 				// ASCII STL; hence, it is binary and return true.
 
-				if ( solid[ i ] != reader.getUint8( i, false ) ) return true;
+				if ( solid[ i ] !== reader.getUint8( i, false ) ) return true;
 
  			}
 
@@ -116,9 +116,9 @@ THREE.STLLoader.prototype = {
 
 			for ( var index = 0; index < 80 - 10; index ++ ) {
 
-				if ( ( reader.getUint32( index, false ) == 0x434F4C4F /*COLO*/ ) &&
-					( reader.getUint8( index + 4 ) == 0x52 /*'R'*/ ) &&
-					( reader.getUint8( index + 5 ) == 0x3D /*'='*/ ) ) {
+				if ( ( reader.getUint32( index, false ) === 0x434F4C4F /*COLO*/ ) &&
+					( reader.getUint8( index + 4 ) === 0x52 /*'R'*/ ) &&
+					( reader.getUint8( index + 5 ) === 0x3D /*'='*/ ) ) {
 
 					hasColors = true;
 					colors = [];
@@ -193,12 +193,12 @@ THREE.STLLoader.prototype = {
 
 			}
 
-			geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( vertices ), 3 ) );
-			geometry.addAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( normals ), 3 ) );
+			geometry.setAttribute( 'position', new THREE.BufferAttribute( new Float32Array( vertices ), 3 ) );
+			geometry.setAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( normals ), 3 ) );
 
 			if ( hasColors ) {
 
-				geometry.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( colors ), 3 ) );
+				geometry.setAttribute( 'color', new THREE.BufferAttribute( new Float32Array( colors ), 3 ) );
 				geometry.hasColors = true;
 				geometry.alpha = alpha;
 
@@ -288,8 +288,8 @@ THREE.STLLoader.prototype = {
                 }
 			}
 
-			geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
-			geometry.addAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
+			geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+			geometry.setAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
 
 			return geometry;
 

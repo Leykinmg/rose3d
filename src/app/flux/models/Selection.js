@@ -18,6 +18,7 @@ const DEFAULT_TRANSFORMATION = {
 class Selection {
     constructor() {
         this.selecteds = [];
+        this.group = new THREE.Group();
         this.transformation = {
             ...DEFAULT_TRANSFORMATION
         };
@@ -32,36 +33,45 @@ class Selection {
     }
 
     calTransformation() {
-        const transformation = {
-            positionX: 0,
-            positionY: 0,
-            positionZ: 0
-        };
+        // const transformation = {
+        //     positionX: 0,
+        //     positionY: 0,
+        //     positionZ: 0
+        // };
         for (const model of this.selecteds) {
-            transformation.positionX += model.transformation.positionX;
-            transformation.positionY += model.transformation.positionY;
-            transformation.positionZ += model.transformation.positionZ;
+            // transformation.positionX += model.transformation.positionX;
+            // transformation.positionY += model.transformation.positionY;
+            // transformation.positionZ += model.transformation.positionZ;
             this.lastTransformation.positionX = model.transformation.positionX;
             this.lastTransformation.positionY = model.transformation.positionY;
             this.lastTransformation.positionZ = model.transformation.positionZ;
+            this.lastTransformation.scaleX = model.transformation.scaleX;
+            this.lastTransformation.scaleY = model.transformation.scaleY;
+            this.lastTransformation.scaleZ = model.transformation.scaleZ;
+            this.lastTransformation.rotationX = model.transformation.rotationX;
+            this.lastTransformation.rotationY = model.transformation.rotationY;
+            this.lastTransformation.rotationZ = model.transformation.rotationZ;
         }
-        this.transformation.positionX = transformation.positionX / this.selecteds.length;
-        this.transformation.positionY = transformation.positionY / this.selecteds.length;
-        this.transformation.positionZ = transformation.positionZ / this.selecteds.length;
+        // this.transformation.positionX = transformation.positionX / this.selecteds.length;
+        // this.transformation.positionY = transformation.positionY / this.selecteds.length;
+        // this.transformation.positionZ = transformation.positionZ / this.selecteds.length;
     }
 
     select(selectedModel) {
         this.selecteds.push(selectedModel);
+        this.group.children.push(selectedModel.meshObject);
     }
 
     unSelect(selectedModel) {
         if (selectedModel) {
             this.selecteds = this.selecteds.filter(model => model !== selectedModel);
+            this.group.children = this.group.children.filter(mesh => mesh !== selectedModel.meshObject);
         }
     }
 
     unSelectAll() {
         this.selecteds = [];
+        this.group.children = [];
     }
 
     check(model) {
@@ -70,6 +80,16 @@ class Selection {
 
     updateTransformation(transformation) {
         const position = {
+            x: 0,
+            y: 0,
+            z: 0
+        };
+        const scale = {
+            x: 1,
+            y: 1,
+            z: 1
+        };
+        const rotation = {
             x: 0,
             y: 0,
             z: 0
@@ -83,8 +103,28 @@ class Selection {
         if (transformation.positionZ || transformation.positionZ === 0) {
             position.z = transformation.positionZ - this.lastTransformation.positionZ;
         }
+        if (transformation.scaleX) {
+            scale.x = transformation.scaleX / this.lastTransformation.scaleX;
+        }
+        if (transformation.scaleY) {
+            scale.y = transformation.scaleY / this.lastTransformation.scaleY;
+        }
+        if (transformation.scaleZ) {
+            scale.z = transformation.scaleZ / this.lastTransformation.scaleZ;
+        }
+        if (transformation.rotationX || transformation.rotationX === 0) {
+            rotation.x = transformation.rotationX - this.lastTransformation.rotationX;
+        }
+        if (transformation.rotationY || transformation.rotationY === 0) {
+            rotation.y = transformation.rotationY - this.lastTransformation.rotationY;
+        }
+        if (transformation.rotationZ || transformation.rotationZ === 0) {
+            rotation.z = transformation.rotationZ - this.lastTransformation.rotationZ;
+        }
         for (const model of this.selecteds) {
             model.updatePosition(position);
+            model.updateScale(scale);
+            model.updateRotation(rotation);
         }
         this.calTransformation();
         return this.lastTransformation;
@@ -108,18 +148,21 @@ class Selection {
         for (const model of this.selecteds) {
             model.meshObject.position.copy(model.positionStart).add(offset);
         }
+        this.calTransformation();
     }
 
     changeQuaternion(quaternion) {
         for (const model of this.selecteds) {
             model.meshObject.quaternion.copy(quaternion).multiply(model.quaternionStart).normalize();
         }
+        this.calTransformation();
     }
 
     changeScale(eVec) {
         for (const model of this.selecteds) {
             model.meshObject.scale.copy(model.scaleStart).multiply(eVec);
         }
+        this.calTransformation();
     }
 
     stickToPlate() {
@@ -164,7 +207,6 @@ class Selection {
             group.models.push(model);
             group.meshObject.add(model.meshObject);
         }
-        group.calStick();
         group.computeBoundingBox();
         const offset2 = group.boundingBox.max.clone().add(group.boundingBox.min.clone()).divideScalar(2);
         for (const model of this.selecteds) {
@@ -207,7 +249,7 @@ class Selection {
         const group = this.selecteds[0];
         this.unSelectAll();
         for (const model of group.models) {
-            model.meshObject.applyMatrix(group.meshObject.matrix);
+            model.meshObject.applyMatrix4(group.meshObject.matrix);
             this.selecteds.push(model);
             model.stickToPlate();
         }

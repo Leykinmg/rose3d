@@ -43,9 +43,10 @@ class Group {
 
     onTransform() {
         const { position, rotation, scale } = this.meshObject;
+        this.computeBoundingBox();
         const transformation = {
             positionX: position.x,
-            positionY: position.y - (this.boundingBox.max.y - this.boundingBox.min.y) / 2,
+            positionY: this.boundingBox.min.y,
             positionZ: position.z,
             rotationX: rotation.x,
             rotationY: rotation.y,
@@ -66,8 +67,8 @@ class Group {
 
     calStick() {
         for (const model of this.models) {
-            if (model.isStick === '0') {
-                this.isStick = '0';
+            if (model.isStick) {
+                this.isStick = true;
                 return;
             }
         }
@@ -90,6 +91,40 @@ class Group {
         }
     }
 
+    updateScale(offset) {
+        const { x, y, z } = offset;
+
+        if (x !== undefined) {
+            this.meshObject.scale.x *= x;
+            this.transformation.scaleX *= x;
+        }
+        if (y !== undefined) {
+            this.meshObject.scale.y *= y;
+            this.transformation.scaleY *= y;
+        }
+        if (z !== undefined) {
+            this.meshObject.scale.z *= z;
+            this.transformation.scaleZ *= z;
+        }
+    }
+
+    updateRotation(offset) {
+        const { x, y, z } = offset;
+
+        if (x !== undefined) {
+            this.meshObject.rotation.x += x;
+            this.transformation.rotationX += x;
+        }
+        if (y !== undefined) {
+            this.meshObject.rotation.y += y;
+            this.transformation.rotationY += y;
+        }
+        if (z !== undefined) {
+            this.meshObject.rotation.z += z;
+            this.transformation.rotationZ += z;
+        }
+    }
+
     updateConfig(config) {
         this.config = {
             ...this.config,
@@ -105,7 +140,26 @@ class Group {
     }
 
     computeBoundingBox() {
-        this.boundingBox = this.boundingBox.setFromObject(this.meshObject);
+        this.boundingBox = new THREE.Box3();
+        this.meshObject.updateMatrix();
+        for (const model of this.models) {
+            if (model.meshObject.name === 'g') {
+                this.boundingBox.union(model.computeBoundingBox());
+            } else {
+                model.meshObject.updateMatrix();
+                const clone = model.convexGeometry ? model.convexGeometry.clone() : model.meshObject.geometry.clone();
+                clone.applyMatrix4(model.meshObject.matrix);
+                let parent = model.meshObject.parent;
+                while (parent && parent.name === 'g') {
+                    clone.computeBoundingBox();
+                    clone.applyMatrix4(parent.matrix);
+                    parent = parent.parent;
+                }
+                clone.computeBoundingBox();
+                this.boundingBox.union(clone.boundingBox);
+            }
+        }
+        return this.boundingBox;
     }
 
     stickToPlate() {
@@ -119,8 +173,8 @@ class Group {
 
     setMatrix(matrix) {
         this.meshObject.updateMatrix();
-        this.meshObject.applyMatrix(new THREE.Matrix4().getInverse(this.meshObject.matrix));
-        this.meshObject.applyMatrix(matrix);
+        this.meshObject.applyMatrix4(new THREE.Matrix4().getInverse(this.meshObject.matrix));
+        this.meshObject.applyMatrix4(matrix);
     }
 
     setOverstepped(overstepped) {
@@ -156,7 +210,7 @@ class Group {
         let convexGeometryClone = this.convexGeometry.clone();
         // this.updateMatrix();
         this.meshObject.updateMatrix();
-        convexGeometryClone.applyMatrix(this.meshObject.matrix);
+        convexGeometryClone.applyMatrix4(this.meshObject.matrix);
         let vertices = convexGeometryClone.vertices;
 
         // find out the following params:
@@ -189,10 +243,10 @@ class Group {
         const q1 = new THREE.Quaternion(0, Math.sin(angleY), 0, Math.cos(angleY));
         const q2 = new THREE.Quaternion(0, 0, Math.sin(angleZ), Math.cos(angleZ)).multiply(q1).normalize();
         const Matrix2 = new THREE.Matrix4().makeRotationFromQuaternion(q2);
-        this.meshObject.applyMatrix(Matrix2);
+        this.meshObject.applyMatrix4(Matrix2);
         this.stickToPlate();
         convexGeometryClone = this.convexGeometry.clone();
-        convexGeometryClone.applyMatrix(this.meshObject.matrix);
+        convexGeometryClone.applyMatrix4(this.meshObject.matrix);
         vertices = convexGeometryClone.vertices;
         minV = vertices[0];
         for (let i = 0; i < vertices.length; i++) {
@@ -224,7 +278,7 @@ class Group {
         const q3 = new THREE.Quaternion(Math.sin(angleX), 0, 0, Math.cos(angleX));
         const q4 = new THREE.Quaternion(0, Math.sin(-angleY), 0, Math.cos(-angleY)).multiply(q3).normalize();
         const MatrixC = new THREE.Matrix4().makeRotationFromQuaternion(q4);
-        this.meshObject.applyMatrix(MatrixC);
+        this.meshObject.applyMatrix4(MatrixC);
         this.stickToPlate();
         this.meshObject.position.x = positionX;
         this.meshObject.position.z = positionZ;

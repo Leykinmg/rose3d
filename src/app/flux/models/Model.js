@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import * as THREE from 'three';
-// import ThreeUtils from '../../components/three-extensions/ThreeUtils';
+import ThreeUtils from '../../components/three-extensions/ThreeUtils';
 
 
 // const materialSelected = new THREE.MeshPhongMaterial({ color: 0xf0f0f0, specular: 0xb0b0b0, shininess: 30 });
@@ -30,7 +30,7 @@ const DEFAULT_TRANSFORMATION = {
 class Model {
     constructor(modelInfo) {
         const { originalName, uploadName, mode, geometry, material, center,
-            transformation } = modelInfo;
+            transformation, isStick, extruder } = modelInfo;
 
         this.meshObject = new THREE.Mesh(geometry, material);
         // this.meshObject.translate()
@@ -52,9 +52,9 @@ class Model {
         this.boundingBox = null;
         this.overstepped = false;
         this.convexGeometry = null;
-        this.extruder = '0';
+        this.extruder = extruder !== undefined ? extruder : '0';
         this.material = materialNormal;
-        this.isStick = true;
+        this.isStick = isStick !== undefined ? isStick : true;
 
         this.positionStart = new THREE.Vector3();
         this.quaternionStart = new THREE.Quaternion();
@@ -63,9 +63,10 @@ class Model {
 
     onTransform() {
         const { position, rotation, scale } = this.meshObject;
+        this.computeBoundingBox();
         const transformation = {
             positionX: position.x,
-            positionY: position.y - (this.boundingBox.max.y - this.boundingBox.min.y) / 2,
+            positionY: this.boundingBox.min.y,
             positionZ: position.z,
             rotationX: rotation.x,
             rotationY: rotation.y,
@@ -83,63 +84,63 @@ class Model {
         return this.transformation;
     }
 
-    // updateTransformation(transformation) {
-    //     const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ, flip } = transformation;
-    //     let { width, height } = transformation;
-    //
-    //     if (positionX !== undefined) {
-    //         this.meshObject.position.x = positionX;
-    //         this.transformation.positionX = positionX;
-    //     }
-    //     if (positionY !== undefined) {
-    //         this.meshObject.position.y = positionY;
-    //         this.transformation.positionY = positionY;
-    //     }
-    //     if (positionZ !== undefined) {
-    //         this.meshObject.position.z = positionZ;
-    //         this.transformation.positionZ = positionZ;
-    //     }
-    //     if (rotationX !== undefined) {
-    //         this.meshObject.rotation.x = rotationX;
-    //         this.transformation.rotationX = rotationX;
-    //     }
-    //     if (rotationY !== undefined) {
-    //         this.meshObject.rotation.y = rotationY;
-    //         this.transformation.rotationY = rotationY;
-    //     }
-    //     if (rotationZ !== undefined) {
-    //         this.meshObject.rotation.z = rotationZ;
-    //         this.transformation.rotationZ = rotationZ;
-    //     }
-    //     if (scaleX !== undefined) {
-    //         this.meshObject.scale.x = scaleX;
-    //         this.transformation.scaleX = scaleX;
-    //     }
-    //     if (scaleY !== undefined) {
-    //         this.meshObject.scale.y = scaleY;
-    //         this.transformation.scaleY = scaleY;
-    //     }
-    //     if (scaleZ !== undefined) {
-    //         this.meshObject.scale.z = scaleZ;
-    //         this.transformation.scaleZ = scaleZ;
-    //     }
-    //     if (flip !== undefined) {
-    //         this.transformation.flip = flip;
-    //     }
-    //     if (width || height) {
-    //         const geometrySize = ThreeUtils.getGeometrySize(this.meshObject.geometry, true);
-    //         width = width || height * this.sourceWidth / this.sourceHeight;
-    //         height = height || width * this.sourceHeight / this.sourceWidth;
-    //
-    //         const scaleX_ = width / geometrySize.x;
-    //         const scaleY_ = height / geometrySize.y;
-    //
-    //         this.meshObject.scale.set(scaleX_, scaleY_, 1);
-    //         this.transformation.width = width;
-    //         this.transformation.height = height;
-    //     }
-    //     return this.transformation;
-    // }
+    updateTransformation(transformation) {
+        const { positionX, positionY, positionZ, rotationX, rotationY, rotationZ, scaleX, scaleY, scaleZ, flip } = transformation;
+        let { width, height } = transformation;
+
+        if (positionX !== undefined) {
+            this.meshObject.position.x = positionX;
+            this.transformation.positionX = positionX;
+        }
+        if (positionY !== undefined) {
+            this.meshObject.position.y = positionY;
+            this.transformation.positionY = positionY;
+        }
+        if (positionZ !== undefined) {
+            this.meshObject.position.z = positionZ;
+            this.transformation.positionZ = positionZ;
+        }
+        if (rotationX !== undefined) {
+            this.meshObject.rotation.x = rotationX;
+            this.transformation.rotationX = rotationX;
+        }
+        if (rotationY !== undefined) {
+            this.meshObject.rotation.y = rotationY;
+            this.transformation.rotationY = rotationY;
+        }
+        if (rotationZ !== undefined) {
+            this.meshObject.rotation.z = rotationZ;
+            this.transformation.rotationZ = rotationZ;
+        }
+        if (scaleX !== undefined) {
+            this.meshObject.scale.x = scaleX;
+            this.transformation.scaleX = scaleX;
+        }
+        if (scaleY !== undefined) {
+            this.meshObject.scale.y = scaleY;
+            this.transformation.scaleY = scaleY;
+        }
+        if (scaleZ !== undefined) {
+            this.meshObject.scale.z = scaleZ;
+            this.transformation.scaleZ = scaleZ;
+        }
+        if (flip !== undefined) {
+            this.transformation.flip = flip;
+        }
+        if (width || height) {
+            const geometrySize = ThreeUtils.getGeometrySize(this.meshObject.geometry, true);
+            width = width || height * this.sourceWidth / this.sourceHeight;
+            height = height || width * this.sourceHeight / this.sourceWidth;
+
+            const scaleX_ = width / geometrySize.x;
+            const scaleY_ = height / geometrySize.y;
+
+            this.meshObject.scale.set(scaleX_, scaleY_, 1);
+            this.transformation.width = width;
+            this.transformation.height = height;
+        }
+        return this.transformation;
+    }
 
 
     updatePosition(offset) {
@@ -156,6 +157,40 @@ class Model {
         if (z !== undefined) {
             this.meshObject.position.z += z;
             this.transformation.positionZ += z;
+        }
+    }
+
+    updateScale(offset) {
+        const { x, y, z } = offset;
+
+        if (x !== undefined) {
+            this.meshObject.scale.x *= x;
+            this.transformation.scaleX *= x;
+        }
+        if (y !== undefined) {
+            this.meshObject.scale.y *= y;
+            this.transformation.scaleY *= y;
+        }
+        if (z !== undefined) {
+            this.meshObject.scale.z *= z;
+            this.transformation.scaleZ *= z;
+        }
+    }
+
+    updateRotation(offset) {
+        const { x, y, z } = offset;
+
+        if (x !== undefined) {
+            this.meshObject.rotation.x += x;
+            this.transformation.rotationX += x;
+        }
+        if (y !== undefined) {
+            this.meshObject.rotation.y += y;
+            this.transformation.rotationY += y;
+        }
+        if (z !== undefined) {
+            this.meshObject.rotation.z += z;
+            this.transformation.rotationZ += z;
         }
     }
 
@@ -177,13 +212,13 @@ class Model {
         if (this.convexGeometry) {
             const clone = this.convexGeometry.clone();
             this.meshObject.updateMatrix();
-            clone.applyMatrix(this.meshObject.matrix);
+            clone.applyMatrix4(this.meshObject.matrix);
             clone.computeBoundingBox();
             this.boundingBox = clone.boundingBox;
         } else {
             const clone = this.meshObject.geometry.clone();
             this.meshObject.updateMatrix();
-            clone.applyMatrix(this.meshObject.matrix);
+            clone.applyMatrix4(this.meshObject.matrix);
             clone.computeBoundingBox();
             this.boundingBox = clone.boundingBox;
         }
@@ -211,9 +246,9 @@ class Model {
     // 3D
     setMatrix(matrix) {
         this.meshObject.updateMatrix();
-        this.meshObject.applyMatrix(new THREE.Matrix4().getInverse(this.meshObject.matrix));
-        this.meshObject.applyMatrix(matrix);
-        // attention: do not use Object3D.applyMatrix(matrix : Matrix4)
+        this.meshObject.applyMatrix4(new THREE.Matrix4().getInverse(this.meshObject.matrix));
+        this.meshObject.applyMatrix4(matrix);
+        // attention: do not use Object3D.applyMatrix4(matrix : Matrix4)
         // because applyMatrix is accumulated
         // anther way: decompose Matrix and reset position/rotation/scale
         // let position = new THREE.Vector3();
@@ -257,7 +292,7 @@ class Model {
             geometry: this.meshObject.geometry.clone(),
             material: this.meshObject.material.clone()
         });
-        clone.modelID = this.modelID;
+        clone.modelID = uuid.v4();
         // this.updateMatrix();
         // clone.setMatrix(this.mesh.Object.matrix);
         this.meshObject.updateMatrix();
@@ -274,7 +309,7 @@ class Model {
         let convexGeometryClone = this.convexGeometry.clone();
         // this.updateMatrix();
         this.meshObject.updateMatrix();
-        convexGeometryClone.applyMatrix(this.meshObject.matrix);
+        convexGeometryClone.applyMatrix4(this.meshObject.matrix);
         let vertices = convexGeometryClone.vertices;
 
         // find out the following params:
@@ -307,10 +342,10 @@ class Model {
         const q1 = new THREE.Quaternion(0, Math.sin(angleY), 0, Math.cos(angleY));
         const q2 = new THREE.Quaternion(0, 0, Math.sin(angleZ), Math.cos(angleZ)).multiply(q1).normalize();
         const Matrix2 = new THREE.Matrix4().makeRotationFromQuaternion(q2);
-        this.meshObject.applyMatrix(Matrix2);
+        this.meshObject.applyMatrix4(Matrix2);
         this.stickToPlate();
         convexGeometryClone = this.convexGeometry.clone();
-        convexGeometryClone.applyMatrix(this.meshObject.matrix);
+        convexGeometryClone.applyMatrix4(this.meshObject.matrix);
         vertices = convexGeometryClone.vertices;
         minV = vertices[0];
         for (let i = 0; i < vertices.length; i++) {
@@ -342,7 +377,7 @@ class Model {
         const q3 = new THREE.Quaternion(Math.sin(angleX), 0, 0, Math.cos(angleX));
         const q4 = new THREE.Quaternion(0, Math.sin(-angleY), 0, Math.cos(-angleY)).multiply(q3).normalize();
         const MatrixC = new THREE.Matrix4().makeRotationFromQuaternion(q4);
-        this.meshObject.applyMatrix(MatrixC);
+        this.meshObject.applyMatrix4(MatrixC);
         this.stickToPlate();
         this.meshObject.position.x = positionX;
         this.meshObject.position.z = positionZ;

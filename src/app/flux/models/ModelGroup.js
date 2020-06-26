@@ -76,33 +76,16 @@ class ModelGroup {
     }
 
     removeSelectedModel() {
-        const selected = this.getSelectedModel();
-        if (selected) {
-            this.selectedModel = null;
-            selected.meshObject.removeEventListener('update', this.onModelUpdate);
-            // this.remove(selected);
-            this.models = this.models.filter(model => model !== selected);
-            this.object.remove(selected.meshObject);
-
-            return this._emptyState;
-        }
-        return null;
-    }
-
-    getSortedModelsByPositionZ() {
-        // bubble sort
-        const sorted = this.getModels();
-        const length = sorted.length;
-        for (let i = 0; i < length; i++) {
-            for (let j = 0; j < (length - i - 1); j++) {
-                if (sorted[j].meshObject.position.z > sorted[j + 1].meshObject.position.z) {
-                    const tmp = sorted[j];
-                    sorted[j] = sorted[j + 1];
-                    sorted[j + 1] = tmp;
-                }
+        this.selectedModel = null;
+        for (const model of this.selection.selecteds) {
+            if (model) {
+                model.meshObject.removeEventListener('update', this.onModelUpdate);
+                this.models = this.models.filter(m => m !== model);
+                this.selection.unSelect(model);
+                this.object.remove(model.meshObject);
             }
         }
-        return sorted;
+        return this._emptyState;
     }
 
     setConvexGeometry(uploadName, convexGeometry) {
@@ -128,6 +111,8 @@ class ModelGroup {
     }
 
     undoRedo(models) {
+        this.unselectAllModels();
+        this.selection.unSelectAll();
         for (const model of this.models) {
             model.meshObject.removeEventListener('update', this.onModelUpdate);
             this.object.remove(model.meshObject);
@@ -140,7 +125,6 @@ class ModelGroup {
             this.models.push(newModel);
             this.object.add(newModel.meshObject);
         }
-        this.selectedModel = null;
         return this._emptyState;
     }
 
@@ -163,21 +147,28 @@ class ModelGroup {
     selectModel(modelMeshObject, shiftDown) {
         if (modelMeshObject) {
             const model = this.models.find(d => d.meshObject === modelMeshObject);
-            this.selectedModel = model;
             if (shiftDown) {
                 if (this.selection.check(model)) {
                     this.selection.unSelect(model);
+                    if (this.selection.selecteds.length !== 0) {
+                        this.selectedModel = this.selection.selecteds[this.selection.selecteds.length - 1];
+                    } else {
+                        this.selectedModel = null;
+                        return this._emptyState;
+                    }
                 } else {
+                    this.selectedModel = model;
                     this.selection.select(model);
                 }
             } else {
+                this.selectedModel = model;
                 this.selection.unSelectAll();
                 this.selection.select(model);
             }
             this.selection.calTransformation();
             model.computeBoundingBox();
             model.onTransform();
-            return this._getState(model);
+            return this._getState(this.selectedModel);
         }
         return null;
     }
@@ -212,32 +203,26 @@ class ModelGroup {
     }
 
     multiplySelectedModel(count) {
-        const selected = this.getSelectedModel();
-        if (selected && count > 0) {
-            for (let i = 0; i < count; i++) {
-                const model = this.getSelectedModel().clone();
-                model.stickToPlate();
-                model.meshObject.position.x = 0;
-                model.meshObject.position.z = 0;
-                const xz = this._computeAvailableXZ(model);
-                model.meshObject.position.x = xz.x;
-                model.meshObject.position.z = xz.z;
-                // this.add(model);
-                this.models.push(model);
-                this.object.add(model.meshObject);
+        if (count > 0) {
+            for (const model of this.selection.selecteds) {
+                for (let i = 0; i < count; i++) {
+                    const clone = model.clone();
+                    clone.stickToPlate();
+                    clone.meshObject.position.x = 0;
+                    clone.meshObject.position.z = 0;
+                    const xz = this._computeAvailableXZ(clone);
+                    clone.meshObject.position.x = xz.x;
+                    clone.meshObject.position.z = xz.z;
+                    // this.add(model);
+                    this.models.push(clone);
+                    this.object.add(clone.meshObject);
+                    clone.convexGeometry = model.convexGeometry.clone();
+                }
             }
-
             return {
                 hasModel: this._hasModel(),
                 isAnyModelOverstepped: this._checkAnyModelOverstepped()
             };
-            // const state = {
-            //     canUndo: this._canUndo(),
-            //     canRedo: this._canRedo(),
-            //     hasModel: this._hasModel(),
-            //     isAnyModelOverstepped: this._checkAnyModelOverstepped()
-            // };
-            // this.updateState(state);
         }
         return null;
     }
@@ -295,7 +280,6 @@ class ModelGroup {
         return null;
     }
 
-    // model transformation triggered by controls
     onModelAfterTransform() {
         const selected = this.getSelectedModel();
         if (!selected) {
@@ -487,11 +471,10 @@ class ModelGroup {
             models.push(model);
         }
         for (const group of models) {
-            console.log(group);
             if (group.meshObject.name === 'g') {
                 for (const model of group.models) {
                     const modelClone = model.clone();
-                    modelClone.meshObject.applyMatrix(group.meshObject.matrix);
+                    modelClone.meshObject.applyMatrix4(group.meshObject.matrix);
                     if (modelClone.meshObject.name === 'g') {
                         models.push(modelClone);
                     } else {
@@ -515,7 +498,7 @@ class ModelGroup {
             if (group.meshObject.name === 'g') {
                 for (const model of group.models) {
                     const modelClone = model.clone();
-                    modelClone.meshObject.applyMatrix(group.meshObject.matrix);
+                    modelClone.meshObject.applyMatrix4(group.meshObject.matrix);
                     if (modelClone.meshObject.name === 'g') {
                         models.push(modelClone);
                     } else {
@@ -543,7 +526,7 @@ class ModelGroup {
             if (group.meshObject.name === 'g') {
                 for (const model of group.models) {
                     const modelClone = model.clone();
-                    modelClone.meshObject.applyMatrix(group.meshObject.matrix);
+                    modelClone.meshObject.applyMatrix4(group.meshObject.matrix);
                     if (modelClone.meshObject.name === 'g') {
                         models.push(modelClone);
                     } else {

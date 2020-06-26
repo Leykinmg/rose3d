@@ -167,10 +167,10 @@ class GcodeToBufferGeometryWorkspace {
                             colorAttribute.normalized = true;
                             indexColorAttribute.normalized = true;
 
-                            bufferGeometry.addAttribute('position', positionAttribute);
-                            bufferGeometry.addAttribute('a_color', colorAttribute);
-                            bufferGeometry.addAttribute('a_index_color', indexColorAttribute);
-                            bufferGeometry.addAttribute('a_index', indexAttribute);
+                            bufferGeometry.setAttribute('position', positionAttribute);
+                            bufferGeometry.setAttribute('a_color', colorAttribute);
+                            bufferGeometry.setAttribute('a_index_color', indexColorAttribute);
+                            bufferGeometry.setAttribute('a_index', indexAttribute);
 
                             onParsed({ bufferGeometry: bufferGeometry, renderMethod: renderMethodTmp, isDone: false });
 
@@ -204,10 +204,10 @@ class GcodeToBufferGeometryWorkspace {
             colorAttribute.normalized = true;
             indexColorAttribute.normalized = true;
 
-            bufferGeometry.addAttribute('position', positionAttribute);
-            bufferGeometry.addAttribute('a_color', colorAttribute);
-            bufferGeometry.addAttribute('a_index_color', indexColorAttribute);
-            bufferGeometry.addAttribute('a_index', indexAttribute);
+            bufferGeometry.setAttribute('position', positionAttribute);
+            bufferGeometry.setAttribute('a_color', colorAttribute);
+            bufferGeometry.setAttribute('a_index_color', indexColorAttribute);
+            bufferGeometry.setAttribute('a_index', indexAttribute);
             onParsed({ bufferGeometry: bufferGeometry, renderMethod: renderMethodTmp, isDone: true, boundingBox: boundingBox });
         } catch (err) {
             onError(err);

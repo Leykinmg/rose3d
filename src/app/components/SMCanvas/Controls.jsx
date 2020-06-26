@@ -81,6 +81,8 @@ class Controls extends EventEmitter {
 
     selectedObject = null;
 
+    outline = null;
+
     ray = new THREE.Raycaster();
 
     constructor(camera, group, domElement) {
@@ -213,8 +215,12 @@ class Controls extends EventEmitter {
                         while (this.selectedObject.parent.name === 'g') {
                             this.selectedObject = this.selectedObject.parent;
                         }
-                        this.transformControl.attach(this.selectedObject);
                         this.emit(EVENTS.SELECT_OBJECT, this.selectedObject, this.shiftDown);
+                        if (this.selection.selecteds.length === 0) {
+                            this.transformControl.detach();
+                        } else {
+                            this.transformControl.attach(this.selection.selecteds[this.selection.selecteds.length - 1].meshObject);
+                        }
                         this.emit(EVENTS.UPDATE);
                         break;
                     }
@@ -372,6 +378,10 @@ class Controls extends EventEmitter {
     setSelection(selection) {
         this.selection = selection;
         this.transformControl.setSelection(this.selection);
+    }
+
+    setOutline(outline) {
+        this.outline = outline;
     }
 
     attach(object) {
