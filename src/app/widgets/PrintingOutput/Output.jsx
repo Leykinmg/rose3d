@@ -5,8 +5,7 @@ import path from 'path';
 import PropTypes from 'prop-types';
 import request from 'superagent';
 import FileSaver from 'file-saver';
-
-// import { pathWithRandomSuffix } from '../../../shared/lib/random-utils';
+import isElectron from 'is-electron';
 import i18n from '../../lib/i18n';
 import modal from '../../lib/modal';
 import { actions as printingActions, PRINTING_STAGE } from '../../flux/printing';
@@ -14,6 +13,16 @@ import Thumbnail from './Thumbnail';
 import ModelExporter from '../PrintingVisualizer/ModelExporter';
 import { DATA_PREFIX } from '../../constants';
 
+if (isElectron()) {
+    const { ipcRenderer } = window.require('electron');
+    const fs = window.require('fs');
+
+    ipcRenderer.on('saved-file', (event, filename, uploadPath) => {
+        if (!filename.canceled) {
+            fs.copyFile(uploadPath, filename.filePath, () => {});
+        }
+    });
+}
 
 class Output extends PureComponent {
     static propTypes = {
@@ -81,7 +90,12 @@ class Output extends PureComponent {
                 const data = res.text;
                 const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
                 const savedFilename = filename;
-                FileSaver.saveAs(blob, savedFilename, true);
+                if (isElectron()) {
+                    const { ipcRenderer } = window.require('electron');
+                    ipcRenderer.send('save-dialog', gcodeFile.gcodeFilePath);
+                } else {
+                    FileSaver.saveAs(blob, savedFilename, true);
+                }
             });
         },
         onChangeExportModelFormat: (option) => {

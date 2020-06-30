@@ -714,5 +714,18 @@
     "On the software": "On the software",
     "Material Thickness": "Material Thickness",
     "If you reinstalled the laser module, please redo the Camera Calibration on the Touchscreen before proceeding.": "If you reinstalled the laser module, please redo the Camera Calibration on the Touchscreen before proceeding.",
-    "Note: If you use the USB disk to engrave, please make sure you set the work origin in the software instead of on the touchscreen.": "Note: If you use the USB disk to engrave, please make sure you set the work origin in the software instead of on the touchscreen."
+    "Note: If you use the USB disk to engrave, please make sure you set the work origin in the software instead of on the touchscreen.": "Note: If you use the USB disk to engrave, please make sure you set the work origin in the software instead of on the touchscreen.",
+    "Dual": "Dual",
+    "Enable Prime Tower": "Enable Prime Tower",
+    "Print a tower next to the print which serves to prime the material after each nozzle switch.": "Print a tower next to the print which serves to prime the material after each nozzle switch.",
+    "Prime Tower Size": "Prime Tower Size",
+    "The width of the prime tower.": "The width of the prime tower.",
+    "Prime Tower Minimum Volume": "Prime Tower Minimum Volume",
+    "The minimum volume for each layer of the prime tower in order to purge enough material.": "The minimum volume for each layer of the prime tower in order to purge enough material.",
+    "Prime Tower X Position": "Prime Tower X Position",
+    "The x coordinate of the position of the prime tower.": "The x coordinate of the position of the prime tower.",
+    "Prime Tower Y Position": "Prime Tower Y Position",
+    "The y coordinate of the position of the prime tower.": "The y coordinate of the position of the prime tower.",
+    "Nozzle Switch Retraction Distance": "Nozzle Switch Retraction Distance",
+    "The amount of retraction when switching extruders. Set to 0 for no retraction at all. This should generally be the same as the length of the heat zone.": "The amount of retraction when switching extruders. Set to 0 for no retraction at all. This should generally be the same as the length of the heat zone."
 }

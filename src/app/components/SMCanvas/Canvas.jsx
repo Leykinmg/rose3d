@@ -29,6 +29,7 @@ class Canvas extends Component {
         modelGroup: PropTypes.object.isRequired,
         printableArea: PropTypes.object.isRequired,
         gcodeLineGroup: PropTypes.object,
+        primeTower: PropTypes.object,
         cameraInitialPosition: PropTypes.object.isRequired,
         // callback
         onSelectModel: PropTypes.func,
@@ -56,6 +57,7 @@ class Canvas extends Component {
         this.printableArea = this.props.printableArea;
         this.modelGroup = this.props.modelGroup;
         this.gcodeLineGroup = this.props.gcodeLineGroup;
+        this.primeTower = this.props.primeTower;
         this.cameraInitialPosition = this.props.cameraInitialPosition;
 
         // callback
@@ -91,6 +93,7 @@ class Canvas extends Component {
         this.printableArea.addEventListener('update', () => this.renderScene()); // TODO: another way to trigger re-render
 
         this.group.add(this.modelGroup);
+        this.group.add(this.primeTower);
         this.group2 = this.modelGroup.userData.selection.group;
 
         this.scene2.children.push(this.group2);
@@ -413,8 +416,9 @@ class Canvas extends Component {
 
     renderScene() {
         this.renderer.render(this.scene, this.camera);
-        this.outline.renderOutline(this.scene2, this.camera);
-
+        if (this.modelGroup.visible) {
+            this.outline.renderOutline(this.scene2, this.camera);
+        }
         TWEEN.update();
     }
 

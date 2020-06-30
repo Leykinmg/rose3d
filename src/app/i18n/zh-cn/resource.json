@@ -714,5 +714,18 @@
     "On the software": "",
     "Material Thickness": "",
     "If you reinstalled the laser module, please redo the Camera Calibration on the Touchscreen before proceeding.": "",
-    "Note: If you use the USB disk to engrave, please make sure you set the work origin in the software instead of on the touchscreen.": ""
+    "Note: If you use the USB disk to engrave, please make sure you set the work origin in the software instead of on the touchscreen.": "",
+    "Dual": "双重挤出",
+    "Enable Prime Tower": "启用装填塔",
+    "Print a tower next to the print which serves to prime the material after each nozzle switch.": "在打印品相邻处打印一个塔，用于在每个喷嘴切换后装填材料。",
+    "Prime Tower Size": "装填塔尺寸",
+    "The width of the prime tower.": "装填塔的宽度。",
+    "Prime Tower Minimum Volume": "装填塔最小体积",
+    "The minimum volume for each layer of the prime tower in order to purge enough material.": "为了清除足够的材料，装填塔每层的最小体积。",
+    "Prime Tower X Position": "装填塔 X 位置",
+    "The x coordinate of the position of the prime tower.": "装填塔位置的 X 坐标。",
+    "Prime Tower Y Position": "装填塔 Y 位置",
+    "The y coordinate of the position of the prime tower.": "装填塔位置的 y 坐标。",
+    "Nozzle Switch Retraction Distance": "喷嘴切换回抽距离",
+    "The amount of retraction when switching extruders. Set to 0 for no retraction at all. This should generally be the same as the length of the heat zone.": "切换挤出机时的回抽量。设为 0，不进行任何回抽。该值通常应与加热区的长度相同。"
 }

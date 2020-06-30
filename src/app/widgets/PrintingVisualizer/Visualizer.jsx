@@ -29,6 +29,7 @@ class Visualizer extends PureComponent {
         gcodeLineGroup: PropTypes.object.isRequired,
         transformMode: PropTypes.string.isRequired,
         progress: PropTypes.number.isRequired,
+        primeTower: PropTypes.object,
         displayedType: PropTypes.string.isRequired,
         renderingTimestamp: PropTypes.number.isRequired,
 
@@ -231,7 +232,7 @@ class Visualizer extends PureComponent {
     };
 
     render() {
-        const { size, hasModel, selectedModelID, modelGroup, gcodeLineGroup, progress, displayedType } = this.props;
+        const { size, hasModel, selectedModelID, modelGroup, gcodeLineGroup, progress, displayedType, primeTower } = this.props;
 
         // const actions = this.actions;
         let modelType = '';
@@ -282,6 +283,7 @@ class Visualizer extends PureComponent {
                         size={size}
                         modelGroup={modelGroup.object}
                         printableArea={this.printableArea}
+                        primeTower={primeTower}
                         cameraInitialPosition={new Vector3(0, size.z / 2, Math.max(size.x, size.y, size.z) * 2)}
                         gcodeLineGroup={gcodeLineGroup}
                         onSelectModel={this.actions.onSelectModel}
@@ -372,7 +374,7 @@ const mapStateToProps = (state) => {
     const printing = state.printing;
     const { size } = machine;
     // TODO: be to organized
-    const { stage, selectedModelID, modelGroup, hasModel, gcodeLineGroup, transformMode, progress, displayedType, renderingTimestamp } = printing;
+    const { stage, selectedModelID, modelGroup, hasModel, gcodeLineGroup, transformMode, progress, displayedType, renderingTimestamp, primeTower } = printing;
 
     return {
         stage,
@@ -384,7 +386,8 @@ const mapStateToProps = (state) => {
         transformMode,
         progress,
         displayedType,
-        renderingTimestamp
+        renderingTimestamp,
+        primeTower
     };
 };
 

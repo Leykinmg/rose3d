@@ -1,6 +1,6 @@
 /* eslint import/no-unresolved: 0 */
 import 'babel-polyfill';
-import { app, Menu, BrowserWindow } from 'electron';
+import { app, Menu, BrowserWindow, ipcMain, dialog } from 'electron';
 import { configureWindow } from './electron-app/window';
 import getMenuTemplate from './electron-app/Menu';
 import launchServer from './server-cli';
@@ -113,6 +113,19 @@ const main = () => {
     if (process.arch === 'x64') {
         app.commandLine.appendSwitch('--js-flags', '--max-old-space-size=4096');
     }
+
+    ipcMain.on('save-dialog', (event, path) => {
+        dialog.showSaveDialog({
+            title: '保存',
+            defaultPath: path,
+            filters: [{
+                name: 'gcode文件',
+                extensions: ['gcode']
+            }]
+        }).then((filename) => {
+            event.sender.send('saved-file', filename, path);
+        });
+    });
 
     app.commandLine.appendSwitch('ignore-gpu-blacklist');
     app.on('ready', onReady);

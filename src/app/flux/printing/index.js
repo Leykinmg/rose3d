@@ -90,7 +90,11 @@ const INITIAL_STATE = {
     displayedType: 'model', // model/gcode
 
     // temp
-    renderingTimestamp: 0
+    renderingTimestamp: 0,
+
+    // prime_tower
+    // primeTowerGeometry: new THREE.CylinderBufferGeometry(10, 10, 10, 100),
+    primeTower: new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 0, 0, 0), new THREE.MeshBasicMaterial({ color: 0x000000 }))
 };
 
 
@@ -160,14 +164,15 @@ export const actions = {
             }));
         });
         controller.on('slice:completed', (args) => {
-            const { gcodeFilename, gcodeFileLength, printTime, filamentLength, filamentWeight } = args;
+            const { gcodeFilename, gcodeFileLength, printTime, filamentLength, filamentWeight, gcodeFilePath } = args;
             dispatch(actions.updateState({
                 gcodeFile: {
                     name: gcodeFilename,
                     uploadName: gcodeFilename,
                     size: gcodeFileLength,
                     lastModifiedDate: new Date().getTime(),
-                    thumbnail: ''
+                    thumbnail: '',
+                    gcodeFilePath: gcodeFilePath
                 },
                 printTime,
                 filamentLength,
@@ -306,6 +311,7 @@ export const actions = {
         const activeDefinition = {
             ...state.activeDefinition
         };
+        const primeTower = state.primeTower;
 
         // Note that activeDefinition can be updated by itself
         if (definition !== state.activeDefinition) {
@@ -324,6 +330,19 @@ export const actions = {
             definitionManager.calculateDependencies(activeDefinition, activeDefinition.settings);
         }
 
+        if (activeDefinition.settings.prime_tower_enable.default_value) {
+            const size = activeDefinition.settings.prime_tower_size.default_value;
+            const height = activeDefinition.settings.machine_height.default_value;
+            const geometry = new THREE.CylinderBufferGeometry(size, size, height, 100);
+            primeTower.geometry = geometry;
+            primeTower.position.x = activeDefinition.settings.prime_tower_position_x.default_value;
+            primeTower.position.z = activeDefinition.settings.prime_tower_position_y.default_value;
+            primeTower.position.y = height / 2;
+            primeTower.visible = true;
+        } else {
+            primeTower.visible = false;
+        }
+        dispatch(actions.render());
         // Update activeDefinition to force component re-render
         dispatch(actions.updateState({ activeDefinition }));
     },
@@ -495,6 +514,7 @@ export const actions = {
         const uploadName = pathWithRandomSuffix(file.name);
         formData.append('uploadName', uploadName);
         const res = await api.uploadFile(formData);
+        console.log(res);
 
         // const { name, filename } = res.body;
         const { originalName } = res.body;
