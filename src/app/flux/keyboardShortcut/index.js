@@ -25,6 +25,14 @@ export const actions = {
                     displayedType === 'model' && (dispatch(printingActions.multiplySelectedModel(1)));
                 }
             },
+            'UNDO': () => {
+                const { displayedType } = getState().printing;
+                displayedType === 'model' && (dispatch(printingActions.undo()));
+            },
+            'REDO': () => {
+                const { displayedType } = getState().printing;
+                displayedType === 'model' && (dispatch(printingActions.redo()));
+            },
             'JOG': (event, { direction }) => {
                 const from = window.location.hash.split('/')[1];
                 if (from === '3dp') {

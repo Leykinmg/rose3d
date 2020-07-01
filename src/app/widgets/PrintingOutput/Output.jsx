@@ -17,7 +17,19 @@ if (isElectron()) {
     const { ipcRenderer } = window.require('electron');
     const fs = window.require('fs');
 
-    ipcRenderer.on('saved-file', (event, filename, uploadPath) => {
+    ipcRenderer.on('saved-gcode', (event, filename, uploadPath) => {
+        if (!filename.canceled) {
+            fs.copyFile(uploadPath, filename.filePath, () => {});
+        }
+    });
+
+    ipcRenderer.on('saved-model', (event, filename, output) => {
+        if (!filename.canceled) {
+            fs.writeFile(filename.filePath, output, 'utf8', () => {});
+        }
+    });
+
+    ipcRenderer.on('saved-config', (event, filename, uploadPath) => {
         if (!filename.canceled) {
             fs.copyFile(uploadPath, filename.filePath, () => {});
         }
@@ -37,7 +49,8 @@ class Output extends PureComponent {
         hasModel: PropTypes.bool.isRequired,
         stage: PropTypes.number.isRequired,
         isAnyModelOverstepped: PropTypes.bool.isRequired,
-        generateGcode: PropTypes.func.isRequired
+        generateGcode: PropTypes.func.isRequired,
+        createConfig: PropTypes.func.isRequired
     };
 
     state = {
@@ -48,6 +61,7 @@ class Output extends PureComponent {
 
     actions = {
         onClickGenerateGcode: () => {
+            this.props.modelGroup.unselectAllModels();
             const thumbnail = this.thumbnail.current.getThumbnail();
             this.props.generateGcode(thumbnail);
         },
@@ -86,17 +100,18 @@ class Output extends PureComponent {
             const { gcodeFile } = this.props;
             const filename = path.basename(gcodeFile.name);
             const gcodeFilePath = `${DATA_PREFIX}/${gcodeFile.uploadName}`;
-            request.get(gcodeFilePath).end((err, res) => {
-                const data = res.text;
-                const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
-                const savedFilename = filename;
-                if (isElectron()) {
-                    const { ipcRenderer } = window.require('electron');
-                    ipcRenderer.send('save-dialog', gcodeFile.gcodeFilePath);
-                } else {
-                    FileSaver.saveAs(blob, savedFilename, true);
-                }
-            });
+            if (isElectron()) {
+                const { ipcRenderer } = window.require('electron');
+                ipcRenderer.send('save-gcode', gcodeFile.gcodeFilePath);
+            } else {
+                request.get(gcodeFilePath)
+                    .end((err, res) => {
+                        const data = res.text;
+                        const blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+                        const savedFilename = filename;
+                        FileSaver.saveAs(blob, savedFilename, true);
+                    });
+            }
         },
         onChangeExportModelFormat: (option) => {
             this.setState({
@@ -113,7 +128,6 @@ class Output extends PureComponent {
                 // export error
                 return;
             }
-            const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
             let fileName = 'export';
             if (format === 'stl') {
                 if (isBinary === true) {
@@ -123,7 +137,21 @@ class Output extends PureComponent {
                 }
             }
             fileName += `.${format}`;
-            FileSaver.saveAs(blob, fileName, true);
+            if (isElectron()) {
+                const { ipcRenderer } = window.require('electron');
+                ipcRenderer.send('save-model', `./${fileName}`, output);
+            } else {
+                const blob = new Blob([output], { type: 'text/plain;charset=utf-8' });
+                FileSaver.saveAs(blob, fileName, true);
+            }
+        },
+        onClickExportConfig: () => {
+            this.props.createConfig();
+            // const configFilePath = `${DataStorage.configDir}/active_final.def.json`;
+            if (isElectron()) {
+                const { ipcRenderer } = window.require('electron');
+                ipcRenderer.send('save-config');
+            }
         }
     };
 
@@ -174,6 +202,32 @@ class Output extends PureComponent {
                                         onClick={actions.onClickExportModel}
                                     >
                                         {i18n._('Export Models')}
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table style={{ width: '100%', marginTop: '10px' }}>
+                        <tbody>
+                            <tr>
+                                <td style={{ paddingRight: '0px', width: '50%' }}>
+                                    <button
+                                        type="button"
+                                        className="sm-btn-large sm-btn-default"
+                                        style={{ width: '100%' }}
+                                        onClick={actions.onClickExportConfig}
+                                    >
+                                        {i18n._('Export Config')}
+                                    </button>
+                                </td>
+                                <td style={{ paddingRight: '0px', width: '50%' }}>
+                                    <button
+                                        type="button"
+                                        className="sm-btn-large sm-btn-default"
+                                        style={{ width: '100%' }}
+                                        onClick={actions.onClickImportConfig}
+                                    >
+                                        {i18n._('Import Config')}
                                     </button>
                                 </td>
                             </tr>
@@ -233,7 +287,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        generateGcode: (thumbnail) => dispatch(printingActions.generateGcode(thumbnail))
+        generateGcode: (thumbnail) => dispatch(printingActions.generateGcode(thumbnail)),
+        createConfig: () => dispatch(printingActions.createConfig())
     };
 };
 

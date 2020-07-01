@@ -31,6 +31,7 @@ class ModelGroup {
             selectedModelID: null,
             transformation: {}
         };
+        this.primeEnable = false;
     }
 
     onModelUpdate = () => {
@@ -383,6 +384,23 @@ class ModelGroup {
 
     _checkOverstepped(model) {
         model.computeBoundingBox();
+        if (this.primeEnable) {
+            const clone = this.object.userData.primeTower.geometry.clone();
+            this.object.userData.primeTower.updateMatrix();
+            clone.applyMatrix4(this.object.userData.primeTower.matrix);
+            clone.computeBoundingBox();
+            const boundingBox = clone.boundingBox;
+            if (model.meshObject.name === 'g') {
+                if (model.checkOverstepped(boundingBox)) {
+                    return true;
+                }
+            } else {
+                model.computeBoundingBox();
+                if (model.boundingBox.intersectsBox(boundingBox)) {
+                    return true;
+                }
+            }
+        }
         return !this._bbox.containsBox(model.boundingBox);
     }
 

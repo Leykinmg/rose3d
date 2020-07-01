@@ -21,6 +21,20 @@ const commandKeys = [
         preventDefault: true
     },
     {
+        keys: ['ctrl', 'z'].join('+'),
+        cmd: 'UNDO',
+        payload: {
+        },
+        preventDefault: true
+    },
+    {
+        keys: ['ctrl', 'shift', 'z'].join('+'),
+        cmd: 'REDO',
+        payload: {
+        },
+        preventDefault: true
+    },
+    {
         keys: ['mod', 'd'].join('+'),
         cmd: 'DUPLICATE',
         payload: {

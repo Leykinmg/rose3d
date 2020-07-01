@@ -48,6 +48,7 @@ class DataStorage {
 
         this.tmpDir = `${this.userDataDir}/Tmp`;
         this.sessionDir = `${this.userDataDir}/Sessions`;
+        this.configDir = `${this.userDataDir}/Config`;
 
         mkdirp.sync(this.tmpDir);
         mkdirp.sync(this.sessionDir);

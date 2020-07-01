@@ -94,7 +94,7 @@ const INITIAL_STATE = {
 
     // prime_tower
     // primeTowerGeometry: new THREE.CylinderBufferGeometry(10, 10, 10, 100),
-    primeTower: new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 0, 0, 0), new THREE.MeshBasicMaterial({ color: 0x000000 }))
+    primeTower: new THREE.Mesh(new THREE.CylinderBufferGeometry(0, 0, 0, 0), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.5 }))
 };
 
 
@@ -331,15 +331,19 @@ export const actions = {
         }
 
         if (activeDefinition.settings.prime_tower_enable.default_value) {
+            state.modelGroup.primeEnable = true;
             const size = activeDefinition.settings.prime_tower_size.default_value;
             const height = activeDefinition.settings.machine_height.default_value;
-            const geometry = new THREE.CylinderBufferGeometry(size, size, height, 100);
+            const width = activeDefinition.settings.machine_width.default_value;
+            const depth = activeDefinition.settings.machine_depth.default_value;
+            const geometry = new THREE.CylinderBufferGeometry(size / 2, size / 2, height, 100);
             primeTower.geometry = geometry;
-            primeTower.position.x = activeDefinition.settings.prime_tower_position_x.default_value;
-            primeTower.position.z = activeDefinition.settings.prime_tower_position_y.default_value;
+            primeTower.position.x = activeDefinition.settings.prime_tower_position_x.default_value - width / 2 - size / 2;
+            primeTower.position.z = depth / 2 - activeDefinition.settings.prime_tower_position_y.default_value - size / 2;
             primeTower.position.y = height / 2;
             primeTower.visible = true;
         } else {
+            state.modelGroup.primeEnable = false;
             primeTower.visible = false;
         }
         dispatch(actions.render());
@@ -514,7 +518,6 @@ export const actions = {
         const uploadName = pathWithRandomSuffix(file.name);
         formData.append('uploadName', uploadName);
         const res = await api.uploadFile(formData);
-        console.log(res);
 
         // const { name, filename } = res.body;
         const { originalName } = res.body;
@@ -618,6 +621,13 @@ export const actions = {
                 gcodeLine: null
             }));
         }
+    },
+
+    createConfig: () => async (dispatch, getState) => {
+        const { activeDefinition } = getState().printing;
+        const { series } = getState().machine;
+        const finalDefinition = definitionManager.finalizeActiveDefinition(activeDefinition, series);
+        await api.printingConfigs.createDefinition(finalDefinition);
     },
 
     generateGcode: (thumbnail) => async (dispatch, getState) => {
@@ -812,9 +822,10 @@ export const actions = {
     },
 
     displayModel: () => (dispatch, getState) => {
-        const { gcodeLineGroup, modelGroup } = getState().printing;
+        const { gcodeLineGroup, modelGroup, primeTower } = getState().printing;
         // modelGroup.visible = true;
         modelGroup.object.visible = true;
+        primeTower.visible = true;
         gcodeLineGroup.visible = false;
         dispatch(actions.updateState({
             displayedType: 'model'
@@ -1051,9 +1062,10 @@ export const actions = {
     },
 
     displayGcode: () => (dispatch, getState) => {
-        const { gcodeLineGroup, modelGroup } = getState().printing;
+        const { gcodeLineGroup, modelGroup, primeTower } = getState().printing;
         // modelGroup.visible = false;
         modelGroup.object.visible = false;
+        primeTower.visible = false;
         gcodeLineGroup.visible = true;
         dispatch(actions.updateState({
             displayedType: 'gcode'

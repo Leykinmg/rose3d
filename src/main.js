@@ -114,16 +114,43 @@ const main = () => {
         app.commandLine.appendSwitch('--js-flags', '--max-old-space-size=4096');
     }
 
-    ipcMain.on('save-dialog', (event, path) => {
+    ipcMain.on('save-gcode', (event, path) => {
         dialog.showSaveDialog({
-            title: '保存',
+            title: '导出gcode',
             defaultPath: path,
             filters: [{
                 name: 'gcode文件',
                 extensions: ['gcode']
             }]
         }).then((filename) => {
-            event.sender.send('saved-file', filename, path);
+            event.sender.send('saved-gcode', filename, path);
+        });
+    });
+
+    ipcMain.on('save-model', (event, path, output) => {
+        dialog.showSaveDialog({
+            title: '导出模型',
+            defaultPath: path,
+            filters: [{
+                name: '模型文件stl/obj',
+                extensions: ['stl', 'obj']
+            }]
+        }).then((filename) => {
+            event.sender.send('saved-model', filename, output);
+        });
+    });
+
+    ipcMain.on('save-config', (event) => {
+        const uploadPath = `${DataStorage.configDir}/active_final.def.json`;
+        dialog.showSaveDialog({
+            title: '导出配置',
+            defaultPath: uploadPath,
+            filters: [{
+                name: '切片配置',
+                extensions: ['json']
+            }]
+        }).then((filename) => {
+            event.sender.send('saved-config', filename, uploadPath);
         });
     });
 

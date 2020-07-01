@@ -151,7 +151,6 @@ class Group {
                 clone.applyMatrix4(model.meshObject.matrix);
                 let parent = model.meshObject.parent;
                 while (parent && parent.name === 'g') {
-                    clone.computeBoundingBox();
                     clone.applyMatrix4(parent.matrix);
                     parent = parent.parent;
                 }
@@ -296,6 +295,31 @@ class Group {
         for (const model of this.models) {
             model.setExtruder(type);
         }
+    }
+
+    checkOverstepped(boundingBox) {
+        this.meshObject.updateMatrix();
+        for (const model of this.models) {
+            if (model.meshObject.name === 'g') {
+                if (model.checkOverStep(boundingBox)) {
+                    return true;
+                }
+            } else {
+                model.meshObject.updateMatrix();
+                const clone = model.convexGeometry ? model.convexGeometry.clone() : model.meshObject.geometry.clone();
+                clone.applyMatrix4(model.meshObject.matrix);
+                let parent = model.meshObject.parent;
+                while (parent && parent.name === 'g') {
+                    clone.applyMatrix4(parent.matrix);
+                    parent = parent.parent;
+                }
+                clone.computeBoundingBox();
+                if (clone.boundingBox.intersectsBox(boundingBox)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
 

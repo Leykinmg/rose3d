@@ -94,6 +94,8 @@ class Canvas extends Component {
 
         this.group.add(this.modelGroup);
         this.group.add(this.primeTower);
+        this.primeTower.visible = false;
+        this.modelGroup.userData.primeTower = this.primeTower;
         this.group2 = this.modelGroup.userData.selection.group;
 
         this.scene2.children.push(this.group2);
