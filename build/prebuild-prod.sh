@@ -39,6 +39,7 @@ mkdir -p "$CURA_DIR/$CURA_VERSION"
 if [[ "$PLATFORM" == "darwin" ]]; then
     cp -r "resources/CuraEngine/$CURA_VERSION/macOS" "$CURA_DIR/$CURA_VERSION"
     cp -r "resources/CuraEngine/$CURA_VERSION/Windows-x64" "$CURA_DIR/$CURA_VERSION"
+    chmod 755 "$CURA_DIR/$CURA_VERSION/macOS/CuraEngine"
 elif [[ "$PLATFORM" == "win32" ]]; then
     cp -r "resources/CuraEngine/$CURA_VERSION/Windows-x64" "$CURA_DIR/$CURA_VERSION"
 elif [[ "$PLATFORM" == "linux" ]]; then
