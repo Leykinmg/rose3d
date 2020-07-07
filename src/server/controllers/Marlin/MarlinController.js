@@ -3,7 +3,6 @@ import isEqual from 'lodash/isEqual';
 import includes from 'lodash/includes';
 import noop from 'lodash/noop';
 import semver from 'semver';
-import interpret from '../../lib/interpret';
 import EventTrigger from '../../lib/EventTrigger';
 import Feeder from '../../lib/Feeder';
 import Sender, { SP_TYPE_SEND_RESPONSE } from '../../lib/Sender';

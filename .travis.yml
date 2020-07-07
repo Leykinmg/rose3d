@@ -1,7 +1,7 @@
 os:
 - osx
-- linux
-osx_image: xcode11.5
+#- linux
+osx_image: xcode11.3
 sudo: required
 dist: xenial
 group: travis_latest
@@ -55,7 +55,7 @@ after_success:
       # Temporarily Bypass Gatekeeper
       sudo spctl --master-disable;
       sudo spctl --status;
-      travis_wait 30 npm run build:mac-x64;
+      travis_wait 60 npm run build:mac-x64;
       ls -al output output/*;
       cp -af "output/${PRODUCT_NAME}-${PACKAGE_VERSION}.dmg" "releases/${RELEASE}-mac-x64.dmg";
       ls -al releases/*;
@@ -84,24 +84,6 @@ after_success:
       tar zcfh "${RELEASE}-linux-ia32.tar.gz" "${RELEASE}-linux-ia32";
       rm -f "${RELEASE}-linux-ia32";
       popd;
-      ls -al releases/*;
-  fi
-- |
-  # build:win-64
-  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      npm run build:win-x64;
-      ls -al output output/*;
-      cp -af "output/${PACKAGE_NAME}-${PACKAGE_VERSION}-win.zip" "releases/${RELEASE}-win.zip";
-      cp -af "output/${PACKAGE_NAME} Setup ${PACKAGE_VERSION}.exe" "releases/${RELEASE}-win.exe";
-      ls -al releases/*;
-  fi
-- |
-  # build:win-ia32
-  if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      npm run build:win-ia32;
-      ls -al output output/*;
-      cp -af "output/${PACKAGE_NAME}-${PACKAGE_VERSION}-ia32-win.zip" "releases/${RELEASE}-win-ia32.zip";
-      cp -af "output/${PACKAGE_NAME} Setup ${PACKAGE_VERSION}.exe" "releases/${RELEASE}-win-ia32.exe";
       ls -al releases/*;
   fi
 before_deploy:

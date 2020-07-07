@@ -1,8 +1,6 @@
 import store from '../../store';
 import logger from '../../lib/logger';
 import { MarlinController } from '../../controllers';
-import ensureArray from '../../lib/ensure-array';
-import config from '../configstore';
 import { PROTOCOL_SCREEN, WRITE_SOURCE_CLIENT } from '../../controllers/constants';
 import ScreenController from '../../controllers/Marlin/ScreenController';
 

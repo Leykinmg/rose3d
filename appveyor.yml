@@ -16,7 +16,7 @@ environment:
   - nodejs_version: "10"
   global:
     GITHUB_TOKEN:
-      secure: 4lZ6pJxMl/2aEnBqcoHKsX86geFzHr+YC8BgqvbYiMBIs/KGjFTRI+oWKN8i3u9U
+      secure: 2T7CiOsY+DLkhurj0pjQ1XoGyshwHlLiva08d00Pwo54AyMdADBiDwhc6gALJLy5
 
 matrix:
   fast_finish: true
@@ -80,7 +80,7 @@ artifacts:
 deploy:
   - provider: GitHub
     auth_token:
-      secure: 4lZ6pJxMl/2aEnBqcoHKsX86geFzHr+YC8BgqvbYiMBIs/KGjFTRI+oWKN8i3u9U
+      secure: 2T7CiOsY+DLkhurj0pjQ1XoGyshwHlLiva08d00Pwo54AyMdADBiDwhc6gALJLy5
     draft: false
     prerelease: false
     on:

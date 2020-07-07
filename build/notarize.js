@@ -15,15 +15,12 @@ module.exports = async function notarizing(context) {
     }
 
     console.log('Notarizing application...');
-    return;
-    // eslint-disable-next-line no-unreachable
     const appName = context.packager.appInfo.productFilename;
 
     const appleId = process.env.APPLEID;
     const appleIdPassword = process.env.APPLEIDPASS;
-
     await notarize({
-        appBundleId: 'com.snapmaker.luban',
+        appBundleId: 'com.rose.rose3d',
         appPath: `${appOutDir}/${appName}.app`,
         appleId,
         appleIdPassword

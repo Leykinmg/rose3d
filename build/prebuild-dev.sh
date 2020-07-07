@@ -28,18 +28,18 @@ mkdir -p "$RESOURCES_DIR"
 # copy Cura Engine
 #
 CURA_DIR="$RESOURCES_DIR/CuraEngine"
-CURA_VERSION="4.6"
+CURA_VERSION="4.1"
 
 mkdir -p "$CURA_DIR"
 mkdir -p "$CURA_DIR/$CURA_VERSION"
 
 if [ "$PLATFORM" = "darwin" ]; then
     cp -r "resources/CuraEngine/$CURA_VERSION/macOS" "$CURA_DIR/$CURA_VERSION"
+    chmod +x "$CURA_DIR/$CURA_VERSION/CuraEngine"
 elif [ "$PLATFORM" = "win32" ]; then
     cp -r "resources/CuraEngine/$CURA_VERSION/Windows-x64" "$CURA_DIR/$CURA_VERSION"
 elif [ "$PLATFORM" = "linux" ]; then
     cp -r "resources/CuraEngine/$CURA_VERSION/Linux" "$CURA_DIR/$CURA_VERSION"
-    cp -r "resources/CuraEngine/$CURA_VERSION/Windows-x64" "$CURA_DIR/$CURA_VERSION"
 fi
 cp -r resources/CuraEngine/Config "$CURA_DIR"
 

@@ -1,16 +1,11 @@
-Snapmaker Luban
+Rose3D
 ===============
 
-[![Build Status](https://travis-ci.org/Snapmaker/Luban.svg?branch=master)](https://travis-ci.org/Snapmaker/Luban)
-[![Build status](https://ci.appveyor.com/api/projects/status/2912jdsm88wcg19g?svg=true)](https://ci.appveyor.com/project/parachvte/luban)
-
-Snapmaker Luban is an easy-to-use 3-in-1 software tailor-made for Snapmaker machines.
-You can customize the printer settings and control the machine using the command panel in Luban anytime with ease.
-The software also provides G-code generation support for 3D models, laser engraving / cutting, and CNC milling.
+[![Build Status](https://travis-ci.org/Snapmaker/Luban.svg?branch=master)](https://travis-ci.com/github/Leykinmg/rose3d)
 
 Our goal is to provide a multi-functional 3D software, while making it as accessible and customizable as possible for new users / beginners.
 
-The software is inspired by [cncjs](https://github.com/cncjs/cncjs) by cheton, we also use [CuraEngine](https://github.com/Ultimaker/CuraEngine) for 3D slicing.
+The software is inspired by [CuraEngine](https://github.com/Ultimaker/CuraEngine) for 3D slicing.
 
 ## Features
 
@@ -21,21 +16,6 @@ The software is inspired by [cncjs](https://github.com/cncjs/cncjs) by cheton, w
     - Manipulate model (Position / Rotate / Duplicate / Lay Flat)
     - Model export and G-code export
     - Built-in and custom configurations for slicing
-- Laser G-code generator
-    - Multiple models
-    - Manipulate model (Position / Rotate / Duplicate)
-    - Model export and G-code export
-    - Featured modes: B&W, Greyscale, Vector, Text
-- CNC G-code generator
-    - Multiple models
-    - Manipulate model (Position / Rotate / Duplicate)
-    - Model export and G-code export
-    - Featured modes: Relief, Vector, Text
-    - Support Tabs
-- Snapmaker 2.0 only features
-    - Wi-Fi controls and file transfer
-    - Camera Aid Background
-- Case Library
 - Multi-Language Support
 - Keyboard shortcut
 - Custom Widgets
@@ -54,7 +34,7 @@ Or you can clone this repository, then follow the instructions in "**Development
 ### Setup development environment
 
 - Install Node.js 10 (or higher). You can use
-[NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) to install and manage multiple Node.js 
+[NVM (Node Version Manager)](https://github.com/nvm-sh/nvm) to install and manage multiple Node.js
 versions:
 
 ```Bash
