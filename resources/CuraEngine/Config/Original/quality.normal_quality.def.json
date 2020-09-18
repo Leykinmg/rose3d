@@ -13,7 +13,7 @@
                     "default_value": 0.2
                 },
                 "initial_layer_line_width_factor": {
-                    "default_value": 110
+                    "default_value": 150
                 }
             }
         },
