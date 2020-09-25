@@ -12,7 +12,8 @@ import { actions as printingActions } from '../../flux/printing';
 
 const LANGUAGE_OPTIONS = [
     { value: 'zh-cn', label: '简体中文' },
-    { value: 'en', label: 'English' }
+    { value: 'en', label: 'English' },
+    { value: 'ja', label: '日本語' }
 ];
 
 const getOption = (lang) => {
@@ -21,6 +22,9 @@ const getOption = (lang) => {
     }
     if (lang === 'zh-cn') {
         return { value: 'zh-cn', label: '简体中文' };
+    }
+    if (lang === 'ja') {
+        return { value: 'ja', label: '日本語' };
     }
     return { value: 'en', label: 'English' };
 };

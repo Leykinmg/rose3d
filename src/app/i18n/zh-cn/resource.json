@@ -406,6 +406,8 @@
     "Slice": "切片",
     "Save To File": "保存",
     "Export Models": "保存模型文件",
+    "Export Config": "导出配置",
+    "Import Config": "导入配置",
     "Only STL/OBJ files are supported.": "",
     "Drop an STL/OBJ file here.": "",
     "Only G-code files are supported": "",
