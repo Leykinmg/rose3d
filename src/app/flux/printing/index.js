@@ -681,8 +681,9 @@ export const actions = {
         return new Promise((resolve) => {
             const { modelGroup } = getState().printing;
             const originalName = modelGroup.getModels()[0].originalName;
-            const uploadName = modelGroup.getModels()[0].uploadName;
+            let uploadName = modelGroup.getModels()[0].uploadName;
             const uploadPath = `${DATA_PREFIX}/${originalName}`;
+            uploadName = `${path.basename(uploadName, path.extname(uploadName))}.stl`;
             const basenameWithoutExt = path.basename(uploadPath, path.extname(uploadPath));
             const stlFileName = `${basenameWithoutExt}.stl`;
             // Use setTimeout to force export executes in next tick, preventing block of updateState()
