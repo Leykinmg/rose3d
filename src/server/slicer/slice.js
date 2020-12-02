@@ -161,6 +161,8 @@ function slice(params, onProgress, onSucceed, onError) {
             });
         }
         log.info(`slice progress closed with code ${code}`);
+        onError(`slice progress closed with code ${code}`);
+
     });
 }
 

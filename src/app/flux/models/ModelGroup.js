@@ -34,6 +34,16 @@ class ModelGroup {
         this.primeEnable = false;
     }
 
+    getEmptyState = () => {
+        return {
+            mode: '',
+            hasModel: this._hasModel(),
+            isAnyModelOverstepped: this._checkAnyModelOverstepped(),
+            selectedModelID: null,
+            transformation: {}
+        };
+    }
+
     onModelUpdate = () => {
         this.object.dispatchEvent(EVENTS.UPDATE);
     };
@@ -86,7 +96,7 @@ class ModelGroup {
                 this.object.remove(model.meshObject);
             }
         }
-        return this._emptyState;
+        return this.getEmptyState();
     }
 
     setConvexGeometry(uploadName, convexGeometry) {
@@ -106,9 +116,9 @@ class ModelGroup {
                 this.object.remove(model.meshObject);
             }
             this.models.splice(0);
-            return this._emptyState;
+            return this.getEmptyState();
         }
-        return this._emptyState;
+        return this.getEmptyState();
     }
 
     undoRedo(models) {
@@ -126,7 +136,7 @@ class ModelGroup {
             this.models.push(newModel);
             this.object.add(newModel.meshObject);
         }
-        return this._emptyState;
+        return this.getEmptyState();
     }
 
     getModels() {
@@ -155,7 +165,7 @@ class ModelGroup {
                         this.selectedModel = this.selection.selecteds[this.selection.selecteds.length - 1];
                     } else {
                         this.selectedModel = null;
-                        return this._emptyState;
+                        return this.getEmptyState();
                     }
                 } else {
                     this.selectedModel = model;
@@ -177,7 +187,7 @@ class ModelGroup {
     unselectAllModels() {
         this.selection.unSelectAll();
         this.selectedModel = null;
-        return this._emptyState;
+        return this.getEmptyState();
     }
 
     arrangeAllModels() {
@@ -200,7 +210,7 @@ class ModelGroup {
             this.models.push(model);
             this.object.add(model.meshObject);
         }
-        return this.selectedModel ? this._getState(this.selectedModel) : this._emptyState;
+        return this.selectedModel ? this._getState(this.selectedModel) : this.getEmptyState();
     }
 
     multiplySelectedModel(count) {
