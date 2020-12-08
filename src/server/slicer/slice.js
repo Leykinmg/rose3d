@@ -159,10 +159,10 @@ function slice(params, onProgress, onSucceed, onError) {
                 filamentWeight: filamentWeight,
                 gcodeFilePath: gcodeFilePath
             });
+        } else {
+            onError(`slice progress closed with code ${code}`);
         }
         log.info(`slice progress closed with code ${code}`);
-        onError(`slice progress closed with code ${code}`);
-
     });
 }
 
