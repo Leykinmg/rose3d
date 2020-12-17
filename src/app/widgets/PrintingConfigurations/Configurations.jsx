@@ -66,8 +66,8 @@ class Configurations extends PureComponent {
         officialQualityDefinition: null,
         customQualityDefinition: null,
 
-        supportKey: null,
-        supportValue: null,
+        supportKey: 'support_enable',
+        supportValue: false,
         // rename custom config
         newName: null,
         isRenaming: false,
@@ -275,11 +275,11 @@ class Configurations extends PureComponent {
             const definition = this.state.customQualityDefinition;
 
             definition.settings[key].default_value = value;
-            this.state.supportKey = key;
-            this.state.supportValue = value;
 
             this.setState({
-                SupportDefinition: value === false ? 'none' : value
+                supportKey: key,
+                SupportDefinition: value === false ? 'none' : value,
+                supportValue: value
             });
 
             this.props.updateActiveDefinition({
