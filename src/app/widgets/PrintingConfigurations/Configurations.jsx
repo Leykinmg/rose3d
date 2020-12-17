@@ -66,6 +66,8 @@ class Configurations extends PureComponent {
         officialQualityDefinition: null,
         customQualityDefinition: null,
 
+        supportKey: null,
+        supportValue: null,
         // rename custom config
         newName: null,
         isRenaming: false,
@@ -185,8 +187,10 @@ class Configurations extends PureComponent {
                 isOfficialTab: true,
                 officialQualityDefinition: definition
             });
+            // this.actions.onChangeSupportDefinition(definition.)
             this.props.updateDefaultQualityId(definition.definitionId);
             this.props.updateActiveDefinition(definition);
+            this.actions.onChangeSupportDefinition(this.state.supportKey, this.state.supportValue);
         },
         onSelectCustomDefinitionById: (definitionId) => {
             const definition = this.props.qualityDefinitions.find(d => d.definitionId === definitionId);
@@ -271,6 +275,8 @@ class Configurations extends PureComponent {
             const definition = this.state.customQualityDefinition;
 
             definition.settings[key].default_value = value;
+            this.state.supportKey = key;
+            this.state.supportValue = value;
 
             this.setState({
                 SupportDefinition: value === false ? 'none' : value
@@ -342,7 +348,7 @@ class Configurations extends PureComponent {
                 this.props.updateActiveDefinition(definition);
             } else {
                 const officialQualityDefinition = nextProps.qualityDefinitions.find(d => d.definitionId === this.state.officialQualityDefinition.definitionId)
-                || nextProps.qualityDefinitions.find(d => d.definitionId === 'quality.fast_print');
+                    || nextProps.qualityDefinitions.find(d => d.definitionId === 'quality.fast_print');
                 const customQualityDefinition = nextProps.qualityDefinitions.find(d => d.definitionId === this.state.customQualityDefinition.definitionId)
                     || nextProps.qualityDefinitions.find(d => d.definitionId === 'quality.fast_print');
                 Object.assign(newState, {
