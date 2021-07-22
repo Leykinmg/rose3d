@@ -327,7 +327,7 @@
     "word-wrap": "^1.2.3",
     "worker-loader": "~2.0.0",
     "write-file-webpack-plugin": "~4.3.2",
-    "xlsx": "~0.13.3"
+    "xlsx": "~0.17.0"
   },
   "config": {
     "commitizen": {
